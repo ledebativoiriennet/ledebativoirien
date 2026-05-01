@@ -135,7 +135,7 @@ export default async function ArticlePage({ params }: Props) {
       
       {/* CENTER COLUMN: Article Content & Bottom related */}
       <div className="portal-col-center">
-        <article style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", padding: "2rem" }}>
+        <article className="article-main-container">
           
           {/* JSON-LD Structured Data for NewsArticle */}
           <script
@@ -175,7 +175,7 @@ export default async function ArticlePage({ params }: Props) {
             {article.title}
           </h1>
           
-          <div style={{ color: "var(--muted)", marginBottom: "2rem", display: "flex", alignItems: "center", gap: "1rem", fontSize: "0.85rem" }}>
+          <div className="article-meta-info">
             <span>Publié le {new Date(article.publishedAt || new Date()).toLocaleDateString("fr-FR", { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
             {article.isPremium && <span className="premium-badge">PREMIUM</span>}
             <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>⏱️ 5 min de lecture</span>
@@ -187,9 +187,6 @@ export default async function ArticlePage({ params }: Props) {
             <div 
               className="article-content"
               style={{ 
-                fontSize: "1.125rem", 
-                lineHeight: 1.8, 
-                color: "var(--foreground)",
                 position: "relative",
                 maxHeight: showPaywall ? "500px" : "none",
                 overflow: "hidden"
@@ -234,7 +231,7 @@ export default async function ArticlePage({ params }: Props) {
         {/* À lire également (Recommandations) */}
         <div style={{ marginTop: "2rem" }}>
           <h2 className="portal-section-title dark" style={{ borderBottom: "2px solid var(--primary)" }}>À lire également</h2>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginTop: "1rem" }}>
+          <div className="grid-responsive-2col" style={{ marginTop: "1rem" }}>
             {relatedArticles.map(rel => {
               const relImg = extractFirstImageUrl(rel.content);
               return (
