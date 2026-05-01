@@ -118,7 +118,7 @@ export default async function Home() {
                 <div style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#64748b', padding: '1rem', fontSize: '0.8rem' }}>Les unes de journaux du jour ne sont pas encore disponibles.</div>
               )}
             </div>
-            <Link href="#" style={{ display: 'block', textAlign: 'center', fontSize: '0.8rem', marginTop: '1rem', color: 'var(--primary)', fontWeight: 'bold' }}>
+            <Link href="/titrologie" style={{ display: 'block', textAlign: 'center', fontSize: '0.8rem', marginTop: '1rem', color: 'var(--primary)', fontWeight: 'bold' }}>
               Voir toute la titrologie
             </Link>
           </div>
