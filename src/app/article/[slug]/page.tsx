@@ -9,10 +9,59 @@ import { authOptions } from "@/lib/auth";
 import { recordArticleRead } from "@/app/actions/user-stats";
 import { LikeButton } from "@/components/LikeButton";
 import AdBanner from "@/components/AdBanner";
+import { Metadata, ResolvingMetadata } from "next";
 
 export const revalidate = 60;
 
-export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
+type Props = {
+  params: Promise<{ slug: string }>
+};
+
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const { slug } = await params;
+  const article = await prisma.article.findUnique({
+    where: { slug },
+    include: { categories: true, author: true }
+  });
+
+  if (!article) return { title: 'Article introuvable' };
+
+  const previousImages = (await parent).openGraph?.images || [];
+  const articleImg = article.imageUrl || extractFirstImageUrl(article.content);
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ledebativoirien.net';
+  
+  const description = article.excerpt || article.content.replace(/<[^>]*>?/gm, '').substring(0, 160) + '...';
+
+  return {
+    title: `${article.title} - Le Débat Ivoirien`,
+    description: description,
+    alternates: {
+      canonical: `${baseUrl}/article/${article.slug}`,
+    },
+    openGraph: {
+      title: article.title,
+      description: description,
+      url: `${baseUrl}/article/${article.slug}`,
+      siteName: 'Le Débat Ivoirien',
+      images: articleImg ? [articleImg, ...previousImages] : previousImages,
+      locale: 'fr_CI',
+      type: 'article',
+      publishedTime: article.publishedAt?.toISOString(),
+      authors: article.author?.name ? [article.author.name] : ['La Rédaction'],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: article.title,
+      description: description,
+      images: articleImg ? [articleImg] : [],
+    },
+  };
+}
+
+export default async function ArticlePage({ params }: Props) {
   const { slug } = await params;
   
   const article = await prisma.article.findUnique({
@@ -87,6 +136,35 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       {/* CENTER COLUMN: Article Content & Bottom related */}
       <div className="portal-col-center">
         <article style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", padding: "2rem" }}>
+          
+          {/* JSON-LD Structured Data for NewsArticle */}
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "NewsArticle",
+                "headline": article.title,
+                "image": mainImageUrl ? [mainImageUrl] : [],
+                "datePublished": article.publishedAt?.toISOString(),
+                "dateModified": article.updatedAt?.toISOString(),
+                "author": [{
+                    "@type": "Person",
+                    "name": article.author?.name || "La Rédaction"
+                }],
+                "publisher": {
+                  "@type": "Organization",
+                  "name": "Le Débat Ivoirien",
+                  "logo": {
+                    "@type": "ImageObject",
+                    "url": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://ledebativoirien.net'}/logo.png`
+                  }
+                },
+                "description": article.excerpt || article.content.replace(/<[^>]*>?/gm, '').substring(0, 160) + '...'
+              })
+            }}
+          />
+
           <div className="article-meta" style={{ marginBottom: "1rem" }}>
             {article.categories.map((c) => (
               <span key={c.id} style={{ color: "var(--secondary)", fontWeight: "bold", textTransform: "uppercase", fontSize: "0.8rem" }}>{c.name}</span>

@@ -2,10 +2,39 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { extractFirstImageUrl } from "@/lib/utils";
+import { Metadata } from "next";
 
 export const revalidate = 60;
 
-export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
+type Props = {
+  params: Promise<{ slug: string }>
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const category = await prisma.category.findUnique({ where: { slug } });
+
+  if (!category) return { title: 'Catégorie introuvable' };
+
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ledebativoirien.net';
+  
+  return {
+    title: `Actualités ${category.name} - Le Débat Ivoirien`,
+    description: `Retrouvez toutes les dernières actualités et articles d'investigation sur le thème : ${category.name}.`,
+    alternates: {
+      canonical: `${baseUrl}/category/${category.slug}`,
+    },
+    openGraph: {
+      title: `Actualités ${category.name} | Le Débat Ivoirien`,
+      description: `Toutes les informations exclusives concernant : ${category.name}.`,
+      url: `${baseUrl}/category/${category.slug}`,
+      siteName: 'Le Débat Ivoirien',
+      type: 'website',
+    }
+  };
+}
+
+export default async function CategoryPage({ params }: Props) {
   const { slug } = await params;
   const category = await prisma.category.findUnique({
     where: { slug }
