@@ -106,8 +106,8 @@ export default async function RootLayout({
           </div>
           
           {/* Indicators Strip - Abidjan.net Style */}
-          <div style={{ backgroundColor: 'white', borderBottom: '1px solid var(--border)', padding: '1rem 0' }}>
-            <div className="container" style={{ display: 'flex', gap: '2rem', overflowX: 'auto', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div style={{ backgroundColor: 'white', borderBottom: '1px solid var(--border)', padding: '1rem 0', overflow: 'hidden' }}>
+            <div className="indicator-ticker">
               
               {/* Block 1: Cacao */}
               {cacaoGrp.length > 0 && (
