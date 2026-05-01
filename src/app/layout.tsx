@@ -6,6 +6,9 @@ import { Providers } from "@/components/Providers";
 import VisitorTracker from "@/components/VisitorTracker";
 import { UserMenu } from "@/components/UserMenu";
 import { prisma } from "@/lib/prisma";
+import { GoogleAnalytics } from '@next/third-parties/google';
+import Script from "next/script";
+
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
@@ -57,7 +60,19 @@ export default async function RootLayout({
 
   return (
     <html lang="fr" className={inter.variable}>
+      <head>
+        {process.env.NEXT_PUBLIC_ADSENSE_ID && (
+          <Script
+            id="adsense-init"
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_ID}`}
+            crossOrigin="anonymous"
+            strategy="afterInteractive"
+          />
+        )}
+      </head>
       <body>
+        {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
         <VisitorTracker />
         <Providers>
           <header className="header">

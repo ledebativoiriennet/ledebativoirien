@@ -61,6 +61,12 @@ export default function RegisterPage() {
           <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, fontSize: '0.9rem' }}>Mot de passe</label>
           <input type="password" name="password" placeholder="••••••••" minLength={6} className="input" required />
         </div>
+
+        {/* --- ESPACE GOOGLE RECAPTCHA ---
+            Lorsque vous aurez vos clés, décommentez et insérez votre composant ici :
+            <ReCAPTCHA sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY} onChange={handleCaptchaChange} />
+        */}
+
         <button type="submit" className="btn btn-primary" disabled={loading} style={{ width: '100%', marginTop: '1rem', opacity: loading ? 0.7 : 1 }}>
           {loading ? "Création en cours..." : "Créer mon compte"}
         </button>
