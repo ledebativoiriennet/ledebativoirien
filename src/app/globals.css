@@ -156,23 +156,6 @@ a:hover {
   100% { transform: translateX(-100%); }
 }
 
-.indicator-ticker {
-  display: flex;
-  gap: 3rem;
-  width: max-content;
-  animation: scroll-left 35s linear infinite;
-  padding: 0 1rem;
-}
-
-.indicator-ticker:hover {
-  animation-play-state: paused;
-}
-
-@keyframes scroll-left {
-  0% { transform: translateX(100vw); }
-  100% { transform: translateX(-100%); }
-}
-
 .main-header {
   padding: 1.5rem 0;
   display: flex;

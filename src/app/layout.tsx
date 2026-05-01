@@ -91,6 +91,7 @@ export default async function RootLayout({
               <MainNavigation categories={navCategories} />
             </div>
           </div>
+        </header>
 
           {/* BREAKING NEWS */}
           <div style={{ backgroundColor: 'var(--primary)', color: 'white', height: '40px', overflow: 'hidden' }}>
@@ -106,8 +107,8 @@ export default async function RootLayout({
           </div>
           
           {/* Indicators Strip - Abidjan.net Style */}
-          <div style={{ backgroundColor: 'white', borderBottom: '1px solid var(--border)', padding: '1rem 0', overflow: 'hidden' }}>
-            <div className="indicator-ticker">
+          <div style={{ backgroundColor: 'white', borderBottom: '1px solid var(--border)', padding: '1rem 0' }}>
+            <div className="container" style={{ display: 'flex', gap: '2rem', overflowX: 'auto', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               
               {/* Block 1: Cacao */}
               {cacaoGrp.length > 0 && (
@@ -190,7 +191,6 @@ export default async function RootLayout({
 
             </div>
           </div>
-        </header>
         
         <main className="container" style={{ minHeight: '60vh' }}>
           {children}
