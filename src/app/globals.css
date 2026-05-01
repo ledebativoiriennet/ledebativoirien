@@ -132,7 +132,7 @@ a:hover {
 }
 
 .breaking-label {
-  background-color: var(--secondary);
+  background-color: #111111;
   padding: 0.25rem 0.75rem;
   border-radius: 999px;
   font-weight: 700;
@@ -222,7 +222,7 @@ a:hover {
   left: 0;
   width: 0;
   height: 2px;
-  background-color: var(--secondary);
+  background-color: #111111;
   transition: width 0.3s ease;
 }
 
@@ -439,11 +439,11 @@ a:hover {
   text-transform: uppercase;
   margin-bottom: 1rem;
   border-radius: var(--radius) var(--radius) 0 0;
-  border-bottom: 4px solid var(--secondary);
+  border-bottom: 4px solid #111111;
 }
 
 .portal-section-title.dark {
-  background-color: var(--secondary);
+  background-color: #111111;
   border-bottom: 4px solid var(--primary);
 }
 
@@ -468,7 +468,7 @@ a:hover {
   width: 70px;
   height: 70px;
   min-width: 70px;
-  background-color: var(--muted);
+  background-color: #111111;
   border-radius: 4px;
   object-fit: cover;
 }

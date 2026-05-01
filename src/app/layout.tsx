@@ -86,7 +86,7 @@ export default async function RootLayout({
             </div>
           </div>
           {/* Mega Menu */}
-          <div style={{ backgroundColor: 'var(--secondary)', color: 'white' }}>
+          <div style={{ backgroundColor: '#111111', color: 'white' }}>
             <div className="container" style={{ padding: 0 }}>
               <MainNavigation categories={navCategories} />
             </div>

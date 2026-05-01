@@ -88,7 +88,7 @@ export default function MainNavigation({ categories }: MainNavigationProps) {
             top: 100%;
             left: 0;
             width: 100%;
-            background-color: var(--secondary);
+            background-color: #111111;
             flex-direction: column;
             gap: 0;
             padding: 0;

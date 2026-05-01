@@ -495,7 +495,7 @@ export default async function Home() {
           <h3 style={{ fontSize: "1.2rem", fontWeight: 800, marginBottom: "0.5rem" }}>Restez informé</h3>
           <p style={{ fontSize: "0.8rem", marginBottom: "1rem" }}>Recevez l'essentiel de l'actualité ivoirienne chaque matin.</p>
           <input type="email" placeholder="Votre email" className="input" style={{ marginBottom: "0.5rem" }} />
-          <button className="btn" style={{ width: "100%", backgroundColor: "var(--secondary)", color: "white" }}>S'inscrire</button>
+          <button className="btn" style={{ width: "100%", backgroundColor: "#111111", color: "white" }}>S'inscrire</button>
         </div>
 
         {/* Citation du Jour */}

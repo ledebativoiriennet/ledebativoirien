@@ -315,7 +315,7 @@ export default async function ArticlePage({ params }: Props) {
           <h3 style={{ fontSize: "1.2rem", fontWeight: 800, marginBottom: "0.5rem" }}>Restez informé</h3>
           <p style={{ fontSize: "0.8rem", marginBottom: "1rem" }}>Ne manquez aucune actualité importante.</p>
           <input type="email" placeholder="Votre email" className="input" style={{ marginBottom: "0.5rem" }} />
-          <button className="btn" style={{ width: "100%", backgroundColor: "var(--secondary)", color: "white", border: "none", cursor: "pointer", padding: "0.5rem", borderRadius: "4px" }}>S'inscrire</button>
+          <button className="btn" style={{ width: "100%", backgroundColor: "#111111", color: "white", border: "none", cursor: "pointer", padding: "0.5rem", borderRadius: "4px" }}>S'inscrire</button>
         </div>
 
         {/* Auteur */}
