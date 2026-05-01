@@ -10,6 +10,8 @@ import { recordArticleRead } from "@/app/actions/user-stats";
 import { LikeButton } from "@/components/LikeButton";
 import AdBanner from "@/components/AdBanner";
 import { Metadata, ResolvingMetadata } from "next";
+import NewsletterWidget from "@/components/NewsletterWidget";
+import AuthorSubscribeButton from "@/components/AuthorSubscribeButton";
 
 export const revalidate = 60;
 
@@ -311,12 +313,7 @@ export default async function ArticlePage({ params }: Props) {
         </div>
 
         {/* Newsletter Widget */}
-        <div style={{ backgroundColor: "var(--primary)", color: "white", padding: "1.5rem", borderRadius: "var(--radius)", textAlign: "center", marginBottom: "1.5rem" }}>
-          <h3 style={{ fontSize: "1.2rem", fontWeight: 800, marginBottom: "0.5rem" }}>Restez informé</h3>
-          <p style={{ fontSize: "0.8rem", marginBottom: "1rem" }}>Ne manquez aucune actualité importante.</p>
-          <input type="email" placeholder="Votre email" className="input" style={{ marginBottom: "0.5rem" }} />
-          <button className="btn" style={{ width: "100%", backgroundColor: "#111111", color: "white", border: "none", cursor: "pointer", padding: "0.5rem", borderRadius: "4px" }}>S'inscrire</button>
-        </div>
+        <NewsletterWidget />
 
         {/* Auteur */}
         <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", padding: "1.5rem", textAlign: "center", marginBottom: "1.5rem" }}>
@@ -325,7 +322,7 @@ export default async function ArticlePage({ params }: Props) {
           </div>
           <h3 style={{ fontSize: "1.1rem", fontWeight: 800 }}>{article.author?.name || "La Rédaction"}</h3>
           <p style={{ fontSize: "0.8rem", color: "var(--muted)", margin: "0.5rem 0 1rem 0" }}>Journaliste / Éditorialiste</p>
-          <button className="btn" style={{ width: "100%", backgroundColor: "var(--primary)", color: "white", padding: "0.5rem", fontSize: "0.8rem", cursor: "pointer", border: "none", borderRadius: "4px" }}>S'abonner à l'auteur</button>
+          <AuthorSubscribeButton authorId={article.authorId as string | undefined} authorName={article.author?.name} />
         </div>
 
         {/* Partage */}
