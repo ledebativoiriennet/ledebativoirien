@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import ApproveButton from "./ApproveButton";
+import TogglePremiumButton from "./TogglePremiumButton";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
@@ -66,6 +67,11 @@ export default async function AdminArticles({ searchParams }: { searchParams: Pr
                     <span style={{ backgroundColor: '#fef08a', color: '#854d0e', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 'bold', display: 'inline-block' }}>⭐ Premium</span>
                   ) : (
                     <span style={{ backgroundColor: '#e2e8f0', color: '#475569', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 'bold', display: 'inline-block' }}>Gratuit</span>
+                  )}
+                  {canApprove && (
+                    <div style={{ marginTop: '0.2rem' }}>
+                      <TogglePremiumButton articleId={article.id} isPremium={article.isPremium} />
+                    </div>
                   )}
                 </td>
                 <td style={{ padding: '1rem', fontSize: '0.85rem', color: '#64748b' }}>

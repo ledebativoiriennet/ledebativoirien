@@ -97,3 +97,23 @@ export async function approveArticle(articleId: string) {
     return { success: false, error: "Erreur serveur lors de la validation." };
   }
 }
+
+export async function toggleArticlePremiumStatus(articleId: string, currentStatus: boolean) {
+  const session = await getServerSession(authOptions);
+  const role = (session?.user as any)?.role;
+
+  if (role !== "ADMIN" && role !== "EDITOR") {
+    return { success: false, error: "Accès refusé. Seul un Éditeur ou Administrateur peut modifier le statut d'un article." };
+  }
+
+  try {
+    await prisma.article.update({
+      where: { id: articleId },
+      data: { isPremium: !currentStatus }
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Erreur toggleArticlePremiumStatus:", error);
+    return { success: false, error: "Erreur serveur lors de la modification du statut Premium." };
+  }
+}
