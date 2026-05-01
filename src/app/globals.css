@@ -390,12 +390,12 @@ a:hover {
 }
 
 .btn-primary {
-  background-color: var(--secondary);
+  background-color: var(--primary);
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: var(--secondary-hover);
+  background-color: var(--primary-hover);
   color: white;
 }
 
