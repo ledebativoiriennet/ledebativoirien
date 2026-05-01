@@ -94,7 +94,7 @@ export default async function Home() {
         <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden" }}>
           <h2 className="portal-section-title dark">Titrologie</h2>
           <div style={{ padding: "1rem" }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+            <div className="grid-responsive-titrologie">
               {titrologieItems && titrologieItems.length > 0 ? (
                 titrologieItems.map(item => (
                   <div key={item.id} style={{ height: '180px', backgroundColor: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
@@ -176,7 +176,7 @@ export default async function Home() {
                   <li key={job.id} style={{ borderBottom: "1px solid var(--border)", padding: "0.75rem 1rem" }}>
                     <Link href={job.url || "#"} style={{ display: "block" }}>
                       <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--foreground)" }}>{job.title}</div>
-                      <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.25rem", fontSize: "0.7rem", color: "var(--muted)" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem", marginTop: "0.25rem", fontSize: "0.7rem", color: "var(--muted)" }}>
                         <span>📍 {job.location || "Côte d'Ivoire"}</span>
                         <span style={{ fontWeight: "bold", color: "#0284c7" }}>{job.company}</span>
                       </div>
@@ -215,7 +215,7 @@ export default async function Home() {
             </div>
           </Link>
           
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+          <div className="grid-responsive-2col">
             {subFeatured.slice(0, 2).map((article) => {
               const imgUrl = extractFirstImageUrl(article.content);
               return (
@@ -239,7 +239,7 @@ export default async function Home() {
         </div>
 
         {/* Thematic Blocks */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
+        <div className="grid-responsive-2col" style={{ gap: "1.5rem" }}>
           {topCategories.map((category) => (
             <div key={category.id} style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden" }}>
               <h2 className="portal-section-title">{category.name}</h2>
@@ -298,7 +298,7 @@ export default async function Home() {
           <h2 className="portal-section-title dark" style={{ display: "flex", justifyContent: "space-between", borderBottom: '2px solid var(--primary)' }}>
             <span>Plus de News</span>
           </h2>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginTop: "1rem" }}>
+          <div className="grid-responsive-2col" style={{ marginTop: "1rem" }}>
             {recentArticles.slice(10, 16).map((article) => {
               const imgUrl = extractFirstImageUrl(article.content);
               return (

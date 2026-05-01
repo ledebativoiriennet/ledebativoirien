@@ -222,6 +222,30 @@ a:hover {
   }
 }
 
+.grid-responsive-2col {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .grid-responsive-2col {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.grid-responsive-titrologie {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+
+@media (min-width: 480px) {
+  .grid-responsive-titrologie {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 .article-card {
   background-color: var(--card-bg);
   border-radius: var(--radius);
