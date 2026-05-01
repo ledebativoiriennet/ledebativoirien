@@ -79,15 +79,15 @@ export default async function RootLayout({
           <div className="container main-header">
             <a href="/" className="logo-container" style={{ display: 'flex', alignItems: 'center', gap: '1rem', textDecoration: 'none' }}>
               <div style={{ position: 'relative', width: '50px', height: '50px', borderRadius: '50%', border: '4px solid var(--primary)', borderLeftColor: 'var(--foreground)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
-                <span style={{ color: 'var(--foreground)' }}>LDI</span>
+                <img src="/logo.png" alt="Logo Le Débat Ivoirien" style={{ height: '60px', width: 'auto', objectFit: 'contain' }} />
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 0.9 }}>
-                <span style={{ fontSize: '2.5rem', fontWeight: 900, color: 'var(--foreground)', letterSpacing: '-0.05em' }}>LeDébat</span>
-                <span style={{ fontSize: '2.5rem', fontWeight: 900, color: 'var(--primary)', letterSpacing: '0.02em', fontFamily: 'Impact, sans-serif' }}>IVOIRIEN</span>
+                <span className="logo-text-primary">LeDébat</span>
+                <span className="logo-text-secondary">IVOIRIEN</span>
               </div>
             </a>
-            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-               <input type="text" placeholder="Rechercher..." className="input" style={{ width: '200px', padding: '0.5rem' }} />
+            <div className="header-actions">
+               <input type="text" placeholder="Rechercher..." className="input search-input" style={{ padding: '0.5rem' }} />
                <UserMenu />
             </div>
           </div>

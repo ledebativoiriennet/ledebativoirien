@@ -171,7 +171,7 @@ export default async function ArticlePage({ params }: Props) {
             ))}
           </div>
           
-          <h1 style={{ fontSize: "2.5rem", fontWeight: 900, marginBottom: "1rem", lineHeight: 1.2 }}>
+          <h1 style={{ fontSize: 'clamp(1.8rem, 5vw, 3rem)', fontWeight: 900, marginBottom: '1rem', lineHeight: 1.2 }}>
             {article.title}
           </h1>
           
