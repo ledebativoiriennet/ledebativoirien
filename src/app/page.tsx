@@ -21,7 +21,6 @@ export default async function Home() {
     cultureArticles,
     jobOffers,
     weatherReport,
-    breakingNews,
     titrologieItems,
     siteSettings
   ] = await Promise.all([
@@ -50,7 +49,6 @@ export default async function Home() {
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'culture' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.jobOffer.findMany({ take: 4, orderBy: { createdAt: 'desc' }, where: { isActive: true } }),
     prisma.weatherReport.findFirst({ orderBy: { date: 'desc' } }),
-    prisma.breakingNews.findFirst({ where: { isActive: true } }),
     prisma.titrologie.findMany({ take: 4, orderBy: { date: 'desc' } }),
     prisma.siteSettings.findUnique({ where: { id: "global" } })
   ]);
@@ -68,17 +66,6 @@ export default async function Home() {
 
   return (
     <>
-    {breakingNews && (
-      <div style={{ backgroundColor: '#dc2626', color: 'white', padding: '0.75rem', textAlign: 'center', fontWeight: 'bold', fontSize: '0.9rem', position: 'relative', zIndex: 50 }}>
-        <span style={{ backgroundColor: 'white', color: '#dc2626', padding: '0.2rem 0.5rem', borderRadius: '4px', marginRight: '1rem', fontSize: '0.75rem', textTransform: 'uppercase' }}>Alerte Info</span>
-        {breakingNews.link ? (
-          <Link href={breakingNews.link} style={{ color: 'white', textDecoration: 'underline' }}>{breakingNews.content}</Link>
-        ) : (
-          <span>{breakingNews.content}</span>
-        )}
-      </div>
-    )}
-    
     <div className="container">
       <AdBanner slot="HOME_TOP" />
       <SportsModule />
