@@ -77,7 +77,7 @@ export default async function RootLayout({
           <header className="header">
           <div className="container main-header">
             <a href="/" className="logo-container" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-              <img src="/logo.svg" alt="Logo Le Débat Ivoirien" style={{ height: '60px', width: 'auto', objectFit: 'contain' }} />
+              <img src="/logo.png" alt="Logo Le Débat Ivoirien" style={{ height: '60px', width: 'auto', objectFit: 'contain' }} />
             </a>
             <div className="header-actions">
                <input type="text" placeholder="Rechercher..." className="input search-input" style={{ padding: '0.5rem' }} />
