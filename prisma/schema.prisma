@@ -1,0 +1,289 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x", "debian-openssl-1.1.x"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(cuid())
+  name          String?
+  email         String?        @unique
+  password      String?
+  role          String         @default("USER") // ADMIN, EDITOR, USER
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  subscriptions Subscription[]
+  readingHistory ReadingHistory[]
+  articleLikes   ArticleLike[]
+}
+
+model Subscription {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  plan      String   @default("PREMIUM")
+  status    String   @default("ACTIVE")
+  startDate DateTime @default(now())
+  endDate   DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Author {
+  id        String    @id @default(cuid())
+  wpId      Int?      @unique
+  name      String
+  slug      String    @unique
+  email     String?
+  articles  Article[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  wpId      Int?      @unique
+  name      String
+  slug      String    @unique
+  parentId  String?
+  parent    Category?  @relation("CategoryToCategory", fields: [parentId], references: [id])
+  children  Category[] @relation("CategoryToCategory")
+  articles  Article[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Article {
+  id          String    @id @default(cuid())
+  wpId        Int?      @unique
+  title       String
+  slug        String    @unique
+  content     String
+  excerpt     String?
+  imageUrl    String?
+  isPremium   Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  authorId    String?
+  author      Author?   @relation(fields: [authorId], references: [id])
+
+  categories  Category[]
+  readingHistory ReadingHistory[]
+  likes          ArticleLike[]
+}
+
+model Poll {
+  id        String       @id @default(cuid())
+  question  String
+  isActive  Boolean      @default(true)
+  options   PollOption[]
+  createdAt DateTime     @default(now())
+}
+
+model PollOption {
+  id        String   @id @default(cuid())
+  pollId    String
+  poll      Poll     @relation(fields: [pollId], references: [id])
+  text      String
+  votes     Int      @default(0)
+}
+
+model Obituary {
+  id        String   @id @default(cuid())
+  name      String
+  details   String
+  imageUrl  String?
+  createdAt DateTime @default(now())
+}
+
+model PressRelease {
+  id        String   @id @default(cuid())
+  title     String
+  company   String
+  createdAt DateTime @default(now())
+}
+
+model Video {
+  id        String   @id @default(cuid())
+  title     String
+  youtubeId String
+  createdAt DateTime @default(now())
+}
+
+model MarketIndicator {
+  id        String   @id @default(cuid())
+  group     String   // e.g., 'CACAO', 'PETROCI', 'SIB', 'APAYM', 'BRVM', 'COTON'
+  label     String   // e.g., 'CACAO', 'CAFE', 'Euro €'
+  value     String   // e.g., '1903F/Kg', '108.76 $'
+  trend     String   // 'UP', 'DOWN', 'FLAT'
+  extraText String?  // e.g., 'A-J', 'NC - A-M'
+  dateLabel String   // e.g., '30 AVRIL 2026'
+  order     Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  title     String
+  date      String
+  location  String
+  imageUrl  String?
+  link      String?
+  createdAt DateTime @default(now())
+}
+
+model FlashNews {
+  id        String   @id @default(cuid())
+  time      String   // e.g., "14:30"
+  content   String
+  link      String?
+  source    String?  // e.g., "AFP"
+  createdAt DateTime @default(now())
+}
+
+model JobOffer {
+  id          String   @id @default(cuid())
+  title       String
+  company     String?
+  location    String?
+  description String?
+  url         String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Visitor {
+  id        String   @id @default(cuid())
+  ipHash    String
+  country   String?
+  city      String?
+  browser   String?
+  os        String?
+  device    String?
+  brand     String?
+  visitedAt DateTime @default(now())
+
+  @@index([ipHash])
+}
+
+model Advertisement {
+  id          String    @id @default(cuid())
+  title       String    // Nom de la campagne
+  company     String    // Annonceur
+  imageUrl    String    // Image ou document
+  linkUrl     String?   // Redirection au clic
+  slot        String    // HOME_TOP, HOME_MIDDLE, HOME_SIDEBAR, ARTICLE_TOP, ARTICLE_MIDDLE, ARTICLE_BOTTOM, GLOBAL_POPUP
+  status      String    @default("PENDING") // PENDING, ACTIVE, REJECTED
+  startDate   DateTime?
+  endDate     DateTime?
+  clicks      Int       @default(0)
+  impressions Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model WeatherReport {
+  id          String   @id @default(cuid())
+  city        String   @default("Abidjan")
+  temperature Int      // e.g., 32
+  condition   String   // e.g., "Soleil", "Pluie", "Nuageux"
+  icon        String?  // e.g., "☀️", "🌧️"
+  
+  forecast1Day  String? // e.g., "Ven"
+  forecast1Temp Int?
+  forecast1Icon String?
+  
+  forecast2Day  String? // e.g., "Sam"
+  forecast2Temp Int?
+  forecast2Icon String?
+  
+  forecast3Day  String? // e.g., "Dim"
+  forecast3Temp Int?
+  forecast3Icon String?
+
+  date        DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AdInquiry {
+  id        String   @id @default(cuid())
+  company   String
+  name      String
+  email     String
+  phone     String?
+  format    String?
+  message   String?
+  status    String   @default("PENDING")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ReadingHistory {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  articleId String
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  readAt    DateTime @default(now())
+
+  @@unique([userId, articleId]) // An article is tracked once per user to avoid duplicates, we just update readAt
+}
+
+model ArticleLike {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  articleId String
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, articleId]) // A user can only like an article once
+}
+
+model FootballMatch {
+  id        String   @id @default(cuid())
+  team1     String
+  team2     String
+  team1Flag String?  // Emoji (ex: 🇨🇮) ou code pays ou URL
+  team2Flag String?  // Emoji ou code pays ou URL
+  matchDate DateTime
+  phase     String?  // ex: "Groupe A", "Quarts de finale"
+  score     String?  // ex: "2 - 1"
+  status    String   @default("UPCOMING") // UPCOMING, LIVE, FINISHED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BreakingNews {
+  id        String   @id @default(cuid())
+  content   String
+  link      String?
+  isActive  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Titrologie {
+  id            String   @id @default(cuid())
+  newspaperName String
+  imageUrl      String
+  date          DateTime @default(now())
+  createdAt     DateTime @default(now())
+}
+
+model SiteSettings {
+  id          String   @id @default("global")
+  facebookUrl String?
+  updatedAt   DateTime @updatedAt
+}
+

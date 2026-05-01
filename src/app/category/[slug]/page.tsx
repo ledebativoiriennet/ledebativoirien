@@ -1,0 +1,61 @@
+import { prisma } from "@/lib/prisma";
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { extractFirstImageUrl } from "@/lib/utils";
+
+export const revalidate = 60;
+
+export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const category = await prisma.category.findUnique({
+    where: { slug }
+  });
+
+  if (!category) return notFound();
+
+  const articles = await prisma.article.findMany({
+    where: { 
+      categories: { some: { id: category.id } },
+      publishedAt: { not: null }
+    },
+    orderBy: { publishedAt: "desc" },
+    take: 30,
+    include: { author: true }
+  });
+
+  return (
+    <div className="container" style={{ marginTop: '2rem', marginBottom: '4rem' }}>
+      <h1 className="portal-section-title" style={{ fontSize: '2rem', display: 'inline-block', marginBottom: '2rem' }}>
+        {category.name.replace(/&amp;/g, '&')}
+      </h1>
+      
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
+        {articles.map(article => {
+          const imgUrl = extractFirstImageUrl(article.content);
+          return (
+            <Link href={`/article/${article.slug}`} key={article.id}>
+              <div className="article-card" style={{ height: '100%' }}>
+                <div className="article-card-image" style={{ height: '180px', position: 'relative' }}>
+                  {imgUrl ? (
+                    <img src={imgUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <div style={{ background: 'var(--foreground)', color: 'white', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', fontWeight: 'bold' }}>LDI</div>
+                  )}
+                </div>
+                <div className="article-card-content">
+                  <div className="article-meta">
+                    {new Date(article.publishedAt || new Date()).toLocaleDateString("fr-FR")}
+                  </div>
+                  <h2 className="article-title" style={{ fontSize: '1.1rem' }}>
+                    {article.title}
+                    {article.isPremium && <span className="premium-badge">PR</span>}
+                  </h2>
+                </div>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
