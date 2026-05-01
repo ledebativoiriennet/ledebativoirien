@@ -75,28 +75,44 @@ export default function MainNavigation({ categories }: MainNavigationProps) {
 
         /* Mobile Styles */
         @media (max-width: 768px) {
+          .main-nav-wrapper {
+            position: relative;
+          }
+
           .mobile-menu-toggle {
             display: flex;
           }
 
           .nav {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--secondary);
             flex-direction: column;
             gap: 0;
             padding: 0;
-            overflow: hidden;
+            overflow-y: auto;
             max-height: 0;
             transition: max-height 0.3s ease-out;
             align-items: flex-start;
+            z-index: 1000;
           }
 
           .nav.nav-open {
-            max-height: 1000px; /* Large enough to show all items */
+            max-height: calc(100vh - 120px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
           }
 
           .nav-link {
             padding: 1rem;
             width: 100%;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+          }
+          
+          .nav-link:first-child {
+            border-top: none;
           }
         }
       `}</style>
