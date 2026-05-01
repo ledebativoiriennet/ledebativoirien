@@ -28,6 +28,15 @@ export default async function RootLayout({
     orderBy: { order: 'asc' }
   });
 
+  const breakingNews = await prisma.breakingNews.findMany({
+    where: { isActive: true },
+    orderBy: { createdAt: 'desc' }
+  });
+
+  const breakingText = breakingNews.length > 0 
+    ? breakingNews.map(bn => bn.content).join(' &nbsp; &nbsp; | &nbsp; &nbsp; ') 
+    : "Bienvenue sur Le Débat Ivoirien - L'actualité en continu";
+
   const getGroup = (groupName: string) => indicators.filter(i => i.group === groupName);
   const cacaoGrp = getGroup('CACAO');
   const anacardeGrp = getGroup('ANACARDE');
@@ -88,7 +97,7 @@ export default async function RootLayout({
                 </div>
                 <span style={{ fontWeight: 900, fontSize: '0.9rem', letterSpacing: '0.5px' }}>BREAKING NEWS</span>
               </div>
-              <div dangerouslySetInnerHTML={{ __html: `<marquee scrollamount="5" style="font-weight: 700; font-size: 0.9rem; width: 100%;">Côte d'Ivoire : le super sans plomb et le gasoil en hausse respectivement de 55 FCFA et 25 FCFA pour le mois de mai (Officiel)</marquee>` }} style={{ flex: 1, display: 'flex', alignItems: 'center' }} />
+              <div dangerouslySetInnerHTML={{ __html: `<marquee scrollamount="5" style="font-weight: 700; font-size: 0.9rem; width: 100%;">${breakingText}</marquee>` }} style={{ flex: 1, display: 'flex', alignItems: 'center' }} />
             </div>
           </div>
           
