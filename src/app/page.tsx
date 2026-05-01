@@ -1,11 +1,14 @@
 import { prisma } from "@/lib/prisma";
 import { extractFirstImageUrl } from "@/lib/utils";
+import Image from "next/image";
 import Link from "next/link";
+import MainNavigation from "@/components/MainNavigation";
+import NewsletterWidget from "@/components/NewsletterWidget";
 import { AdSlot } from "@/components/AdSlot";
 import AdBanner from "@/components/AdBanner";
 import SportsModule from "@/components/SportsModule";
 
-export const revalidate = 60;
+export const revalidate = 60; // Revalidate every minute
 
 export default async function Home() {
   // Fetch massive data in parallel for high density
@@ -21,8 +24,10 @@ export default async function Home() {
     cultureArticles,
     jobOffers,
     weatherReport,
+    breakingNews,
     titrologieItems,
-    siteSettings
+    siteSettings,
+    quote
   ] = await Promise.all([
     prisma.article.findMany({
       where: { publishedAt: { not: null } },
@@ -49,8 +54,10 @@ export default async function Home() {
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'culture' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.jobOffer.findMany({ take: 4, orderBy: { createdAt: 'desc' }, where: { isActive: true } }),
     prisma.weatherReport.findFirst({ orderBy: { date: 'desc' } }),
-    prisma.titrologie.findMany({ take: 4, orderBy: { date: 'desc' } }),
-    prisma.siteSettings.findUnique({ where: { id: "global" } })
+    prisma.breakingNews.findMany({ where: { isActive: true }, orderBy: { createdAt: 'desc' } }),
+    prisma.titrologie.findMany({ orderBy: { date: 'desc' }, take: 4 }),
+    prisma.siteSettings.findUnique({ where: { id: "global" } }),
+    prisma.quote.findFirst({ where: { isActive: true } })
   ]);
 
   if (!recentArticles || recentArticles.length === 0) {
@@ -491,21 +498,26 @@ export default async function Home() {
         )}
 
         {/* Newsletter Widget */}
-        <div style={{ backgroundColor: "var(--primary)", color: "white", padding: "1.5rem", borderRadius: "var(--radius)", marginTop: "1.5rem", textAlign: "center" }}>
-          <h3 style={{ fontSize: "1.2rem", fontWeight: 800, marginBottom: "0.5rem" }}>Restez informé</h3>
-          <p style={{ fontSize: "0.8rem", marginBottom: "1rem" }}>Recevez l'essentiel de l'actualité ivoirienne chaque matin.</p>
-          <input type="email" placeholder="Votre email" className="input" style={{ marginBottom: "0.5rem" }} />
-          <button className="btn" style={{ width: "100%", backgroundColor: "#111111", color: "white" }}>S'inscrire</button>
-        </div>
+        <NewsletterWidget />
 
         {/* Citation du Jour */}
-        <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginTop: "1.5rem", padding: "1.5rem", textAlign: "center", position: "relative" }}>
-          <div style={{ fontSize: "3rem", color: "var(--muted)", opacity: 0.3, position: "absolute", top: "-10px", left: "10px", lineHeight: 1 }}>"</div>
-          <p style={{ fontSize: "0.9rem", fontStyle: "italic", fontWeight: 600, color: "var(--foreground)", position: "relative", zIndex: 1, margin: "1rem 0" }}>
-            "La paix n'est pas un vain mot, c'est un comportement."
-          </p>
-          <div style={{ fontSize: "0.8rem", fontWeight: 800, color: "var(--primary)" }}>Félix Houphouët-Boigny</div>
-        </div>
+        {quote ? (
+          <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginTop: "1.5rem", padding: "1.5rem", textAlign: "center", position: "relative" }}>
+            <div style={{ fontSize: "3rem", color: "var(--muted)", opacity: 0.3, position: "absolute", top: "-10px", left: "10px", lineHeight: 1 }}>"</div>
+            <p style={{ fontSize: "0.9rem", fontStyle: "italic", fontWeight: 600, color: "var(--foreground)", position: "relative", zIndex: 1, margin: "1rem 0" }}>
+              "{quote.text}"
+            </p>
+            <div style={{ fontSize: "0.8rem", fontWeight: 800, color: "var(--primary)" }}>{quote.author}</div>
+          </div>
+        ) : (
+          <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginTop: "1.5rem", padding: "1.5rem", textAlign: "center", position: "relative" }}>
+            <div style={{ fontSize: "3rem", color: "var(--muted)", opacity: 0.3, position: "absolute", top: "-10px", left: "10px", lineHeight: 1 }}>"</div>
+            <p style={{ fontSize: "0.9rem", fontStyle: "italic", fontWeight: 600, color: "var(--foreground)", position: "relative", zIndex: 1, margin: "1rem 0" }}>
+              "La paix n'est pas un vain mot, c'est un comportement."
+            </p>
+            <div style={{ fontSize: "0.8rem", fontWeight: 800, color: "var(--primary)" }}>Félix Houphouët-Boigny</div>
+          </div>
+        )}
 
         {/* Facebook Embed */}
         {siteSettings?.facebookUrl && (

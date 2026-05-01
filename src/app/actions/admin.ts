@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { writeFile } from "fs/promises";
 import { join } from "path";
+import { sendNewArticleNotification } from "@/lib/newsletter";
 
 // Convert a title to a URL-friendly slug
 function generateSlug(title: string) {
@@ -56,7 +57,7 @@ export async function publishArticle(formData: FormData) {
       slug = `${slug}-${Date.now()}`;
     }
 
-    await prisma.article.create({
+    const newArticle = await prisma.article.create({
       data: {
         title,
         slug,
@@ -70,6 +71,11 @@ export async function publishArticle(formData: FormData) {
         } : undefined
       }
     });
+
+    // Envoyer la notification si publié immédiatement
+    if (role !== "CONTRIBUTOR") {
+      sendNewArticleNotification(newArticle.id).catch(console.error);
+    }
 
     return { success: true };
   } catch (error) {
@@ -91,6 +97,10 @@ export async function approveArticle(articleId: string) {
       where: { id: articleId },
       data: { publishedAt: new Date() }
     });
+
+    // Envoyer la notification
+    sendNewArticleNotification(articleId).catch(console.error);
+
     return { success: true };
   } catch (error) {
     console.error("Erreur approveArticle:", error);
