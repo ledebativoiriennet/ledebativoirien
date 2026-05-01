@@ -28,7 +28,7 @@ export default function MainNavigation({ categories }: MainNavigationProps) {
   return (
     <div className="main-nav-wrapper">
       {/* Mobile Toggle Button */}
-      <div className="mobile-menu-toggle" onClick={toggleMenu} style={{ padding: '0.75rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontWeight: 'bold' }}>
+      <div className="mobile-menu-toggle" onClick={toggleMenu} style={{ padding: '0.75rem 1rem', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontWeight: 'bold' }}>
         <span>MENU PRINCIPAL</span>
         <span style={{ fontSize: '1.5rem', lineHeight: 1 }}>{isOpen ? '✕' : '☰'}</span>
       </div>
