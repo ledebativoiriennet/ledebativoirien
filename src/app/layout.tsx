@@ -23,8 +23,7 @@ export default async function RootLayout({
 }>) {
 
   const navCategories = await prisma.category.findMany({
-    take: 8,
-    where: { articles: { some: {} } }
+    take: 8
   });
 
   const indicators = await prisma.marketIndicator.findMany({
@@ -77,14 +76,8 @@ export default async function RootLayout({
         <Providers>
           <header className="header">
           <div className="container main-header">
-            <a href="/" className="logo-container" style={{ display: 'flex', alignItems: 'center', gap: '1rem', textDecoration: 'none' }}>
-              <div style={{ position: 'relative', width: '50px', height: '50px', borderRadius: '50%', border: '4px solid var(--primary)', borderLeftColor: 'var(--foreground)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
-                <img src="/logo.png" alt="Logo Le Débat Ivoirien" style={{ height: '60px', width: 'auto', objectFit: 'contain' }} />
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 0.9 }}>
-                <span className="logo-text-primary">LeDébat</span>
-                <span className="logo-text-secondary">IVOIRIEN</span>
-              </div>
+            <a href="/" className="logo-container" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+              <img src="/logo.svg" alt="Logo Le Débat Ivoirien" style={{ height: '60px', width: 'auto', objectFit: 'contain' }} />
             </a>
             <div className="header-actions">
                <input type="text" placeholder="Rechercher..." className="input search-input" style={{ padding: '0.5rem' }} />
