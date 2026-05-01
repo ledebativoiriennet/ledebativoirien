@@ -8,6 +8,7 @@ import { UserMenu } from "@/components/UserMenu";
 import { prisma } from "@/lib/prisma";
 import { GoogleAnalytics } from '@next/third-parties/google';
 import Script from "next/script";
+import MainNavigation from "@/components/MainNavigation";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -86,13 +87,8 @@ export default async function RootLayout({
           </div>
           {/* Mega Menu */}
           <div style={{ backgroundColor: 'var(--secondary)', color: 'white' }}>
-            <div className="container">
-              <nav className="nav" style={{ overflowX: 'auto', padding: '0.75rem 0', gap: '1.5rem', fontSize: '0.85rem', textTransform: 'uppercase' }}>
-                <Link href="/" style={{ fontWeight: 'bold', color: 'var(--primary)' }}>Accueil</Link>
-                {navCategories.map(c => (
-                  <Link key={c.id} href={`/category/${c.slug}`} style={{ whiteSpace: 'nowrap' }}>{c.name.replace(/&amp;/g, '&')}</Link>
-                ))}
-              </nav>
+            <div className="container" style={{ padding: 0 }}>
+              <MainNavigation categories={navCategories} />
             </div>
           </div>
 
