@@ -9,6 +9,7 @@ import { prisma } from "@/lib/prisma";
 import { GoogleAnalytics } from '@next/third-parties/google';
 import Script from "next/script";
 import MainNavigation from "@/components/MainNavigation";
+import { getLiveMarketData } from "@/lib/marketData";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -28,8 +29,53 @@ export default async function RootLayout({
     take: 8
   });
 
-  const indicators = await prisma.marketIndicator.findMany({
-    orderBy: { order: 'asc' }
+  const [dbIndicators, liveMarketData] = await Promise.all([
+    prisma.marketIndicator.findMany({ orderBy: { order: 'asc' } }),
+    getLiveMarketData()
+  ]);
+
+  const indicators = dbIndicators.map(ind => {
+    // Clone object to avoid mutating Prisma result directly
+    const indicator = { ...ind };
+    const today = new Date().toLocaleDateString("fr-FR");
+
+    if (indicator.label === "Cacao" && liveMarketData.cocoa) {
+      indicator.value = `${liveMarketData.cocoa.price.toFixed(0)} $ / MT`;
+      indicator.trend = liveMarketData.cocoa.price > liveMarketData.cocoa.prev ? "UP" : liveMarketData.cocoa.price < liveMarketData.cocoa.prev ? "DOWN" : "FLAT";
+      indicator.dateLabel = today;
+    }
+    if (indicator.label === "Café" && liveMarketData.coffee) {
+      indicator.value = `${liveMarketData.coffee.price.toFixed(2)} ¢ / lb`;
+      indicator.trend = liveMarketData.coffee.price > liveMarketData.coffee.prev ? "UP" : liveMarketData.coffee.price < liveMarketData.coffee.prev ? "DOWN" : "FLAT";
+      indicator.dateLabel = today;
+    }
+    if (indicator.label === "Or (Once)" && liveMarketData.gold) {
+      indicator.value = `${liveMarketData.gold.price.toFixed(2)} $`;
+      indicator.trend = liveMarketData.gold.price > liveMarketData.gold.prev ? "UP" : liveMarketData.gold.price < liveMarketData.gold.prev ? "DOWN" : "FLAT";
+      indicator.dateLabel = today;
+    }
+    if (indicator.label === "Argent" && liveMarketData.silver) {
+      indicator.value = `${liveMarketData.silver.price.toFixed(2)} $`;
+      indicator.trend = liveMarketData.silver.price > liveMarketData.silver.prev ? "UP" : liveMarketData.silver.price < liveMarketData.silver.prev ? "DOWN" : "FLAT";
+      indicator.dateLabel = today;
+    }
+    if (indicator.label === "Aluminium" && liveMarketData.aluminium) {
+      indicator.value = `${liveMarketData.aluminium.price.toFixed(2)} $`;
+      indicator.trend = liveMarketData.aluminium.price > liveMarketData.aluminium.prev ? "UP" : liveMarketData.aluminium.price < liveMarketData.aluminium.prev ? "DOWN" : "FLAT";
+      indicator.dateLabel = today;
+    }
+    if (indicator.label === "USD / XOF" && liveMarketData.rates && liveMarketData.rates.XOF) {
+      indicator.value = `${liveMarketData.rates.XOF.toFixed(2)} FCFA`;
+      indicator.trend = "FLAT";
+      indicator.dateLabel = today;
+    }
+    if (indicator.label === "EUR / XOF") {
+      indicator.value = `655.957 FCFA`;
+      indicator.trend = "FLAT";
+      indicator.dateLabel = "Fixe";
+    }
+
+    return indicator;
   });
 
   const breakingNews = await prisma.breakingNews.findMany({
@@ -116,7 +162,7 @@ export default async function RootLayout({
                 <div style={{ display: 'flex', flexDirection: 'column', minWidth: '150px' }}>
                   <div style={{ height: '35px', display: 'flex', alignItems: 'center' }}>
                     <div style={{ border: '1px solid #16a34a', padding: '0.1rem 0.3rem', display: 'flex', gap: '0.2rem', alignItems: 'center', fontSize: '0.65rem', fontWeight: 900, color: '#3f2a14' }}>
-                       <span style={{color: '#d97706'}}>☕</span> LE CONSEIL DU <span style={{color: '#15803d'}}>CAFÉ-CACAO</span>
+                       <span style={{color: '#d97706'}}>🌍</span> BOURSE MOND. <span style={{color: '#15803d'}}>CAFÉ-CACAO</span>
                     </div>
                   </div>
                   <div style={{ fontSize: '0.55rem', color: '#9ca3af', textTransform: 'uppercase', margin: '0.4rem 0 0.2rem 0' }}>{cacaoGrp[0].dateLabel}</div>
