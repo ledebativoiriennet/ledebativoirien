@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { Paywall } from "@/components/Paywall";
 import Link from "next/link";
-import { extractFirstImageUrl } from "@/lib/utils";
+import { getArticleImage } from "@/lib/utils";
 import { AdSlot } from "@/components/AdSlot";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -32,7 +32,7 @@ export async function generateMetadata(
   if (!article) return { title: 'Article introuvable' };
 
   const previousImages = (await parent).openGraph?.images || [];
-  const articleImg = article.imageUrl || extractFirstImageUrl(article.content);
+  const articleImg = getArticleImage(article);
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ledebativoirien.net';
   
   const description = article.excerpt || article.content.replace(/<[^>]*>?/gm, '').substring(0, 160) + '...';
@@ -130,7 +130,7 @@ export default async function ArticlePage({ params }: Props) {
   // We don't cut the HTML string directly to avoid unclosed tags breaking the layout.
   // The CSS maxHeight: "500px" + overflow: "hidden" handles the cutoff visually.
 
-  const mainImageUrl = extractFirstImageUrl(article.content);
+  const mainImageUrl = getArticleImage(article);
 
   return (
     <div className="article-layout container" style={{ marginTop: "2rem", marginBottom: "4rem" }}>
@@ -249,7 +249,7 @@ export default async function ArticlePage({ params }: Props) {
           <h2 className="portal-section-title dark" style={{ borderBottom: "2px solid var(--primary)" }}>À lire également</h2>
           <div className="grid-responsive-2col" style={{ marginTop: "1rem" }}>
             {relatedArticles.map(rel => {
-              const relImg = extractFirstImageUrl(rel.content);
+              const relImg = getArticleImage(rel);
               return (
                 <Link href={`/article/${rel.slug}`} key={rel.id} style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
                   <div style={{ height: "140px", backgroundColor: "var(--muted)" }}>

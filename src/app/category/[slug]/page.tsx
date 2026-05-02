@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { extractFirstImageUrl } from "@/lib/utils";
+import { getArticleImage } from "@/lib/utils";
 import { Metadata } from "next";
 
 export const revalidate = 60;
@@ -60,7 +60,7 @@ export default async function CategoryPage({ params }: Props) {
       
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
         {articles.map(article => {
-          const imgUrl = extractFirstImageUrl(article.content);
+          const imgUrl = getArticleImage(article);
           return (
             <Link href={`/article/${article.slug}`} key={article.id}>
               <div className="article-card" style={{ height: '100%' }}>

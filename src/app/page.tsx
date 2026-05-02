@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { extractFirstImageUrl } from "@/lib/utils";
+import { getArticleImage } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import MainNavigation from "@/components/MainNavigation";
@@ -126,7 +126,7 @@ export default async function Home() {
             <h2 className="portal-section-title" style={{ backgroundColor: "#9333ea", borderColor: "#7e22ce" }}>Tendances Culturelles</h2>
             <div className="compact-list" style={{ padding: "1rem" }}>
               {cultureArticles.map((article) => {
-                const imgUrl = extractFirstImageUrl(article.content);
+                const imgUrl = getArticleImage(article);
                 return (
                   <Link href={`/article/${article.slug}`} key={article.id} className="compact-item" style={{ marginBottom: '1rem', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
                     <div style={{ width: '60px', height: '60px', backgroundColor: '#e2e8f0', flexShrink: 0, borderRadius: '4px', overflow: 'hidden' }}>
@@ -205,8 +205,8 @@ export default async function Home() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "1rem", marginBottom: "2rem" }}>
           <Link href={`/article/${mainFeatured.slug}`} style={{ display: "block" }}>
             <div style={{ position: "relative", height: "350px", backgroundColor: "#e2e8f0", borderRadius: "var(--radius)", overflow: "hidden" }}>
-              {extractFirstImageUrl(mainFeatured.content) ? (
-                <img src={extractFirstImageUrl(mainFeatured.content) as string} alt={mainFeatured.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              {getArticleImage(mainFeatured) ? (
+                <img src={getArticleImage(mainFeatured) as string} alt={mainFeatured.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (
                 <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--foreground)', color: 'white', opacity: 0.8 }}>
                   <span style={{ fontSize: '4rem', fontWeight: 900, letterSpacing: '-0.05em' }}>LeDébat</span>
@@ -226,7 +226,7 @@ export default async function Home() {
           
           <div className="grid-responsive-2col">
             {subFeatured.slice(0, 2).map((article) => {
-              const imgUrl = extractFirstImageUrl(article.content);
+              const imgUrl = getArticleImage(article);
               return (
                 <Link href={`/article/${article.slug}`} key={article.id}>
                   <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", height: "100%" }}>
@@ -254,7 +254,7 @@ export default async function Home() {
               <h2 className="portal-section-title">{category.name}</h2>
               <div className="compact-list" style={{ padding: "1rem" }}>
                 {category.articles.map((article, idx) => {
-                  const imgUrl = extractFirstImageUrl(article.content);
+                  const imgUrl = getArticleImage(article);
                   return (
                     <Link href={`/article/${article.slug}`} key={article.id} className="compact-item">
                       {idx === 0 && (
@@ -311,7 +311,7 @@ export default async function Home() {
             </h2>
             <div className="grid-responsive-2col" style={{ marginTop: "1rem" }}>
               {faitsDiversArticles.map((article) => {
-                const imgUrl = extractFirstImageUrl(article.content);
+                const imgUrl = getArticleImage(article);
                 return (
                   <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", gap: "0.75rem", backgroundColor: "var(--card-bg)", padding: "0.5rem", borderRadius: "var(--radius)", border: "1px solid var(--border)" }}>
                     <div style={{ width: "80px", height: "80px", backgroundColor: "var(--muted)", flexShrink: 0, overflow: "hidden", borderRadius: "4px" }}>
@@ -337,7 +337,7 @@ export default async function Home() {
           </h2>
           <div className="grid-responsive-2col" style={{ marginTop: "1rem" }}>
             {recentArticles.slice(10, 16).map((article) => {
-              const imgUrl = extractFirstImageUrl(article.content);
+              const imgUrl = getArticleImage(article);
               return (
                 <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", gap: "0.75rem", backgroundColor: "var(--card-bg)", padding: "0.5rem", borderRadius: "var(--radius)", border: "1px solid var(--border)" }}>
                   <div style={{ width: "80px", height: "80px", backgroundColor: "var(--muted)", flexShrink: 0, overflow: "hidden", borderRadius: "4px" }}>
@@ -581,7 +581,7 @@ export default async function Home() {
       </h2>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1.5rem", marginTop: "1.5rem" }}>
         {recentArticles.slice(19, 23).map((article) => {
-          const imgUrl = extractFirstImageUrl(article.content);
+          const imgUrl = getArticleImage(article);
           return (
             <Link href={`/article/${article.slug}`} key={`intl-${article.id}`} style={{ display: "flex", flexDirection: "column", gap: "0.75rem", backgroundColor: "var(--card-bg)", borderRadius: "var(--radius)", overflow: "hidden", border: "1px solid var(--border)", transition: "transform 0.2s" }} className="hover-scale">
               <div style={{ aspectRatio: "16/9", backgroundColor: "var(--muted)", overflow: "hidden", position: "relative" }}>
@@ -607,7 +607,7 @@ export default async function Home() {
       </h2>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1.5rem", marginTop: "1.5rem" }}>
         {recentArticles.slice(10, 14).map((article) => {
-          const imgUrl = extractFirstImageUrl(article.content);
+          const imgUrl = getArticleImage(article);
           return (
             <Link href={`/article/${article.slug}`} key={`sport-${article.id}`} style={{ display: "flex", flexDirection: "column", gap: "0.75rem", backgroundColor: "var(--card-bg)", borderRadius: "var(--radius)", overflow: "hidden", border: "1px solid var(--border)", transition: "transform 0.2s" }} className="hover-scale">
               <div style={{ aspectRatio: "16/9", backgroundColor: "var(--muted)", overflow: "hidden", position: "relative" }}>
@@ -633,7 +633,7 @@ export default async function Home() {
       </h2>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1.5rem", marginTop: "1.5rem" }}>
         {(cultureArticles.length > 0 ? cultureArticles : recentArticles.slice(6, 10)).slice(0, 4).map((article) => {
-          const imgUrl = extractFirstImageUrl(article.content);
+          const imgUrl = getArticleImage(article);
           return (
             <Link href={`/article/${article.slug}`} key={`cult-${article.id}`} style={{ display: "flex", flexDirection: "column", gap: "0.75rem", backgroundColor: "var(--card-bg)", borderRadius: "var(--radius)", overflow: "hidden", border: "1px solid var(--border)", transition: "transform 0.2s" }} className="hover-scale">
               <div style={{ aspectRatio: "16/9", backgroundColor: "var(--muted)", overflow: "hidden", position: "relative" }}>
@@ -657,7 +657,7 @@ export default async function Home() {
         <h2 className="portal-section-title" style={{ backgroundColor: 'transparent', borderBottom: '2px solid var(--primary)', padding: '0 0 0.5rem 0', display: 'inline-block' }}>En Images</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem', marginTop: '1.5rem' }}>
           {recentArticles.slice(0, 4).map(article => {
-            const imgUrl = extractFirstImageUrl(article.content);
+            const imgUrl = getArticleImage(article);
             return (
               <Link href={`/article/${article.slug}`} key={`photo-${article.id}`} style={{ display: 'block', position: 'relative', aspectRatio: '4/3', backgroundColor: '#1e293b', borderRadius: '4px', overflow: 'hidden', transform: 'translateZ(0)' }}>
                 {imgUrl ? <img src={imgUrl} alt={article.title} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s' }} className="hover-scale" /> : <div style={{position: 'absolute', top: 0, left: 0, width:'100%',height:'100%',background:'var(--muted)'}} />}
