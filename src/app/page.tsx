@@ -198,6 +198,29 @@ export default async function Home() {
             </div>
           </div>
         )}
+
+        {/* Communiqués */}
+        {pressReleases && pressReleases.length > 0 && (
+          <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginTop: "1.5rem" }}>
+            <h2 className="portal-section-title" style={{ backgroundColor: "#10b981", borderColor: "#059669" }}>Communiqués</h2>
+            <div style={{ padding: "0" }}>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                {pressReleases.map((pr) => (
+                  <li key={pr.id} style={{ borderBottom: "1px solid var(--border)", padding: "0.75rem 1rem" }}>
+                    <Link href={pr.url || "#"} target={pr.url ? "_blank" : undefined} style={{ display: "block" }}>
+                      <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--foreground)" }}>{pr.title}</div>
+                      <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem", marginTop: "0.25rem", fontSize: "0.7rem", color: "var(--muted)" }}>
+                        <span style={{ fontWeight: "bold", color: "#10b981" }}>{pr.company}</span>
+                        <span>{new Date(pr.createdAt).toLocaleDateString('fr-FR')}</span>
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <Link href="/communiques" style={{ display: "block", textAlign: "center", fontSize: "0.8rem", padding: "0.5rem", backgroundColor: "#f8fafc", color: "var(--primary)", fontWeight: "bold", borderTop: "1px solid var(--border)" }}>Voir tous les communiqués</Link>
+            </div>
+          </div>
+        )}
       </aside>
 
       {/* CENTER COLUMN: A la Une & Categories */}
