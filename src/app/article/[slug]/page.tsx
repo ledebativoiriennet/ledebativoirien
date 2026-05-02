@@ -185,6 +185,20 @@ export default async function ArticlePage({ params }: Props) {
 
           <AdBanner slot="ARTICLE_TOP" />
 
+          {/* Image de couverture (Nouveaux articles) */}
+          {article.imageUrl && (
+            <div style={{ marginBottom: "2rem", borderRadius: "8px", overflow: "hidden" }}>
+              <img src={article.imageUrl} alt={article.title} style={{ width: "100%", height: "auto", display: "block" }} />
+            </div>
+          )}
+
+          {/* Chapô (Extrait) */}
+          {article.excerpt && (
+            <div style={{ fontSize: "1.15rem", fontWeight: 700, lineHeight: 1.6, marginBottom: "2rem", color: "var(--foreground)" }}>
+              {article.excerpt}
+            </div>
+          )}
+
           <div style={{ position: "relative" }}>
             <div 
               className="article-content"
