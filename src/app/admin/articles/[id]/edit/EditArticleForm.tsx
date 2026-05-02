@@ -23,14 +23,20 @@ export default function EditArticleForm({ article, categories }: { article: any,
     setLoading(true);
     setError("");
 
-    const formData = new FormData(e.currentTarget);
-    const result = await updateArticle(article.id, formData);
+    try {
+      const formData = new FormData(e.currentTarget);
+      const result = await updateArticle(article.id, formData);
 
-    if (result.success) {
-      router.push("/admin/articles");
-      router.refresh();
-    } else {
-      setError(result.error || "Une erreur est survenue");
+      if (result.success) {
+        router.push("/admin/articles");
+        router.refresh();
+      } else {
+        setError(result.error || "Une erreur est survenue côté serveur");
+        setLoading(false);
+      }
+    } catch (err: any) {
+      console.error(err);
+      setError("Erreur réseau ou fichier trop lourd. Impossible de joindre le serveur.");
       setLoading(false);
     }
   }

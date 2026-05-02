@@ -21,14 +21,20 @@ export default function CreateArticleForm({ categories }: { categories: Category
     setLoading(true);
     setError("");
 
-    const formData = new FormData(e.currentTarget);
-    const result = await publishArticle(formData);
+    try {
+      const formData = new FormData(e.currentTarget);
+      const result = await publishArticle(formData);
 
-    if (result.success) {
-      router.push("/admin/articles");
-      router.refresh();
-    } else {
-      setError(result.error || "Une erreur est survenue");
+      if (result.success) {
+        router.push("/admin/articles");
+        router.refresh();
+      } else {
+        setError(result.error || "Une erreur est survenue côté serveur");
+        setLoading(false);
+      }
+    } catch (err: any) {
+      console.error(err);
+      setError("Erreur réseau ou fichier trop lourd. Impossible de joindre le serveur.");
       setLoading(false);
     }
   }

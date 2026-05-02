@@ -28,6 +28,9 @@ export async function sendNewArticleNotification(articleId: string) {
       host: process.env.SMTP_HOST,
       port: Number(process.env.SMTP_PORT) || 465,
       secure: true,
+      connectionTimeout: 5000,
+      greetingTimeout: 5000,
+      socketTimeout: 5000,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
