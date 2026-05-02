@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import fs from 'fs';
 import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
+import crypto from 'crypto';
 
 // Ensure uploads directories exist
 const setupDirectories = () => {
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     // Save PDF
     const pdfBuffer = Buffer.from(await pdfFile.arrayBuffer());
     const pdfExt = path.extname(pdfFile.name) || '.pdf';
-    const pdfFilename = `journal_${uuidv4()}${pdfExt}`;
+    const pdfFilename = `journal_${crypto.randomUUID()}${pdfExt}`;
     const pdfPath = path.join(dirs.pdfDir, pdfFilename);
     fs.writeFileSync(pdfPath, pdfBuffer);
     const pdfUrl = `/uploads/pdf/${pdfFilename}`;
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
     if (coverFile) {
       const coverBuffer = Buffer.from(await coverFile.arrayBuffer());
       const coverExt = path.extname(coverFile.name) || '.jpg';
-      const coverFilename = `cover_${uuidv4()}${coverExt}`;
+      const coverFilename = `cover_${crypto.randomUUID()}${coverExt}`;
       const coverPath = path.join(dirs.coversDir, coverFilename);
       fs.writeFileSync(coverPath, coverBuffer);
       coverUrl = `/uploads/covers/${coverFilename}`;
