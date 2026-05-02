@@ -86,6 +86,8 @@ a:hover {
 .article-content {
   word-wrap: break-word;
   overflow-wrap: break-word;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .article-content img {
@@ -96,10 +98,16 @@ a:hover {
 }
 
 .article-content p {
-  font-size: 1.1rem;
-  line-height: 1.8;
-  margin-bottom: 1.5rem;
+  font-size: 1.15rem !important;
+  line-height: 1.9 !important;
+  margin-bottom: 1.5rem !important;
   color: var(--foreground);
+  text-align: justify !important;
+}
+
+.article-content span {
+  font-size: inherit !important;
+  line-height: inherit !important;
 }
 
 .article-content h2, .article-content h3, .article-content h4 {
