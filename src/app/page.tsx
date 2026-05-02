@@ -69,7 +69,7 @@ export default async function Home() {
 
   // Split recent articles for "A la Une"
   const aLaUne = recentArticles.slice(0, 5);
-  const flashInfo = recentArticles.slice(5);
+  const flashInfo = recentArticles.slice(0, 15); // Show all recent articles in En Continu
 
   const mainFeatured = aLaUne[0];
   const subFeatured = aLaUne.slice(1);
