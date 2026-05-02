@@ -16,6 +16,26 @@ import AuthorSubscribeButton from "@/components/AuthorSubscribeButton";
 
 export const revalidate = 60;
 
+function truncateHtmlToFirstParagraph(html: string): string {
+  const regex = /<\/p>/gi;
+  let match;
+  let splitIndex = -1;
+  
+  while ((match = regex.exec(html)) !== null) {
+    const htmlUpToMatch = html.substring(0, match.index + 4);
+    const textOnly = htmlUpToMatch.replace(/<[^>]+>/g, '').trim();
+    if (textOnly.length > 50) {
+      splitIndex = match.index + 4;
+      break;
+    }
+  }
+  
+  if (splitIndex !== -1) {
+    return html.substring(0, splitIndex);
+  }
+  return html.substring(0, 400);
+}
+
 type Props = {
   params: Promise<{ slug: string }>
 };
@@ -128,8 +148,9 @@ export default async function ArticlePage({ params }: Props) {
   const showPaywall = article.isPremium && !isPremiumSubscriber;
 
   let contentToShow = article.content;
-  // We don't cut the HTML string directly to avoid unclosed tags breaking the layout.
-  // The CSS maxHeight: "500px" + overflow: "hidden" handles the cutoff visually.
+  if (showPaywall) {
+    contentToShow = truncateHtmlToFirstParagraph(article.content);
+  }
 
   const mainImageUrl = getArticleImage(article);
 
@@ -207,8 +228,7 @@ export default async function ArticlePage({ params }: Props) {
               className="article-content"
               style={{ 
                 position: "relative",
-                maxHeight: showPaywall ? "500px" : "none",
-                overflow: "hidden"
+                paddingBottom: showPaywall ? "40px" : "0"
               }} 
             >
               <div dangerouslySetInnerHTML={{ __html: contentToShow }} />
@@ -219,8 +239,8 @@ export default async function ArticlePage({ params }: Props) {
                   bottom: 0,
                   left: 0,
                   width: "100%",
-                  height: "250px",
-                  background: "linear-gradient(to bottom, transparent, var(--card-bg))",
+                  height: "100px",
+                  background: "linear-gradient(to bottom, transparent, var(--background))",
                   pointerEvents: "none"
                 }} />
               )}
