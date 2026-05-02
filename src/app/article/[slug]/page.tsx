@@ -8,6 +8,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import SocialShareButtons from "@/components/SocialShareButtons";
 import { recordArticleRead } from "@/app/actions/user-stats";
+import DownloadPdfButton from "@/components/DownloadPdfButton";
 import { LikeButton } from "@/components/LikeButton";
 import AdBanner from "@/components/AdBanner";
 import { Metadata, ResolvingMetadata } from "next";
@@ -205,7 +206,18 @@ export default async function ArticlePage({ params }: Props) {
             <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>⏱️ 5 min de lecture</span>
           </div>
 
-          <SocialShareButtons title={article.title} layout="horizontal" />
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "1.5rem" }}>
+            <SocialShareButtons title={article.title} layout="horizontal" />
+            <DownloadPdfButton 
+              articleTitle={article.title}
+              articleContent={article.content}
+              articleDate={new Date(article.publishedAt || new Date()).toLocaleDateString("fr-FR", { year: 'numeric', month: 'long', day: 'numeric' })}
+              articleImage={article.imageUrl || mainImageUrl || undefined}
+              authorName={article.author?.name || undefined}
+              isPremium={article.isPremium}
+              userHasAccess={!showPaywall}
+            />
+          </div>
 
           <AdBanner slot="ARTICLE_TOP" />
 
