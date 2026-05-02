@@ -18,7 +18,7 @@ export default async function Home() {
     topCategories,
     poll,
     obituaries,
-    pressReleases,
+    politiqueArticles,
     videos,
     activities,
     flashNewsItems,
@@ -50,7 +50,7 @@ export default async function Home() {
     }),
     prisma.poll.findFirst({ where: { isActive: true }, include: { options: true }, orderBy: { createdAt: 'desc' } }),
     prisma.obituary.findMany({ take: 5, orderBy: { createdAt: 'desc' } }),
-    prisma.pressRelease.findMany({ take: 5, orderBy: { createdAt: 'desc' } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'politique' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.video.findMany({ take: 4, orderBy: { createdAt: 'desc' } }),
     prisma.activity.findMany({ take: 3, orderBy: { createdAt: 'desc' } }),
     prisma.flashNews.findMany({ take: 6, orderBy: { createdAt: 'desc' } }),
@@ -349,23 +349,35 @@ export default async function Home() {
             </div>
           ))}
 
-          {/* Communiqués de Presse Block */}
-          <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", gridColumn: "1 / -1" }}>
-            <h2 className="portal-section-title dark" style={{ display: "flex", justifyContent: "space-between" }}>
-              <span>Communiqués d'Entreprises</span>
-              <span style={{ fontSize: '0.8rem', fontWeight: 'normal', color: 'var(--primary)' }}><Link href="/communiques">Voir tout</Link></span>
-            </h2>
-            <div style={{ padding: "1rem" }}>
-              <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1rem" }}>
-                {pressReleases.map((pr) => (
-                  <li key={pr.id} style={{ display: "flex", flexDirection: "column", padding: "0.75rem", backgroundColor: "#f8fafc", borderLeft: "4px solid var(--primary)", borderRadius: "0 4px 4px 0" }}>
-                    <span style={{ fontSize: "0.7rem", color: "var(--muted)", textTransform: "uppercase", fontWeight: "bold", marginBottom: "0.25rem" }}>{pr.company}</span>
-                    <Link href={pr.url || "#"} target={pr.url ? "_blank" : undefined} style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}>{pr.title}</Link>
-                  </li>
-                ))}
-              </ul>
+          {/* Politique Block */}
+          {politiqueArticles && politiqueArticles.length > 0 && (
+            <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", gridColumn: "1 / -1" }}>
+              <h2 className="portal-section-title dark" style={{ display: "flex", justifyContent: "space-between" }}>
+                <span>Politique</span>
+                <span style={{ fontSize: '0.8rem', fontWeight: 'normal', color: 'var(--primary)' }}><Link href="/category/politique">Voir tout</Link></span>
+              </h2>
+              <div style={{ padding: "1rem" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
+                  {politiqueArticles.map((article) => {
+                    const imgUrl = getArticleImage(article);
+                    return (
+                      <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                        <div style={{ height: "120px", backgroundColor: "var(--muted)", overflow: "hidden", borderRadius: "4px" }}>
+                          {imgUrl ? <img src={imgUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : <div style={{ background: 'var(--foreground)', color: 'white', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>LDI</div>}
+                        </div>
+                        <div>
+                          <div style={{ fontSize: "0.65rem", color: "var(--primary)", fontWeight: "bold", textTransform: "uppercase", marginBottom: "0.2rem" }}>
+                            Politique
+                          </div>
+                          <h3 style={{ fontSize: "0.85rem", fontWeight: 700, lineHeight: 1.3 }}>{article.title}</h3>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Economie */}
