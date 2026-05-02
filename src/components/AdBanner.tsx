@@ -2,7 +2,9 @@ import { prisma } from "@/lib/prisma";
 
 export default async function AdBanner({ slot }: { slot: string }) {
   const now = new Date();
-  
+  const startOfDay = new Date();
+  startOfDay.setUTCHours(0, 0, 0, 0);
+
   // @ts-ignore
   const ad = await prisma.advertisement.findFirst({
     where: {
@@ -11,8 +13,8 @@ export default async function AdBanner({ slot }: { slot: string }) {
       OR: [
         { startDate: null, endDate: null },
         { startDate: { lte: now }, endDate: null },
-        { startDate: null, endDate: { gte: now } },
-        { startDate: { lte: now }, endDate: { gte: now } },
+        { startDate: null, endDate: { gte: startOfDay } },
+        { startDate: { lte: now }, endDate: { gte: startOfDay } },
       ]
     },
     orderBy: { createdAt: 'desc' }

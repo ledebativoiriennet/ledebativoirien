@@ -36,8 +36,8 @@ export async function createAd(formData: FormData) {
       linkUrl: linkUrl || null,
       slot,
       status: "PENDING",
-      startDate: startDateStr ? new Date(startDateStr) : null,
-      endDate: endDateStr ? new Date(endDateStr) : null,
+      startDate: startDateStr ? new Date(`${startDateStr}T00:00:00Z`) : null,
+      endDate: endDateStr ? new Date(`${endDateStr}T23:59:59Z`) : null,
     }
   });
   revalidatePath("/admin/publicites");

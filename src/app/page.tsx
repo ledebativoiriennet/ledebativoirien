@@ -315,6 +315,9 @@ export default async function Home() {
           </div>
         </div>
 
+        {/* Publicité Milieu de page */}
+        <AdBanner slot="HOME_MIDDLE" />
+
         {/* Thematic Blocks */}
         <div className="grid-responsive-2col" style={{ gap: "1.5rem" }}>
           {topCategories.map((category) => (

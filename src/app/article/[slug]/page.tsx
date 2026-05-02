@@ -216,6 +216,8 @@ export default async function ArticlePage({ params }: Props) {
             </div>
           )}
 
+          <AdBanner slot="ARTICLE_MIDDLE" />
+
           {/* Chapô (Extrait) */}
           {article.excerpt && (
             <div style={{ fontSize: "1.15rem", fontWeight: 700, lineHeight: 1.6, marginBottom: "2rem", color: "var(--foreground)" }}>
