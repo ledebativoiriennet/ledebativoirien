@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import fs from 'fs';
 import path from 'path';
+import { UPLOAD_DIR } from '@/lib/upload';
 
 export async function GET(
   request: Request,
@@ -36,7 +37,6 @@ export async function GET(
     
     // Check if it's the new format (/api/media/...)
     if (pdfUrl.startsWith('/api/media/')) {
-      const { UPLOAD_DIR } = require('@/lib/upload');
       const filename = pdfUrl.replace('/api/media/', '');
       filePath = path.join(UPLOAD_DIR, filename);
     } 

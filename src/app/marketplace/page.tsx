@@ -34,12 +34,13 @@ export default async function MarketplacePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {newspapers.map((paper) => (
               <Link href={`/marketplace/${paper.id}`} key={paper.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group flex flex-col cursor-pointer hover:-translate-y-1">
-                <div className="relative h-80 w-full bg-gray-200 overflow-hidden">
+                <div className="relative w-full bg-gray-200 overflow-hidden" style={{ height: '320px' }}>
                   {paper.coverImageUrl ? (
                     <img
                       src={paper.coverImageUrl}
                       alt={paper.title}
-                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                      className="group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
                     <div className="flex items-center justify-center h-full bg-gray-100 text-gray-400">

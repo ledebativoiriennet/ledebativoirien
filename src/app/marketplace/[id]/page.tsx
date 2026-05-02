@@ -29,12 +29,12 @@ export default async function NewspaperDetailPage({ params }: { params: Promise<
         </div>
 
         <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 flex flex-col md:flex-row">
-          <div className="md:w-1/2 bg-gray-100 relative min-h-[400px]">
+          <div className="md:w-1/2 bg-gray-100 relative min-h-[400px]" style={{ minHeight: '400px' }}>
             {newspaper.coverImageUrl ? (
               <img
                 src={newspaper.coverImageUrl}
                 alt={newspaper.title}
-                className="absolute inset-0 w-full h-full object-cover"
+                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
               />
             ) : (
               <div className="flex items-center justify-center h-full text-gray-400">
