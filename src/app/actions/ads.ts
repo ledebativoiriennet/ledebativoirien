@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 
 import { writeFile } from "fs/promises";
 import { join } from "path";
+import { saveUpload } from "@/lib/upload";
 
 export async function createAd(formData: FormData) {
   const title = formData.get("title") as string;
@@ -21,12 +22,7 @@ export async function createAd(formData: FormData) {
 
   let imageUrl = "";
   try {
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, '')}`;
-    const path = join(process.cwd(), 'public', 'uploads', filename);
-    await writeFile(path, buffer);
-    imageUrl = `/uploads/${filename}`;
+    imageUrl = await saveUpload(file);
   } catch (e) {
     return { error: "Erreur lors du téléchargement de l'image" };
   }

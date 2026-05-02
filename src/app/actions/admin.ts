@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { writeFile } from "fs/promises";
 import { join } from "path";
+import { saveUpload } from "@/lib/upload";
 import { sendNewArticleNotification } from "@/lib/newsletter";
 
 // Convert a title to a URL-friendly slug
@@ -41,14 +42,7 @@ export async function publishArticle(formData: FormData) {
     
     // Gérer l'upload de l'image si elle est présente (priorité sur le lien externe si uploadé)
     if (imageFile && imageFile.size > 0) {
-      const bytes = await imageFile.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      const filename = `${Date.now()}-${imageFile.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-      const uploadDir = join(process.cwd(), 'public', 'uploads');
-      await require('fs/promises').mkdir(uploadDir, { recursive: true }).catch(() => {});
-      const path = join(uploadDir, filename);
-      await writeFile(path, buffer);
-      imageUrl = `/uploads/${filename}`;
+      imageUrl = await saveUpload(imageFile);
     }
 
     let slug = generateSlug(title);
@@ -156,14 +150,7 @@ export async function updateArticle(articleId: string, formData: FormData) {
 
   const imageFile = formData.get("image") as File | null;
   if (imageFile && imageFile.size > 0) {
-    const bytes = await imageFile.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const filename = `${Date.now()}-${imageFile.name.replace(/[^a-zA-Z0-9.-]/g, "")}`;
-    const uploadDir = join(process.cwd(), 'public', 'uploads');
-    await require('fs/promises').mkdir(uploadDir, { recursive: true }).catch(() => {});
-    const filePath = join(uploadDir, filename);
-    await writeFile(filePath, buffer);
-    imageUrl = `/uploads/${filename}`;
+    imageUrl = await saveUpload(imageFile);
   }
 
   try {

@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { writeFile } from "fs/promises";
 import { join } from "path";
+import { saveUpload } from "@/lib/upload";
 
 async function checkAdminOrEditor() {
   const session = await getServerSession(authOptions);
@@ -31,12 +32,7 @@ export async function createPressRelease(formData: FormData) {
     
     // If a PDF file was uploaded
     if (file && file.size > 0) {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      const filename = `communique-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-      const path = join(process.cwd(), 'public', 'uploads', filename);
-      await writeFile(path, buffer);
-      url = `/uploads/${filename}`;
+      url = await saveUpload(file);
     }
 
     await prisma.pressRelease.create({

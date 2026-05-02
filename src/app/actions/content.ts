@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { writeFile } from "fs/promises";
 import { join } from "path";
+import { saveUpload } from "@/lib/upload";
 
 // Vérification de sécurité basique
 async function checkAdminOrEditor() {
@@ -67,12 +68,7 @@ export async function uploadTitrologie(formData: FormData) {
   }
 
   try {
-    const bytes = await imageFile.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const filename = `titrologie-${Date.now()}-${imageFile.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-    const path = join(process.cwd(), 'public', 'uploads', filename);
-    await writeFile(path, buffer);
-    const imageUrl = `/uploads/${filename}`;
+    const imageUrl = await saveUpload(imageFile);
 
     await prisma.titrologie.create({
       data: {
@@ -146,12 +142,7 @@ export async function uploadActivity(formData: FormData) {
   try {
     let imageUrl = null;
     if (imageFile && imageFile.size > 0) {
-      const bytes = await imageFile.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      const filename = `activity-${Date.now()}-${imageFile.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-      const path = join(process.cwd(), 'public', 'uploads', filename);
-      await writeFile(path, buffer);
-      imageUrl = `/uploads/${filename}`;
+      imageUrl = await saveUpload(imageFile);
     }
 
     await prisma.activity.create({
@@ -184,12 +175,7 @@ export async function createObituary(formData: FormData) {
   try {
     let imageUrl = null;
     if (imageFile && imageFile.size > 0) {
-      const bytes = await imageFile.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      const filename = `necro-${Date.now()}-${imageFile.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-      const path = join(process.cwd(), 'public', 'uploads', filename);
-      await writeFile(path, buffer);
-      imageUrl = `/uploads/${filename}`;
+      imageUrl = await saveUpload(imageFile);
     }
 
     await prisma.obituary.create({
