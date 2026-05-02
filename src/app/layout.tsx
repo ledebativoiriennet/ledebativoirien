@@ -24,6 +24,7 @@ export default async function RootLayout({
 }>) {
 
   const navCategories = await prisma.category.findMany({
+    where: { slug: { not: "breaking-news" } },
     take: 8
   });
 
