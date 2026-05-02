@@ -22,6 +22,7 @@ model User {
   subscriptions Subscription[]
   readingHistory ReadingHistory[]
   articleLikes   ArticleLike[]
+  purchases      Purchase[]
 }
 
 model Subscription {
@@ -317,4 +318,37 @@ model AuthorSubscriber {
   createdAt DateTime @default(now())
 
   @@unique([email, authorId])
+}
+
+model DigitalNewspaper {
+  id            String   @id @default(cuid())
+  title         String   // e.g. "Le Débat Ivoirien N°150"
+  description   String?
+  issueNumber   Int?
+  price         Float    // e.g. 500 (FCFA)
+  coverImageUrl String?
+  pdfUrl        String   // Path to the actual PDF file
+  publishedAt   DateTime @default(now())
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  purchases     Purchase[]
+}
+
+model Purchase {
+  id                 String   @id @default(cuid())
+  userId             String?
+  user               User?    @relation(fields: [userId], references: [id])
+  customerEmail      String
+  customerName       String?
+  digitalNewspaperId String
+  digitalNewspaper   DigitalNewspaper @relation(fields: [digitalNewspaperId], references: [id])
+  amount             Float
+  status             String   @default("PENDING") // PENDING, COMPLETED, FAILED
+  paymentMethod      String?  // CINETPAY
+  transactionId      String?  @unique
+  downloadToken      String   @unique @default(cuid())
+  downloadCount      Int      @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 }
