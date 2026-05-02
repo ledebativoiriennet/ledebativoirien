@@ -10,6 +10,7 @@ import { GoogleAnalytics } from '@next/third-parties/google';
 import Script from "next/script";
 import MainNavigation from "@/components/MainNavigation";
 import { getLiveMarketData } from "@/lib/marketData";
+import { PushNotificationPrompt, ConsentManagerButton } from "@/components/PushNotificationPrompt";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -119,6 +120,7 @@ export default async function RootLayout({
         )}
       </head>
       <body>
+        <PushNotificationPrompt />
         {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
         <VisitorTracker />
         <Providers>
@@ -278,9 +280,20 @@ export default async function RootLayout({
                 <li>+225 00 00 00 00 00</li>
               </ul>
             </div>
+            <div>
+              <h4 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '1rem', color: 'var(--primary)' }}>Informations Légales</h4>
+              <ul style={{ listStyle: 'none', padding: 0, fontSize: '0.9rem', color: '#cbd5e1', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <li><Link href="/cgu">CGU</Link></li>
+                <li><Link href="/mentions-legales">Mentions Légales</Link></li>
+                <li><Link href="/confidentialite">Confidentialité</Link></li>
+                <li><Link href="/cookies">Cookies</Link></li>
+                <li><Link href="/accessibilite">Accessibilité</Link></li>
+                <li><ConsentManagerButton /></li>
+              </ul>
+            </div>
           </div>
-          <div className="container" style={{ borderTop: '1px solid #334155', paddingTop: '2rem', textAlign: 'center', fontSize: '0.8rem', color: '#64748b' }}>
-            &copy; {new Date().getFullYear()} Le Débat Ivoirien. Tous droits réservés.
+          <div className="container" style={{ textAlign: 'center', fontSize: '0.85rem', color: '#64748b', borderTop: '1px solid #334155', paddingTop: '2rem' }}>
+            © {new Date().getFullYear()} Le Débat Ivoirien. Tous droits réservés.
           </div>
         </footer>
         </Providers>
