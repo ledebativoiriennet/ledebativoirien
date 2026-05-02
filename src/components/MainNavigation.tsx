@@ -36,8 +36,6 @@ export default function MainNavigation({ categories }: MainNavigationProps) {
       {/* Navigation Links */}
       <nav className={`nav ${isOpen ? 'nav-open' : 'nav-closed'}`}>
         <Link href="/" className="nav-link" style={{ fontWeight: 'bold', color: 'var(--primary)' }}>Accueil</Link>
-        <Link href="/depeches" className="nav-link" style={{ whiteSpace: 'nowrap', fontWeight: 'bold', color: '#ef4444' }}>Dépêches</Link>
-        <Link href="/en-continu" className="nav-link" style={{ whiteSpace: 'nowrap' }}>En Continu</Link>
         {categories.map(c => (
           <Link key={c.id} href={`/category/${c.slug}`} className="nav-link" style={{ whiteSpace: 'nowrap' }}>
             {c.name.replace(/&amp;/g, '&')}
