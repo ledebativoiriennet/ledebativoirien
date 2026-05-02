@@ -31,7 +31,7 @@ export default async function MarketplacePage() {
             <p className="text-lg">Aucun journal numérique n'est disponible pour le moment.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {newspapers.map((paper) => (
               <Link href={`/marketplace/${paper.id}`} key={paper.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group flex flex-col cursor-pointer hover:-translate-y-1">
                 <div className="relative h-80 w-full bg-gray-200 overflow-hidden">
