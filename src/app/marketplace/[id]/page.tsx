@@ -31,12 +31,10 @@ export default async function NewspaperDetailPage({ params }: { params: Promise<
         <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 flex flex-col md:flex-row">
           <div className="md:w-1/2 bg-gray-100 relative min-h-[400px]">
             {newspaper.coverImageUrl ? (
-              <Image
+              <img
                 src={newspaper.coverImageUrl}
                 alt={newspaper.title}
-                fill
-                className="object-cover"
-                priority
+                className="w-full h-full object-cover"
               />
             ) : (
               <div className="flex items-center justify-center h-full text-gray-400">
