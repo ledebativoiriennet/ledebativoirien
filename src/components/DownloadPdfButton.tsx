@@ -44,12 +44,12 @@ export default function DownloadPdfButton({
       
       // Add Logo and Header
       const header = `
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #10b981; padding-bottom: 20px; margin-bottom: 30px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #dc2626; padding-bottom: 20px; margin-bottom: 30px;">
           <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="width: 50px; height: 50px; background-color: #0f172a; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 20px;">LDI</div>
+            <div style="width: 50px; height: 50px; background-color: #000000; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 20px;">LDI</div>
             <div style="display: flex; flex-direction: column; line-height: 1;">
-              <span style="font-size: 24px; font-weight: 900; color: #0f172a; letter-spacing: -1px;">LeDébat</span>
-              <span style="font-size: 24px; font-weight: 900; color: #10b981; letter-spacing: 1px; font-family: Impact, sans-serif;">IVOIRIEN</span>
+              <span style="font-size: 24px; font-weight: 900; color: #000000; letter-spacing: -1px;">LeDébat</span>
+              <span style="font-size: 24px; font-weight: 900; color: #dc2626; letter-spacing: 1px; font-family: Impact, sans-serif;">IVOIRIEN</span>
             </div>
           </div>
           <div style="text-align: right; font-size: 12px; color: #64748b;">
@@ -61,10 +61,10 @@ export default function DownloadPdfButton({
       
       // Add Title
       const titleSection = `
-        <h1 style="font-size: 28px; font-weight: 800; color: #0f172a; margin-bottom: 20px; line-height: 1.2;">
+        <h1 style="font-size: 28px; font-weight: 800; color: #000000; margin-bottom: 20px; line-height: 1.2;">
           ${articleTitle}
         </h1>
-        ${authorName ? `<p style="font-weight: bold; color: #10b981; margin-bottom: 20px;">Par ${authorName}</p>` : ''}
+        ${authorName ? `<p style="font-weight: bold; color: #dc2626; margin-bottom: 20px;">Par ${authorName}</p>` : ''}
       `;
       
       // Add Image
@@ -121,7 +121,7 @@ export default function DownloadPdfButton({
         alignItems: 'center',
         gap: '0.5rem',
         padding: '0.6rem 1.2rem',
-        backgroundColor: '#0f172a',
+        backgroundColor: '#000000',
         color: 'white',
         fontWeight: 'bold',
         fontSize: '0.9rem',
@@ -131,8 +131,8 @@ export default function DownloadPdfButton({
         transition: 'background-color 0.2s',
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
       }}
-      onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1e293b'}
-      onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0f172a'}
+      onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#dc2626'}
+      onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#000000'}
     >
       {isGenerating ? (
         <span>⏳ Création du PDF...</span>
