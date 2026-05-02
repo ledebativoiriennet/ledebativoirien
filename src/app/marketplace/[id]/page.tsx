@@ -28,7 +28,7 @@ export default async function NewspaperDetailPage({ params }: { params: Promise<
           </Link>
         </div>
 
-        <div className="article-card" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <div className="article-card product-layout">
           <div style={{ position: 'relative', width: '100%', minHeight: '400px', backgroundColor: 'var(--border)' }}>
             {newspaper.coverImageUrl ? (
               <img
