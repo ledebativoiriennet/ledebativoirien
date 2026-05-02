@@ -20,6 +20,11 @@ export async function GET(
       return new NextResponse("Paiement non validé ou lien invalide.", { status: 403 });
     }
 
+    const MAX_DOWNLOADS = 5;
+    if (purchase.downloadCount >= MAX_DOWNLOADS) {
+      return new NextResponse("Limite de téléchargements atteinte pour ce lien. Contactez le support.", { status: 403 });
+    }
+
     const pdfUrl = purchase.digitalNewspaper.pdfUrl;
     
     // Increment download count

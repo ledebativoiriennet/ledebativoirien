@@ -67,7 +67,7 @@ export async function POST(request: Request) {
         apikey: apiKey,
         site_id: siteId,
         transaction_id: transactionId,
-        amount: amount,
+        amount: newspaper.price,
         currency: "XOF",
         channels: "ALL",
         description: `Achat PDF - ${newspaper.title}`,

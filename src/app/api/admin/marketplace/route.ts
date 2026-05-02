@@ -1,9 +1,17 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { saveUpload } from '@/lib/upload';
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export async function POST(request: Request) {
   try {
+    const session = await getServerSession(authOptions);
+    const role = (session?.user as any)?.role;
+    if (role !== "ADMIN" && role !== "EDITOR") {
+      return NextResponse.json({ error: "Unauthorized. Action requires ADMIN or EDITOR role." }, { status: 401 });
+    }
+
     const formData = await request.formData();
     
     const title = formData.get('title') as string;

@@ -5,7 +5,10 @@ import { UPLOAD_DIR } from '@/lib/upload';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ filename: string }> }) {
   const { filename } = await params;
-  const filePath = join(UPLOAD_DIR, filename);
+  
+  // SANITIZATION: Prevent Path Traversal
+  const safeFilename = require('path').basename(filename);
+  const filePath = join(UPLOAD_DIR, safeFilename);
   
   try {
     const fileStat = await stat(filePath);
