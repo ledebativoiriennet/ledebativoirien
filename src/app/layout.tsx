@@ -27,10 +27,14 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
 
-  const navCategories = await prisma.category.findMany({
-    where: { slug: { not: "breaking-news" } },
-    take: 8
+  const targetSlugs = ["a-la-une", "actualite", "politique", "economie", "societe", "sports", "culture"];
+  
+  let navCategories = await prisma.category.findMany({
+    where: { slug: { in: targetSlugs } }
   });
+
+  // Sort them to match the targetSlugs array order
+  navCategories.sort((a, b) => targetSlugs.indexOf(a.slug) - targetSlugs.indexOf(b.slug));
 
   const [dbIndicators, liveMarketData] = await Promise.all([
     prisma.marketIndicator.findMany({ orderBy: { order: 'asc' } }),
