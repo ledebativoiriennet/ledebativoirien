@@ -37,9 +37,9 @@ export async function publishArticle(formData: FormData) {
   }
 
   try {
-    let imageUrl = null;
+    let imageUrl = formData.get("imageUrlLink") as string || null;
     
-    // Gérer l'upload de l'image si elle est présente
+    // Gérer l'upload de l'image si elle est présente (priorité sur le lien externe si uploadé)
     if (imageFile && imageFile.size > 0) {
       const bytes = await imageFile.arrayBuffer();
       const buffer = Buffer.from(bytes);
@@ -143,6 +143,10 @@ export async function updateArticle(articleId: string, formData: FormData) {
   }
 
   let imageUrl = formData.get("existingImageUrl") as string;
+  const externalLink = formData.get("imageUrlLink") as string;
+  if (externalLink) {
+    imageUrl = externalLink;
+  }
 
   const imageFile = formData.get("image") as File | null;
   if (imageFile && imageFile.size > 0) {

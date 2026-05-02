@@ -112,7 +112,7 @@ export default function EditArticleForm({ article, categories }: { article: any,
         </div>
 
         <div>
-          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Image de couverture (Laisser vide pour conserver l'actuelle)</label>
+          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Image de couverture (Fichier depuis l'ordinateur)</label>
           {article.imageUrl && (
             <div style={{ marginBottom: '0.5rem' }}>
               <img src={article.imageUrl} alt="Couverture" style={{ height: '100px', borderRadius: '4px', objectFit: 'cover' }} />
@@ -123,7 +123,14 @@ export default function EditArticleForm({ article, categories }: { article: any,
             type="file" 
             name="image" 
             accept="image/*"
-            style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '1rem', fontFamily: 'inherit', backgroundColor: '#f8fafc' }}
+            style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '1rem', fontFamily: 'inherit', backgroundColor: '#f8fafc', marginBottom: '0.5rem' }}
+          />
+          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>OU Lien vers une image (Nouveau lien externe)</label>
+          <input 
+            type="url" 
+            name="imageUrlLink" 
+            placeholder="https://..."
+            style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '1rem', fontFamily: 'inherit' }}
           />
         </div>
 
