@@ -9,6 +9,20 @@ import Link from "next/link";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
+const quillModules = {
+  toolbar: [
+    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+    [{ 'font': [] }],
+    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+    [{ 'color': [] }, { 'background': [] }],
+    [{ 'script': 'sub'}, { 'script': 'super' }],
+    [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
+    [{ 'direction': 'rtl' }, { 'align': [] }],
+    ['link', 'image', 'video'],
+    ['clean']
+  ],
+};
+
 type Category = { id: string; name: string };
 
 export default function EditArticleForm({ article, categories }: { article: any, categories: Category[] }) {
@@ -120,6 +134,7 @@ export default function EditArticleForm({ article, categories }: { article: any,
               theme="snow" 
               value={content} 
               onChange={setContent} 
+              modules={quillModules}
               style={{ height: '400px', marginBottom: '3rem' }}
             />
           </div>

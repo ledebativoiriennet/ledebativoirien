@@ -8,6 +8,20 @@ import "react-quill-new/dist/quill.snow.css";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
+const quillModules = {
+  toolbar: [
+    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+    [{ 'font': [] }],
+    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+    [{ 'color': [] }, { 'background': [] }],
+    [{ 'script': 'sub'}, { 'script': 'super' }],
+    [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
+    [{ 'direction': 'rtl' }, { 'align': [] }],
+    ['link', 'image', 'video'],
+    ['clean']
+  ],
+};
+
 type Category = { id: string; name: string };
 
 export default function CreateArticleForm({ categories }: { categories: Category[] }) {
@@ -101,6 +115,7 @@ export default function CreateArticleForm({ categories }: { categories: Category
               theme="snow" 
               value={content} 
               onChange={setContent} 
+              modules={quillModules}
               style={{ height: '400px', marginBottom: '3rem' }} // Add margin bottom because quill toolbar/editor height can overlap
             />
           </div>
