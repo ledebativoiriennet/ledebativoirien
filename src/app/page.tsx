@@ -351,14 +351,14 @@ export default async function Home() {
           <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", gridColumn: "1 / -1" }}>
             <h2 className="portal-section-title dark" style={{ display: "flex", justifyContent: "space-between" }}>
               <span>Communiqués d'Entreprises</span>
-              <span style={{ fontSize: '0.8rem', fontWeight: 'normal', color: 'var(--primary)' }}><Link href="#">Voir tout</Link></span>
+              <span style={{ fontSize: '0.8rem', fontWeight: 'normal', color: 'var(--primary)' }}><Link href="/communiques">Voir tout</Link></span>
             </h2>
             <div style={{ padding: "1rem" }}>
               <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1rem" }}>
                 {pressReleases.map((pr) => (
                   <li key={pr.id} style={{ display: "flex", flexDirection: "column", padding: "0.75rem", backgroundColor: "#f8fafc", borderLeft: "4px solid var(--primary)", borderRadius: "0 4px 4px 0" }}>
                     <span style={{ fontSize: "0.7rem", color: "var(--muted)", textTransform: "uppercase", fontWeight: "bold", marginBottom: "0.25rem" }}>{pr.company}</span>
-                    <Link href="#" style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}>{pr.title}</Link>
+                    <Link href={pr.url || "#"} target={pr.url ? "_blank" : undefined} style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}>{pr.title}</Link>
                   </li>
                 ))}
               </ul>
