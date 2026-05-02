@@ -32,8 +32,18 @@ export async function GET(
       return NextResponse.redirect(pdfUrl);
     }
 
-    // If it's a local file, we serve it
-    const filePath = path.join(process.cwd(), 'public', pdfUrl);
+    let filePath = '';
+    
+    // Check if it's the new format (/api/media/...)
+    if (pdfUrl.startsWith('/api/media/')) {
+      const { UPLOAD_DIR } = require('@/lib/upload');
+      const filename = pdfUrl.replace('/api/media/', '');
+      filePath = path.join(UPLOAD_DIR, filename);
+    } 
+    // Fallback to old format (/uploads/...)
+    else {
+      filePath = path.join(process.cwd(), 'public', pdfUrl);
+    }
     
     if (!fs.existsSync(filePath)) {
       return new NextResponse("Fichier introuvable sur le serveur.", { status: 404 });

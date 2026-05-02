@@ -1,22 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import fs from 'fs';
-import path from 'path';
-import crypto from 'crypto';
-
-// Ensure uploads directories exist
-const setupDirectories = () => {
-  const publicDir = path.join(process.cwd(), 'public');
-  const uploadsDir = path.join(publicDir, 'uploads');
-  const pdfDir = path.join(uploadsDir, 'pdf');
-  const coversDir = path.join(uploadsDir, 'covers');
-
-  if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
-  if (!fs.existsSync(pdfDir)) fs.mkdirSync(pdfDir);
-  if (!fs.existsSync(coversDir)) fs.mkdirSync(coversDir);
-
-  return { pdfDir, coversDir };
-};
+import { saveUpload } from '@/lib/upload';
 
 export async function POST(request: Request) {
   try {
@@ -35,25 +19,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Données manquantes ou invalides." }, { status: 400 });
     }
 
-    const dirs = setupDirectories();
-
     // Save PDF
-    const pdfBuffer = Buffer.from(await pdfFile.arrayBuffer());
-    const pdfExt = path.extname(pdfFile.name) || '.pdf';
-    const pdfFilename = `journal_${crypto.randomUUID()}${pdfExt}`;
-    const pdfPath = path.join(dirs.pdfDir, pdfFilename);
-    fs.writeFileSync(pdfPath, pdfBuffer);
-    const pdfUrl = `/uploads/pdf/${pdfFilename}`;
+    const pdfUrl = await saveUpload(pdfFile);
 
     // Save Cover
     let coverUrl = null;
     if (coverFile) {
-      const coverBuffer = Buffer.from(await coverFile.arrayBuffer());
-      const coverExt = path.extname(coverFile.name) || '.jpg';
-      const coverFilename = `cover_${crypto.randomUUID()}${coverExt}`;
-      const coverPath = path.join(dirs.coversDir, coverFilename);
-      fs.writeFileSync(coverPath, coverBuffer);
-      coverUrl = `/uploads/covers/${coverFilename}`;
+      coverUrl = await saveUpload(coverFile);
     }
 
     const newspaper = await prisma.digitalNewspaper.create({
