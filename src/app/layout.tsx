@@ -11,6 +11,7 @@ import Script from "next/script";
 import MainNavigation from "@/components/MainNavigation";
 import { getLiveMarketData } from "@/lib/marketData";
 import { PushNotificationPrompt, ConsentManagerButton } from "@/components/PushNotificationPrompt";
+import { CookieConsentPopup } from "@/components/CookieConsentPopup";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -120,6 +121,7 @@ export default async function RootLayout({
         )}
       </head>
       <body>
+        <CookieConsentPopup />
         <PushNotificationPrompt />
         {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
         <VisitorTracker />

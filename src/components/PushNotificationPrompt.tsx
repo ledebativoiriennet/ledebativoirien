@@ -85,7 +85,11 @@ export function ConsentManagerButton() {
   return (
     <button 
       style={{ background: 'none', border: 'none', color: '#cbd5e1', cursor: 'pointer', padding: 0, fontSize: 'inherit', textAlign: 'left' }} 
-      onClick={() => { localStorage.removeItem('ldi_push_prompted'); window.location.reload(); }}
+      onClick={() => { 
+        localStorage.removeItem('ldi_push_prompted'); 
+        localStorage.removeItem('ldi_cookie_consent');
+        window.location.reload(); 
+      }}
     >
       Gérer mes consentements
     </button>
