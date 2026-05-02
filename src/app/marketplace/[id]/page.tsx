@@ -34,7 +34,7 @@ export default async function NewspaperDetailPage({ params }: { params: Promise<
               <img
                 src={newspaper.coverImageUrl}
                 alt={newspaper.title}
-                className="w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-cover"
               />
             ) : (
               <div className="flex items-center justify-center h-full text-gray-400">

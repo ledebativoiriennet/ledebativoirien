@@ -39,7 +39,7 @@ export default async function MarketplacePage() {
                     <img
                       src={paper.coverImageUrl}
                       alt={paper.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
                     <div className="flex items-center justify-center h-full bg-gray-100 text-gray-400">
