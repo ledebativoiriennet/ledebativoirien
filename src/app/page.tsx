@@ -29,7 +29,8 @@ export default async function Home() {
     titrologieItems,
     siteSettings,
     quote,
-    faitsDiversArticles
+    faitsDiversArticles,
+    economieArticles
   ] = await Promise.all([
     prisma.article.findMany({
       where: { publishedAt: { not: null } },
@@ -60,7 +61,8 @@ export default async function Home() {
     prisma.titrologie.findMany({ orderBy: { date: 'desc' }, take: 4 }),
     prisma.siteSettings.findUnique({ where: { id: "global" } }),
     prisma.quote.findFirst({ where: { isActive: true } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'faits-divers' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } })
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'faits-divers' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'economie' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } })
   ]);
 
   if (!recentArticles || recentArticles.length === 0) {
@@ -365,6 +367,34 @@ export default async function Home() {
             </div>
           </div>
         </div>
+
+        {/* Economie */}
+        {economieArticles.length > 0 && (
+          <div style={{ marginTop: "2rem" }}>
+            <h2 className="portal-section-title" style={{ display: "flex", justifyContent: "space-between", borderBottom: '2px solid var(--primary)' }}>
+              <span>Économie</span>
+              <Link href="/category/economie" style={{ fontSize: "0.8rem", color: "var(--muted)", textDecoration: "none", fontWeight: "normal" }}>Voir tout</Link>
+            </h2>
+            <div className="grid-responsive-2col" style={{ marginTop: "1rem" }}>
+              {economieArticles.map((article) => {
+                const imgUrl = getArticleImage(article);
+                return (
+                  <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", gap: "0.75rem", backgroundColor: "var(--card-bg)", padding: "0.5rem", borderRadius: "var(--radius)", border: "1px solid var(--border)" }}>
+                    <div style={{ width: "80px", height: "80px", backgroundColor: "var(--muted)", flexShrink: 0, overflow: "hidden", borderRadius: "4px" }}>
+                      {imgUrl ? <img src={imgUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : null}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: "0.65rem", color: "var(--primary)", fontWeight: "bold", textTransform: "uppercase", marginBottom: "0.2rem" }}>
+                        Économie
+                      </div>
+                      <h3 style={{ fontSize: "0.8rem", fontWeight: 700, lineHeight: 1.3 }}>{article.title}</h3>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Faits Divers */}
         {faitsDiversArticles.length > 0 && (
