@@ -3,28 +3,31 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function NewspaperFormClient() {
+export default function NewspaperFormClient({ initialData }: { initialData?: any }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    issueNumber: '',
-    price: '500',
-    isActive: true,
+    title: initialData?.title || '',
+    description: initialData?.description || '',
+    issueNumber: initialData?.issueNumber ? String(initialData.issueNumber) : '',
+    price: initialData?.price ? String(initialData.price) : '500',
+    isActive: initialData?.isActive !== undefined ? initialData.isActive : true,
   });
 
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
+
+  const isEditing = !!initialData;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    if (!formData.title || !formData.price || !pdfFile) {
+    // If creating, PDF is required. If editing, PDF is optional (we keep the old one).
+    if (!formData.title || !formData.price || (!isEditing && !pdfFile)) {
       setError("Le titre, le prix et le fichier PDF sont obligatoires.");
       setLoading(false);
       return;
@@ -39,16 +42,19 @@ export default function NewspaperFormClient() {
       data.append('isActive', String(formData.isActive));
       
       if (coverFile) data.append('coverFile', coverFile);
-      data.append('pdfFile', pdfFile);
+      if (pdfFile) data.append('pdfFile', pdfFile);
 
-      const response = await fetch('/api/admin/marketplace', {
-        method: 'POST',
+      const endpoint = isEditing ? `/api/admin/marketplace/${initialData.id}` : '/api/admin/marketplace';
+      const method = isEditing ? 'PUT' : 'POST';
+
+      const response = await fetch(endpoint, {
+        method,
         body: data,
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Erreur lors de la création");
+        throw new Error(errorData.error || "Erreur lors de l'enregistrement");
       }
 
       router.push('/admin/marketplace');
@@ -148,12 +154,12 @@ export default function NewspaperFormClient() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-medium text-[#888] mb-1">
-            Fichier PDF <span className="text-[#ec1a24]">*</span>
+            Fichier PDF {isEditing ? '(Optionnel si inchangé)' : <span className="text-[#ec1a24]">*</span>}
           </label>
           <input
             type="file"
             accept=".pdf"
-            required
+            required={!isEditing}
             onChange={(e) => setPdfFile(e.target.files?.[0] || null)}
             className="w-full bg-[#111] border border-[#333] rounded p-2 text-white focus:outline-none focus:border-[#ec1a24]"
           />
