@@ -1,27 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { updateArticle } from "@/app/actions/admin";
 import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
 import Link from "next/link";
 
-const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
+const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false }) as any;
 
-const quillModules = {
-  toolbar: [
-    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-    [{ 'font': [] }],
-    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-    [{ 'color': [] }, { 'background': [] }],
-    [{ 'script': 'sub'}, { 'script': 'super' }],
-    [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
-    [{ 'direction': 'rtl' }, { 'align': [] }],
-    ['link', 'image', 'video'],
-    ['clean']
-  ],
-};
+// quillModules are now defined inside the component using useMemo
 
 type Category = { id: string; name: string };
 
@@ -31,6 +19,60 @@ export default function EditArticleForm({ article, categories }: { article: any,
   const [error, setError] = useState("");
   const [content, setContent] = useState(article.content || "");
   const articleCategoryIds = article.categories.map((c: any) => c.id);
+  const quillRef = useRef<any>(null);
+
+  const imageHandler = () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+
+    input.onchange = async () => {
+      const file = input.files ? input.files[0] : null;
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const res = await fetch('/api/admin/upload-image', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        
+        if (data.url) {
+          const quill = quillRef.current.getEditor();
+          const range = quill.getSelection(true);
+          quill.insertEmbed(range.index, 'image', data.url);
+        } else {
+          alert('Erreur: ' + (data.error || 'Upload failed'));
+        }
+      } catch (e) {
+        console.error(e);
+        alert('Upload failed');
+      }
+    };
+  };
+
+  const modules = useMemo(() => ({
+    toolbar: {
+      container: [
+        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+        [{ 'font': [] }],
+        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'script': 'sub'}, { 'script': 'super' }],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
+        [{ 'direction': 'rtl' }, { 'align': [] }],
+        ['link', 'image', 'video'],
+        ['clean']
+      ],
+      handlers: {
+        image: imageHandler
+      }
+    }
+  }), []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -138,11 +180,13 @@ export default function EditArticleForm({ article, categories }: { article: any,
         <div>
           <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Contenu HTML de l'article</label>
           <div style={{ backgroundColor: 'white', borderRadius: '4px' }}>
+            {/* @ts-ignore */}
             <ReactQuill 
+              ref={quillRef}
               theme="snow" 
               value={content} 
               onChange={setContent} 
-              modules={quillModules}
+              modules={modules}
               style={{ height: '400px', marginBottom: '3rem' }}
             />
           </div>
