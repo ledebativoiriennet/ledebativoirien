@@ -1,5 +1,17 @@
 import { prisma } from "@/lib/prisma";
 
+function getFlagEmoji(countryCode: string) {
+  if (!countryCode) return "🌍";
+  // If it's already an emoji or not a 2-letter code, return as is
+  if (countryCode.length !== 2 || /[\u0080-\uFFFF]/.test(countryCode)) return countryCode;
+  
+  const codePoints = countryCode
+    .toUpperCase()
+    .split('')
+    .map(char => 127397 + char.charCodeAt(0));
+  return String.fromCodePoint(...codePoints);
+}
+
 export default async function SportsModule() {
   // @ts-ignore
   const matches = await prisma.footballMatch.findMany({
@@ -16,11 +28,11 @@ export default async function SportsModule() {
   if (!matches || matches.length === 0) return null;
 
   return (
-    <div style={{ backgroundColor: '#0f172a', padding: '1.5rem', marginBottom: '2rem', borderRadius: 'var(--radius)', color: 'white', overflow: 'hidden', position: 'relative' }}>
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: 'linear-gradient(90deg, #10b981, #f59e0b, #3b82f6)' }}></div>
+    <div style={{ backgroundColor: '#dc2626', padding: '1.5rem', marginBottom: '2rem', borderRadius: 'var(--radius)', color: 'white', overflow: 'hidden', position: 'relative' }}>
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: 'linear-gradient(90deg, #fef08a, #f59e0b, #fbbf24)' }}></div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
         <h2 style={{ fontSize: '1.2rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1px', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span>⚽</span> Football • Compétitions
+          <span>⚽</span> Mondial 2026
         </h2>
       </div>
       
@@ -36,18 +48,18 @@ export default async function SportsModule() {
             
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
-                <span style={{ fontSize: '2rem', lineHeight: 1 }}>{match.team1Flag || "🌍"}</span>
+                <span style={{ fontSize: '2.5rem', lineHeight: 1 }}>{getFlagEmoji(match.team1Flag || "")}</span>
                 <span style={{ fontWeight: 'bold', fontSize: '0.9rem', textAlign: 'center' }}>{match.team1}</span>
               </div>
               
               <div style={{ padding: '0 1rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <span style={{ fontSize: '1.8rem', fontWeight: 900, fontFamily: 'monospace', color: match.status === 'LIVE' ? '#f59e0b' : 'white' }}>
+                <span style={{ fontSize: '1.8rem', fontWeight: 900, fontFamily: 'monospace', color: match.status === 'LIVE' ? '#fef08a' : 'white' }}>
                   {match.score || "VS"}
                 </span>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
-                <span style={{ fontSize: '2rem', lineHeight: 1 }}>{match.team2Flag || "🌍"}</span>
+                <span style={{ fontSize: '2.5rem', lineHeight: 1 }}>{getFlagEmoji(match.team2Flag || "")}</span>
                 <span style={{ fontWeight: 'bold', fontSize: '0.9rem', textAlign: 'center' }}>{match.team2}</span>
               </div>
             </div>
