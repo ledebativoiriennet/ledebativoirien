@@ -176,3 +176,42 @@ export async function updateArticle(articleId: string, formData: FormData) {
     return { success: false, error: "Erreur lors de la modification de l'article." };
   }
 }
+
+export async function unpublishArticle(articleId: string) {
+  const session = await getServerSession(authOptions);
+  const role = (session?.user as any)?.role;
+
+  if (role !== "ADMIN" && role !== "EDITOR") {
+    return { success: false, error: "Accès refusé. Seul un Éditeur ou Administrateur peut dépublier un article." };
+  }
+
+  try {
+    await prisma.article.update({
+      where: { id: articleId },
+      data: { publishedAt: null }
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Erreur unpublishArticle:", error);
+    return { success: false, error: "Erreur serveur lors de la dépublication." };
+  }
+}
+
+export async function deleteArticle(articleId: string) {
+  const session = await getServerSession(authOptions);
+  const role = (session?.user as any)?.role;
+
+  if (role !== "ADMIN" && role !== "EDITOR") {
+    return { success: false, error: "Accès refusé. Seul un Éditeur ou Administrateur peut supprimer un article." };
+  }
+
+  try {
+    await prisma.article.delete({
+      where: { id: articleId }
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Erreur deleteArticle:", error);
+    return { success: false, error: "Erreur serveur lors de la suppression." };
+  }
+}

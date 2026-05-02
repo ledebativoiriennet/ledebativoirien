@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import ApproveButton from "./ApproveButton";
+import ArticleActionButtons from "./ArticleActionButtons";
 import TogglePremiumButton from "./TogglePremiumButton";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -87,12 +87,15 @@ export default async function AdminArticles({ searchParams }: { searchParams: Pr
                 </td>
                 <td style={{ padding: '1rem', fontSize: '0.85rem', color: '#64748b' }}>
                   {article.publishedAt ? (
-                    new Date(article.publishedAt).toLocaleDateString('fr-FR')
+                    <div>
+                      {new Date(article.publishedAt).toLocaleDateString('fr-FR')}
+                      {canApprove && <ArticleActionButtons articleId={article.id} isPublished={true} />}
+                    </div>
                   ) : (
-                    <>
+                    <div>
                       <span style={{ color: '#c2410c', fontWeight: 'bold' }}>Brouillon</span>
-                      {canApprove && <ApproveButton articleId={article.id} />}
-                    </>
+                      {canApprove && <ArticleActionButtons articleId={article.id} isPublished={false} />}
+                    </div>
                   )}
                 </td>
               </tr>
