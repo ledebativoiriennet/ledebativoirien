@@ -194,7 +194,7 @@ export default async function Home() {
                   </li>
                 ))}
               </ul>
-              <Link href="#" style={{ display: "block", textAlign: "center", fontSize: "0.8rem", padding: "0.5rem", backgroundColor: "#f8fafc", color: "var(--primary)", fontWeight: "bold", borderTop: "1px solid var(--border)" }}>Toutes les offres</Link>
+              <Link href="/emplois" style={{ display: "block", textAlign: "center", fontSize: "0.8rem", padding: "0.5rem", backgroundColor: "#f8fafc", color: "var(--primary)", fontWeight: "bold", borderTop: "1px solid var(--border)" }}>Toutes les offres</Link>
             </div>
           </div>
         )}
@@ -485,7 +485,7 @@ export default async function Home() {
                 </li>
               ))}
             </ul>
-            <Link href="#" style={{ display: "block", textAlign: "center", fontSize: "0.8rem", color: "var(--primary)", fontWeight: "bold", marginTop: "1rem" }}>Voir tous les avis</Link>
+            <Link href="/necrologie" style={{ display: "block", textAlign: "center", fontSize: "0.8rem", color: "var(--primary)", fontWeight: "bold", marginTop: "1rem" }}>Voir tous les avis</Link>
           </div>
         </div>
 
@@ -508,7 +508,7 @@ export default async function Home() {
                   </li>
                 ))}
               </ul>
-              <Link href="#" style={{ display: "block", textAlign: "center", fontSize: "0.8rem", color: "var(--primary)", fontWeight: "bold", marginTop: "1rem" }}>Toutes les offres</Link>
+              <Link href="/emplois" style={{ display: "block", textAlign: "center", fontSize: "0.8rem", color: "var(--primary)", fontWeight: "bold", marginTop: "1rem" }}>Toutes les offres</Link>
             </div>
           </div>
         )}
