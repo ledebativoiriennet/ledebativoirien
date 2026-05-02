@@ -12,6 +12,7 @@ import MainNavigation from "@/components/MainNavigation";
 import { getLiveMarketData } from "@/lib/marketData";
 import { PushNotificationPrompt, ConsentManagerButton } from "@/components/PushNotificationPrompt";
 import { CookieConsentPopup } from "@/components/CookieConsentPopup";
+import PopupAd from "@/components/PopupAd";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -298,6 +299,7 @@ export default async function RootLayout({
             © {new Date().getFullYear()} Le Débat Ivoirien. Tous droits réservés.
           </div>
         </footer>
+        <PopupAd />
         </Providers>
       </body>
     </html>
