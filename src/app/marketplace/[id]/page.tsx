@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import MarketplaceCheckoutClient from './MarketplaceCheckoutClient';
 
-export default async function NewspaperDetailPage({ params }: { params: { id: string } }) {
+export default async function NewspaperDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   
   const newspaper = await prisma.digitalNewspaper.findUnique({

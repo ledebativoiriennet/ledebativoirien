@@ -5,7 +5,7 @@ import Link from 'next/link';
 export default async function MarketplaceSuccessPage({
   searchParams,
 }: {
-  searchParams: { token?: string; transaction_id?: string };
+  searchParams: Promise<{ token?: string; transaction_id?: string }>;
 }) {
   const { token, transaction_id } = await searchParams;
 

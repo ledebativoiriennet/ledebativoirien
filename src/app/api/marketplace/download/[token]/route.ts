@@ -5,7 +5,7 @@ import path from 'path';
 
 export async function GET(
   request: Request,
-  { params }: { params: { token: string } }
+  { params }: { params: Promise<{ token: string }> }
 ) {
   try {
     const { token } = await params;
