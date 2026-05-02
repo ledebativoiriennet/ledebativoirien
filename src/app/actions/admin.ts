@@ -44,7 +44,9 @@ export async function publishArticle(formData: FormData) {
       const bytes = await imageFile.arrayBuffer();
       const buffer = Buffer.from(bytes);
       const filename = `${Date.now()}-${imageFile.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-      const path = join(process.cwd(), 'public', 'uploads', filename);
+      const uploadDir = join(process.cwd(), 'public', 'uploads');
+      await require('fs/promises').mkdir(uploadDir, { recursive: true }).catch(() => {});
+      const path = join(uploadDir, filename);
       await writeFile(path, buffer);
       imageUrl = `/uploads/${filename}`;
     }
@@ -157,7 +159,9 @@ export async function updateArticle(articleId: string, formData: FormData) {
     const bytes = await imageFile.arrayBuffer();
     const buffer = Buffer.from(bytes);
     const filename = `${Date.now()}-${imageFile.name.replace(/[^a-zA-Z0-9.-]/g, "")}`;
-    const filePath = join(process.cwd(), "public/uploads", filename);
+    const uploadDir = join(process.cwd(), 'public', 'uploads');
+    await require('fs/promises').mkdir(uploadDir, { recursive: true }).catch(() => {});
+    const filePath = join(uploadDir, filename);
     await writeFile(filePath, buffer);
     imageUrl = `/uploads/${filename}`;
   }
