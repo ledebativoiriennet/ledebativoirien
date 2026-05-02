@@ -127,3 +127,52 @@ export async function toggleArticlePremiumStatus(articleId: string, currentStatu
     return { success: false, error: "Erreur serveur lors de la modification du statut Premium." };
   }
 }
+
+export async function updateArticle(articleId: string, formData: FormData) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) return { success: false, error: "Non autorisé" };
+
+  const title = formData.get("title") as string;
+  const excerpt = formData.get("excerpt") as string;
+  const content = formData.get("content") as string;
+  const isPremium = formData.get("isPremium") === "on";
+  const categoryIds = formData.getAll("categories") as string[];
+
+  if (!title || !content) {
+    return { success: false, error: "Le titre et le contenu sont obligatoires." };
+  }
+
+  let imageUrl = formData.get("existingImageUrl") as string;
+
+  const imageFile = formData.get("image") as File | null;
+  if (imageFile && imageFile.size > 0) {
+    const bytes = await imageFile.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    const filename = `${Date.now()}-${imageFile.name.replace(/[^a-zA-Z0-9.-]/g, "")}`;
+    const filePath = join(process.cwd(), "public/uploads", filename);
+    await writeFile(filePath, buffer);
+    imageUrl = `/uploads/${filename}`;
+  }
+
+  try {
+    await prisma.article.update({
+      where: { id: articleId },
+      data: {
+        title,
+        excerpt,
+        content,
+        imageUrl: imageUrl || null,
+        isPremium,
+        categories: {
+          set: [],
+          connect: categoryIds.map(id => ({ id }))
+        }
+      }
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Erreur updateArticle:", error);
+    return { success: false, error: "Erreur lors de la modification de l'article." };
+  }
+}

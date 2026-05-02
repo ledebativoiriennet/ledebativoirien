@@ -53,9 +53,14 @@ export default async function AdminArticles({ searchParams }: { searchParams: Pr
             {articles.map(article => (
               <tr key={article.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
                 <td style={{ padding: '1rem' }}>
-                  <Link href={`/article/${article.slug}`} target="_blank" style={{ fontWeight: 'bold', color: '#0f172a', textDecoration: 'none' }}>
+                  <Link href={`/admin/articles/${article.id}/edit`} style={{ fontWeight: 'bold', color: '#0f172a', textDecoration: 'none', display: 'block' }}>
                     {article.title}
                   </Link>
+                  <div style={{ marginTop: '0.5rem' }}>
+                    <Link href={`/article/${article.slug}`} target="_blank" style={{ fontSize: '0.75rem', backgroundColor: '#e2e8f0', color: '#334155', padding: '0.2rem 0.5rem', borderRadius: '4px', textDecoration: 'none', fontWeight: 'bold', display: 'inline-block' }}>
+                      👁️ Visualiser
+                    </Link>
+                  </div>
                 </td>
                 <td style={{ padding: '1rem' }}>
                   {!article.publishedAt && (
