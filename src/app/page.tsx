@@ -84,36 +84,6 @@ export default async function Home() {
     <div className="portal-layout">
       {/* LEFT COLUMN: Fil Info Continu & Widgets */}
       <aside className="portal-col-left">
-
-        {/* Dépêches / Flash Infos */}
-        {flashNewsItems && flashNewsItems.length > 0 && (
-          <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "1.5rem" }}>
-            <h2 className="portal-section-title" style={{ backgroundColor: "#ef4444", borderColor: "#b91c1c" }}>Flash Infos / Dépêches</h2>
-            <div style={{ padding: "0" }}>
-              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                {flashNewsItems.map((news) => (
-                  <li key={news.id} style={{ borderBottom: "1px solid var(--border)", padding: "0.75rem 1rem" }}>
-                    <div style={{ display: "flex", gap: "0.5rem" }}>
-                      <span style={{ color: "#ef4444", fontWeight: "bold" }}>●</span>
-                      <div>
-                        {news.link ? (
-                          <Link href={news.link} style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--foreground)", lineHeight: 1.4 }}>{news.content}</Link>
-                        ) : (
-                          <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--foreground)", lineHeight: 1.4 }}>{news.content}</div>
-                        )}
-                        <div style={{ fontSize: "0.7rem", color: "var(--muted)", marginTop: "0.25rem" }}>
-                          {new Date(news.createdAt).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-              <Link href="/depeches" style={{ display: "block", textAlign: "center", fontSize: "0.8rem", padding: "0.5rem", backgroundColor: "#f8fafc", color: "var(--primary)", fontWeight: "bold", borderTop: "1px solid var(--border)" }}>Toutes les dépêches</Link>
-            </div>
-          </div>
-        )}
-
         <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "1.5rem" }}>
           <h2 className="portal-section-title">En Continu</h2>
           <div className="flash-info-container" style={{ padding: "0 1rem 1rem 1rem" }}>
