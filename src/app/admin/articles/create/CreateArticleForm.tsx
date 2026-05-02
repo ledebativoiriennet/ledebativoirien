@@ -40,6 +40,7 @@ export default function CreateArticleForm({ categories }: { categories: Category
       const result = await publishArticle(formData);
 
       if (result.success) {
+        alert("Succès ! L'article a été enregistré et publié.");
         router.push("/admin/articles");
         router.refresh();
       } else {

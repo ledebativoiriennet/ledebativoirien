@@ -42,6 +42,7 @@ export default function EditArticleForm({ article, categories }: { article: any,
       const result = await updateArticle(article.id, formData);
 
       if (result.success) {
+        alert("Succès ! L'article a été mis à jour.");
         router.push("/admin/articles");
         router.refresh();
       } else {

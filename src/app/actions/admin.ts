@@ -72,9 +72,11 @@ export async function publishArticle(formData: FormData) {
       }
     });
 
-    // Envoyer la notification si publié immédiatement
+    // Envoyer la notification de manière asynchrone pour ne pas bloquer Next.js
     if (role !== "CONTRIBUTOR") {
-      sendNewArticleNotification(newArticle.id).catch(console.error);
+      setTimeout(() => {
+        sendNewArticleNotification(newArticle.id).catch(console.error);
+      }, 500);
     }
 
     return { success: true };
@@ -98,8 +100,10 @@ export async function approveArticle(articleId: string) {
       data: { publishedAt: new Date() }
     });
 
-    // Envoyer la notification
-    sendNewArticleNotification(articleId).catch(console.error);
+    // Envoyer la notification de manière asynchrone pour ne pas bloquer Next.js
+    setTimeout(() => {
+      sendNewArticleNotification(articleId).catch(console.error);
+    }, 500);
 
     return { success: true };
   } catch (error) {
