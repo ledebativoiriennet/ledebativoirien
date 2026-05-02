@@ -17,19 +17,19 @@ export default async function NewspaperDetailPage({ params }: { params: Promise<
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-8">
-          <Link href="/marketplace" className="text-red-600 hover:text-red-800 flex items-center space-x-2 font-medium">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--background)', padding: '3rem 1rem' }}>
+      <div className="container" style={{ maxWidth: '800px', margin: '0 auto' }}>
+        <div style={{ marginBottom: '2rem' }}>
+          <Link href="/marketplace" style={{ color: 'var(--primary)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
             </svg>
             <span>Retour à la boutique</span>
           </Link>
         </div>
 
-        <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 flex flex-col md:flex-row">
-          <div className="md:w-1/2 bg-gray-100 relative min-h-[400px]" style={{ minHeight: '400px' }}>
+        <div className="article-card" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          <div style={{ position: 'relative', width: '100%', minHeight: '400px', backgroundColor: 'var(--border)' }}>
             {newspaper.coverImageUrl ? (
               <img
                 src={newspaper.coverImageUrl}
@@ -37,24 +37,24 @@ export default async function NewspaperDetailPage({ params }: { params: Promise<
                 style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
               />
             ) : (
-              <div className="flex items-center justify-center h-full text-gray-400">
-                <span className="text-lg">Aucune couverture disponible</span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--muted)' }}>
+                <span style={{ fontSize: '1.125rem' }}>Aucune couverture disponible</span>
               </div>
             )}
-            <div className="absolute top-4 left-4 bg-white px-3 py-1 rounded-full text-xs font-bold text-gray-800 shadow">
+            <div style={{ position: 'absolute', top: '1rem', left: '1rem', backgroundColor: 'var(--card-bg)', padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--foreground)', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
               PDF Numérique
             </div>
           </div>
           
-          <div className="md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
-            <div className="text-sm font-semibold tracking-wide text-red-600 uppercase mb-2">
+          <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--primary)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
               N° {newspaper.issueNumber || '-'} • Paru le {new Date(newspaper.publishedAt).toLocaleDateString('fr-FR')}
             </div>
-            <h1 className="text-3xl font-extrabold text-gray-900 mb-4 leading-tight">
+            <h1 style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--foreground)', marginBottom: '1rem', lineHeight: 1.2 }}>
               {newspaper.title}
             </h1>
             
-            <div className="prose prose-sm text-gray-600 mb-8">
+            <div className="article-content" style={{ color: 'var(--muted)', marginBottom: '2rem' }}>
               {newspaper.description ? (
                 <p>{newspaper.description}</p>
               ) : (
@@ -62,10 +62,10 @@ export default async function NewspaperDetailPage({ params }: { params: Promise<
               )}
             </div>
 
-            <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100 mt-auto">
-              <div className="flex justify-between items-center border-b border-gray-200 pb-4 mb-4">
-                <span className="text-gray-600 font-medium">Prix du PDF</span>
-                <span className="text-2xl font-bold text-gray-900">{newspaper.price} FCFA</span>
+            <div style={{ backgroundColor: 'var(--background)', borderRadius: 'var(--radius)', padding: '1.5rem', border: '1px solid var(--border)', marginTop: 'auto' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                <span style={{ color: 'var(--muted)', fontWeight: 500 }}>Prix du PDF</span>
+                <span style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--foreground)' }}>{newspaper.price} FCFA</span>
               </div>
               
               <MarketplaceCheckoutClient 
