@@ -27,22 +27,27 @@ export async function createAd(formData: FormData) {
     return { error: "Erreur lors du téléchargement de l'image" };
   }
 
-  // @ts-ignore - Ignore Prisma Type error in case generate failed due to lock
-  await prisma.advertisement.create({
-    data: {
-      title,
-      company,
-      imageUrl,
-      linkUrl: linkUrl || null,
-      slot,
-      status: "PENDING",
-      startDate: startDateStr ? new Date(`${startDateStr}T00:00:00Z`) : null,
-      endDate: endDateStr ? new Date(`${endDateStr}T23:59:59Z`) : null,
-    }
-  });
-  revalidatePath("/admin/publicites");
-  revalidatePath("/");
-  return { success: true };
+  try {
+    // @ts-ignore - Ignore Prisma Type error in case generate failed due to lock
+    await prisma.advertisement.create({
+      data: {
+        title,
+        company,
+        imageUrl,
+        linkUrl: linkUrl || null,
+        slot,
+        status: "PENDING",
+        startDate: startDateStr ? new Date(`${startDateStr}T00:00:00Z`) : null,
+        endDate: endDateStr ? new Date(`${endDateStr}T23:59:59Z`) : null,
+      }
+    });
+    revalidatePath("/admin/publicites");
+    revalidatePath("/");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Prisma error during ad creation:", error);
+    return { error: error.message || "Erreur de base de données" };
+  }
 }
 
 export async function updateAdStatus(id: string, status: string) {

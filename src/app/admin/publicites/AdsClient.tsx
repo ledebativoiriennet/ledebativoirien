@@ -19,16 +19,22 @@ export default function AdsClient({ initialAds }: { initialAds: any[] }) {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
-    const formData = new FormData(e.currentTarget);
-    const res = await createAd(formData);
-    
-    if (res?.error) {
-      alert("Erreur: " + res.error);
-    } else {
-      alert("Publicité ajoutée avec succès !");
-      (e.target as HTMLFormElement).reset();
+    try {
+      const formData = new FormData(e.currentTarget);
+      const res = await createAd(formData);
+      
+      if (res?.error) {
+        alert("Erreur: " + res.error);
+      } else {
+        alert("Publicité ajoutée avec succès !");
+        (e.target as HTMLFormElement).reset();
+      }
+    } catch (err: any) {
+      console.error(err);
+      alert("Erreur réseau ou fichier trop lourd (1MB max par défaut).");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   return (
