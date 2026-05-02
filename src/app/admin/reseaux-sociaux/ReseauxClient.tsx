@@ -12,9 +12,15 @@ export default function ReseauxClient({ settings }: { settings: any }) {
     e.preventDefault();
     setLoading(true);
     const formData = new FormData(e.currentTarget);
-    const facebookUrl = formData.get("facebookUrl") as string;
+    const data = {
+      facebookUrl: formData.get("facebookUrl") as string,
+      twitterUrl: formData.get("twitterUrl") as string,
+      instagramUrl: formData.get("instagramUrl") as string,
+      linkedinUrl: formData.get("linkedinUrl") as string,
+      youtubeUrl: formData.get("youtubeUrl") as string,
+    };
 
-    const res = await updateSiteSettings(facebookUrl);
+    const res = await updateSiteSettings(data);
     if (res.success) {
       alert("Paramètres enregistrés !");
       router.refresh();
@@ -29,19 +35,70 @@ export default function ReseauxClient({ settings }: { settings: any }) {
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         <div>
           <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#1877F2' }}>
-            Lien de la page Facebook
+            Facebook
           </label>
           <input 
             name="facebookUrl" 
             type="url" 
             defaultValue={settings?.facebookUrl || ""}
             style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '4px' }} 
-            placeholder="Ex: https://facebook.com/ledebativoirien" 
+            placeholder="Ex: https://facebook.com/..." 
           />
-          <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.5rem' }}>Ce lien sera utilisé dans le widget "Rejoignez-nous sur Facebook" de la page d'accueil.</p>
+        </div>
+
+        <div>
+          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#000000' }}>
+            X (Twitter)
+          </label>
+          <input 
+            name="twitterUrl" 
+            type="url" 
+            defaultValue={settings?.twitterUrl || ""}
+            style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '4px' }} 
+            placeholder="Ex: https://x.com/..." 
+          />
+        </div>
+
+        <div>
+          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#E1306C' }}>
+            Instagram
+          </label>
+          <input 
+            name="instagramUrl" 
+            type="url" 
+            defaultValue={settings?.instagramUrl || ""}
+            style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '4px' }} 
+            placeholder="Ex: https://instagram.com/..." 
+          />
+        </div>
+
+        <div>
+          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#0A66C2' }}>
+            LinkedIn
+          </label>
+          <input 
+            name="linkedinUrl" 
+            type="url" 
+            defaultValue={settings?.linkedinUrl || ""}
+            style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '4px' }} 
+            placeholder="Ex: https://linkedin.com/..." 
+          />
+        </div>
+
+        <div>
+          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#FF0000' }}>
+            YouTube
+          </label>
+          <input 
+            name="youtubeUrl" 
+            type="url" 
+            defaultValue={settings?.youtubeUrl || ""}
+            style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '4px' }} 
+            placeholder="Ex: https://youtube.com/..." 
+          />
         </div>
         
-        <button type="submit" disabled={loading} style={{ alignSelf: 'flex-start', padding: '0.75rem 2rem', backgroundColor: '#1877F2', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}>
+        <button type="submit" disabled={loading} style={{ alignSelf: 'flex-start', padding: '0.75rem 2rem', backgroundColor: '#0f172a', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}>
           {loading ? "..." : "Enregistrer les modifications"}
         </button>
       </form>

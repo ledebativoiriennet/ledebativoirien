@@ -284,9 +284,13 @@ model Titrologie {
 }
 
 model SiteSettings {
-  id          String   @id @default("global")
-  facebookUrl String?
-  updatedAt   DateTime @updatedAt
+  id           String   @id @default("global")
+  facebookUrl  String?
+  twitterUrl   String?
+  instagramUrl String?
+  linkedinUrl  String?
+  youtubeUrl   String?
+  updatedAt    DateTime @updatedAt
 }
 
 model Quote {

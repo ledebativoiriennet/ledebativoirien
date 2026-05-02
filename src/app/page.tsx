@@ -221,6 +221,45 @@ export default async function Home() {
             </div>
           </div>
         )}
+
+        {/* Nous Suivre */}
+        {siteSettings && (
+          <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginTop: "1.5rem" }}>
+            <h2 className="portal-section-title dark" style={{ backgroundColor: "#0f172a", borderColor: "#334155" }}>Nous Suivre</h2>
+            <div style={{ padding: "1rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+              {siteSettings.facebookUrl && (
+                <a href={siteSettings.facebookUrl} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.75rem", backgroundColor: "#1877F2", color: "white", borderRadius: "8px", fontWeight: "bold", textDecoration: "none" }}>
+                  <span style={{ fontSize: "1.2rem", background: "white", color: "#1877F2", width: "24px", height: "24px", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%" }}>f</span>
+                  Rejoignez-nous sur Facebook
+                </a>
+              )}
+              {siteSettings.twitterUrl && (
+                <a href={siteSettings.twitterUrl} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.75rem", backgroundColor: "#000000", color: "white", borderRadius: "8px", fontWeight: "bold", textDecoration: "none" }}>
+                  <span style={{ fontSize: "1.2rem", background: "white", color: "black", width: "24px", height: "24px", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%" }}>𝕏</span>
+                  Suivez-nous sur X
+                </a>
+              )}
+              {siteSettings.instagramUrl && (
+                <a href={siteSettings.instagramUrl} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.75rem", background: "linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)", color: "white", borderRadius: "8px", fontWeight: "bold", textDecoration: "none" }}>
+                  <span style={{ fontSize: "1.2rem", background: "white", color: "#dc2743", width: "24px", height: "24px", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%" }}>📷</span>
+                  Suivez-nous sur Instagram
+                </a>
+              )}
+              {siteSettings.linkedinUrl && (
+                <a href={siteSettings.linkedinUrl} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.75rem", backgroundColor: "#0A66C2", color: "white", borderRadius: "8px", fontWeight: "bold", textDecoration: "none" }}>
+                  <span style={{ fontSize: "1.2rem", background: "white", color: "#0A66C2", width: "24px", height: "24px", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%" }}>in</span>
+                  Suivez-nous sur LinkedIn
+                </a>
+              )}
+              {siteSettings.youtubeUrl && (
+                <a href={siteSettings.youtubeUrl} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.75rem", backgroundColor: "#FF0000", color: "white", borderRadius: "8px", fontWeight: "bold", textDecoration: "none" }}>
+                  <span style={{ fontSize: "1.2rem", background: "white", color: "#FF0000", width: "24px", height: "24px", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%" }}>▶</span>
+                  Abonnez-vous sur YouTube
+                </a>
+              )}
+            </div>
+          </div>
+        )}
       </aside>
 
       {/* CENTER COLUMN: A la Une & Categories */}

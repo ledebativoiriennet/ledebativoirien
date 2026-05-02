@@ -229,14 +229,13 @@ export async function deleteJobOffer(id: string) {
   return { success: true };
 }
 
-// --- SITE SETTINGS (FACEBOOK) ---
-export async function updateSiteSettings(facebookUrl: string) {
+// --- SITE SETTINGS (SOCIALS) ---
+export async function updateSiteSettings(data: { facebookUrl?: string, twitterUrl?: string, instagramUrl?: string, linkedinUrl?: string, youtubeUrl?: string }) {
   await checkAdminOrEditor();
   await prisma.siteSettings.upsert({
     where: { id: "global" },
-    update: { facebookUrl },
-    create: { id: "global", facebookUrl }
+    update: { ...data },
+    create: { id: "global", ...data }
   });
   return { success: true };
 }
-
