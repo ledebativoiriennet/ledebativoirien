@@ -6,6 +6,7 @@ import { getArticleImage } from "@/lib/utils";
 import { AdSlot } from "@/components/AdSlot";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import SocialShareButtons from "@/components/SocialShareButtons";
 import { recordArticleRead } from "@/app/actions/user-stats";
 import { LikeButton } from "@/components/LikeButton";
 import AdBanner from "@/components/AdBanner";
@@ -183,6 +184,8 @@ export default async function ArticlePage({ params }: Props) {
             <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>⏱️ 5 min de lecture</span>
           </div>
 
+          <SocialShareButtons title={article.title} layout="horizontal" />
+
           <AdBanner slot="ARTICLE_TOP" />
 
           {/* Image de couverture (Nouveaux articles) */}
@@ -240,6 +243,8 @@ export default async function ArticlePage({ params }: Props) {
             </div>
             <LikeButton articleId={article.id} initialLiked={initialLiked} initialCount={initialLikeCount} />
           </div>
+          
+          <SocialShareButtons title={article.title} layout="horizontal" />
         </article>
 
         <AdBanner slot="ARTICLE_BOTTOM" />
@@ -342,12 +347,7 @@ export default async function ArticlePage({ params }: Props) {
         {/* Partage */}
         <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", padding: "1.5rem" }}>
           <h4 style={{ fontSize: "0.95rem", fontWeight: 800, marginBottom: "1rem", borderBottom: "2px solid var(--primary)", paddingBottom: "0.5rem" }}>Partager l'article</h4>
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-            <button style={{ padding: "0.75rem", backgroundColor: "#1877F2", color: "white", border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: "bold" }}>Facebook</button>
-            <button style={{ padding: "0.75rem", backgroundColor: "#000000", color: "white", border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: "bold" }}>X (Twitter)</button>
-            <button style={{ padding: "0.75rem", backgroundColor: "#25D366", color: "white", border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: "bold" }}>WhatsApp</button>
-            <button style={{ padding: "0.75rem", backgroundColor: "#0A66C2", color: "white", border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: "bold" }}>LinkedIn</button>
-          </div>
+          <SocialShareButtons title={article.title} layout="vertical" />
         </div>
       </aside>
     </div>
