@@ -130,7 +130,11 @@ export async function toggleArticlePremiumStatus(articleId: string, currentStatu
 
 export async function updateArticle(articleId: string, formData: FormData) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.email) return { success: false, error: "Non autorisé" };
+  const role = (session?.user as any)?.role;
+
+  if (role !== "ADMIN" && role !== "EDITOR") {
+    return { success: false, error: "Accès refusé. Seul un Éditeur ou Administrateur peut modifier un article." };
+  }
 
   const title = formData.get("title") as string;
   const excerpt = formData.get("excerpt") as string;

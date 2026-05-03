@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { saveUpload } from "@/lib/upload";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { checkAdminOrEditor } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    const role = (session?.user as any)?.role;
-    if (role !== "ADMIN" && role !== "EDITOR") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    try {
+      await checkAdminOrEditor();
+    } catch (e: any) {
+      return NextResponse.json({ error: e.message }, { status: 403 });
     }
 
     const formData = await req.formData();

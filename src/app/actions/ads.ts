@@ -2,12 +2,16 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-
-import { writeFile } from "fs/promises";
-import { join } from "path";
 import { saveUpload } from "@/lib/upload";
+import { checkAdminOrEditor } from "@/lib/auth";
 
 export async function createAd(formData: FormData) {
+  try {
+    await checkAdminOrEditor();
+  } catch (e: any) {
+    return { error: e.message };
+  }
+
   const title = formData.get("title") as string;
   const company = formData.get("company") as string;
   const linkUrl = formData.get("linkUrl") as string;
@@ -28,7 +32,6 @@ export async function createAd(formData: FormData) {
   }
 
   try {
-    // @ts-ignore - Ignore Prisma Type error in case generate failed due to lock
     await prisma.advertisement.create({
       data: {
         title,
@@ -46,12 +49,17 @@ export async function createAd(formData: FormData) {
     return { success: true };
   } catch (error: any) {
     console.error("Prisma error during ad creation:", error);
-    return { error: error.message || "Erreur de base de données" };
+    return { error: "Erreur de base de données" };
   }
 }
 
 export async function updateAdStatus(id: string, status: string) {
-  // @ts-ignore
+  try {
+    await checkAdminOrEditor();
+  } catch (e) {
+    return { error: "Non autorisé" };
+  }
+
   await prisma.advertisement.update({
     where: { id },
     data: { status }
@@ -61,7 +69,12 @@ export async function updateAdStatus(id: string, status: string) {
 }
 
 export async function deleteAd(id: string) {
-  // @ts-ignore
+  try {
+    await checkAdminOrEditor();
+  } catch (e) {
+    return { error: "Non autorisé" };
+  }
+
   await prisma.advertisement.delete({
     where: { id }
   });
@@ -70,7 +83,6 @@ export async function deleteAd(id: string) {
 }
 
 export async function incrementAdClick(id: string) {
-  // @ts-ignore
   await prisma.advertisement.update({
     where: { id },
     data: { clicks: { increment: 1 } }

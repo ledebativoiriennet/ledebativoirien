@@ -42,12 +42,13 @@ export async function GET(
     
     // Check if it's the new format (/api/media/...)
     if (pdfUrl.startsWith('/api/media/')) {
-      const filename = pdfUrl.replace('/api/media/', '');
+      const filename = path.basename(pdfUrl.replace('/api/media/', ''));
       filePath = path.join(UPLOAD_DIR, filename);
     } 
     // Fallback to old format (/uploads/...)
     else {
-      filePath = path.join(process.cwd(), 'public', pdfUrl);
+      const filename = path.basename(pdfUrl);
+      filePath = path.join(process.cwd(), 'public', 'uploads', filename);
     }
     
     if (!fs.existsSync(filePath)) {

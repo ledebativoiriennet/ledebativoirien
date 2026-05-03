@@ -1,4 +1,4 @@
-import { NextAuthOptions } from "next-auth";
+import { NextAuthOptions, getServerSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
@@ -71,3 +71,28 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET || "secret_local_dev_12345",
 };
+
+/**
+ * Helper pour vérifier si l'utilisateur est Admin ou Éditeur.
+ * À utiliser dans les Server Actions ou les API Routes.
+ */
+export async function checkAdminOrEditor() {
+  const session = await getServerSession(authOptions);
+  const role = (session?.user as any)?.role;
+  if (role !== "ADMIN" && role !== "EDITOR") {
+    throw new Error("Non autorisé. Vous devez être Administrateur ou Éditeur.");
+  }
+  return session;
+}
+
+/**
+ * Helper pour vérifier si l'utilisateur est Admin.
+ */
+export async function checkAdmin() {
+  const session = await getServerSession(authOptions);
+  const role = (session?.user as any)?.role;
+  if (role !== "ADMIN") {
+    throw new Error("Non autorisé. Vous devez être Administrateur.");
+  }
+  return session;
+}

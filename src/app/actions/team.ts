@@ -1,28 +1,17 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
-
-// Vérifie si l'utilisateur appelant est bien un ADMIN
-async function verifyAdmin() {
-  const session = await getServerSession(authOptions);
-  if (!session || !session.user || !session.user.email) return false;
-
-  const dbUser = await prisma.user.findUnique({
-    where: { email: session.user.email },
-    select: { role: true }
-  });
-
-  return dbUser?.role === "ADMIN";
-}
+import { checkAdmin } from "@/lib/auth";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export async function manageTeamMember(formData: FormData) {
-  const isAdmin = await verifyAdmin();
-  if (!isAdmin) {
-    return { success: false, error: "Accès refusé. Seul un Administrateur peut effectuer cette action." };
+  try {
+    await checkAdmin();
+  } catch (e: any) {
+    return { success: false, error: e.message };
   }
 
   const email = formData.get("email") as string;
@@ -79,9 +68,10 @@ export async function manageTeamMember(formData: FormData) {
 }
 
 export async function revokeAccess(userId: string) {
-  const isAdmin = await verifyAdmin();
-  if (!isAdmin) {
-    return { success: false, error: "Accès refusé." };
+  try {
+    await checkAdmin();
+  } catch (e: any) {
+    return { success: false, error: e.message };
   }
 
   try {

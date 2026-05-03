@@ -1,20 +1,8 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { writeFile } from "fs/promises";
-import { join } from "path";
 import { saveUpload } from "@/lib/upload";
-
-// Vérification de sécurité basique
-async function checkAdminOrEditor() {
-  const session = await getServerSession(authOptions);
-  const role = (session?.user as any)?.role;
-  if (role !== "ADMIN" && role !== "EDITOR") {
-    throw new Error("Non autorisé. Vous devez être Administrateur ou Éditeur.");
-  }
-}
+import { checkAdminOrEditor } from "@/lib/auth";
 
 // --- BREAKING NEWS ---
 export async function updateBreakingNews(content: string, link: string | null, isActive: boolean) {

@@ -2,19 +2,8 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { writeFile } from "fs/promises";
-import { join } from "path";
 import { saveUpload } from "@/lib/upload";
-
-async function checkAdminOrEditor() {
-  const session = await getServerSession(authOptions);
-  const role = (session?.user as any)?.role;
-  if (role !== "ADMIN" && role !== "EDITOR") {
-    throw new Error("Non autorisé. Vous devez être Administrateur ou Éditeur.");
-  }
-}
+import { checkAdminOrEditor } from "@/lib/auth";
 
 export async function createPressRelease(formData: FormData) {
   await checkAdminOrEditor();

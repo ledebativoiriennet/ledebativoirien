@@ -7,7 +7,7 @@ import { AdSlot } from "@/components/AdSlot";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import SocialShareButtons from "@/components/SocialShareButtons";
-import { recordArticleRead } from "@/app/actions/user-stats";
+import ArticleStatsRecorder from "@/components/ArticleStatsRecorder";
 import DownloadPdfButton from "@/components/DownloadPdfButton";
 import { LikeButton } from "@/components/LikeButton";
 import AdBanner from "@/components/AdBanner";
@@ -127,22 +127,13 @@ export default async function ArticlePage({ params }: Props) {
   const initialLikeCount = await prisma.articleLike.count({ where: { articleId: article.id } });
 
   if (session?.user) {
-    // Record reading history in the background
-    recordArticleRead(article.id).catch(console.error);
-
     const userLike = await prisma.articleLike.findUnique({
       where: { userId_articleId: { userId: (session.user as any).id, articleId: article.id } }
     });
     initialLiked = !!userLike;
 
-    // Bypassing JWT cache by checking the DB directly to see if user has an active subscription
-    const dbUser = await prisma.user.findUnique({
-      where: { email: session.user.email as string },
-      include: { subscriptions: { where: { status: 'ACTIVE' } } }
-    });
-    if (dbUser) {
-      isPremiumSubscriber = dbUser.role === "ADMIN" || dbUser.role === "EDITOR" || dbUser.subscriptions.length > 0;
-    }
+    const role = (session.user as any).role;
+    isPremiumSubscriber = role === "ADMIN" || role === "EDITOR" || role === "PREMIUM";
   }
 
   // Determine if paywall should be shown
@@ -157,6 +148,7 @@ export default async function ArticlePage({ params }: Props) {
 
   return (
     <div className="article-layout container" style={{ marginTop: "2rem", marginBottom: "4rem" }}>
+      {session?.user && <ArticleStatsRecorder articleId={article.id} />}
       
       {/* CENTER COLUMN: Article Content & Bottom related */}
       <div className="portal-col-center">
