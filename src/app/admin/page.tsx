@@ -325,7 +325,7 @@ export default async function AdminDashboard() {
         brandData={brandData.length ? brandData : [{name: "Aucune donnée", value: 1}]}
       />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', marginTop: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginTop: '2rem' }}>
         <div style={{ backgroundColor: 'white', padding: '1rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', textAlign: 'center' }}>
           <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase' }}>Visiteurs Aujourd'hui</div>
           <div style={{ fontSize: '2rem', fontWeight: 900, color: '#0f172a' }}>{visitorsToday}</div>

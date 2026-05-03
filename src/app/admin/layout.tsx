@@ -24,9 +24,22 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   }
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f8fafc' }}>
+    <div className="admin-layout">
+      <input type="checkbox" id="admin-menu-toggle" className="admin-menu-checkbox" />
+      
+      <label htmlFor="admin-menu-toggle" className="admin-menu-toggle">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <span>☰</span>
+          <span>LeDébat<span style={{ color: 'var(--primary)' }}>Admin</span></span>
+        </div>
+      </label>
+
       {/* Sidebar */}
-      <aside style={{ width: '250px', backgroundColor: '#1e293b', color: 'white', display: 'flex', flexDirection: 'column' }}>
+      <aside className="admin-sidebar">
+        <label htmlFor="admin-menu-toggle" className="admin-close-mobile">
+          ✕ Fermer le menu
+        </label>
+        
         <div style={{ padding: '2rem 1.5rem', borderBottom: '1px solid #334155' }}>
           <h2 style={{ fontSize: '1.2rem', fontWeight: 900, letterSpacing: '-0.05em' }}>LeDébat<span style={{ color: 'var(--primary)' }}>Admin</span></h2>
           <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.25rem' }}>Espace {role}</p>
@@ -66,7 +79,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       </aside>
 
       {/* Main Content */}
-      <main style={{ flex: 1, padding: '2rem', overflowY: 'auto' }}>
+      <main className="admin-main">
         {children}
       </main>
     </div>
