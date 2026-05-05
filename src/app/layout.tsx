@@ -54,9 +54,10 @@ export default async function RootLayout({
   // Sort them to match the targetSlugs array order
   navCategories.sort((a, b) => targetSlugs.indexOf(a.slug) - targetSlugs.indexOf(b.slug));
 
-  const [dbIndicators, liveMarketData] = await Promise.all([
+  const [dbIndicators, liveMarketData, siteSettings] = await Promise.all([
     prisma.marketIndicator.findMany({ orderBy: { order: 'asc' } }),
-    getLiveMarketData()
+    getLiveMarketData(),
+    prisma.siteSettings.findUnique({ where: { id: "global" } })
   ]);
 
   const indicators = dbIndicators.map(ind => {
@@ -281,6 +282,19 @@ export default async function RootLayout({
                 </div>
               </div>
               <p style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Parce qu'on a tous le droit de penser. Le Débat Ivoirien est votre portail d'information et d'investigation en continu.</p>
+              {siteSettings && (
+                <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
+                  {siteSettings.facebookUrl && (
+                    <a href={siteSettings.facebookUrl} target="_blank" rel="noopener noreferrer" style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#1877F2', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', textDecoration: 'none', fontWeight: 'bold' }}>f</a>
+                  )}
+                  {siteSettings.twitterUrl && (
+                    <a href={siteSettings.twitterUrl} target="_blank" rel="noopener noreferrer" style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'black', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', textDecoration: 'none', fontWeight: 'bold' }}>𝕏</a>
+                  )}
+                  {siteSettings.youtubeUrl && (
+                    <a href={siteSettings.youtubeUrl} target="_blank" rel="noopener noreferrer" style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#FF0000', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', textDecoration: 'none', fontWeight: 'bold' }}>▶</a>
+                  )}
+                </div>
+              )}
             </div>
             <div>
               <h4 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '1rem', color: 'var(--primary)' }}>Rubriques</h4>

@@ -105,8 +105,8 @@ export default async function ArticlePage({ params }: Props) {
     }
   }
 
-  // Fetch side content
-  const [popularArticles, relatedArticles, flashNewsItems] = await Promise.all([
+  // Fetch side content and settings
+  const [popularArticles, relatedArticles, flashNewsItems, siteSettings] = await Promise.all([
     prisma.article.findMany({ where: { publishedAt: { not: null } }, take: 5, orderBy: { publishedAt: 'desc' }, include: { categories: true } }), // Mock popular
     prisma.article.findMany({
       where: { 
@@ -117,7 +117,8 @@ export default async function ArticlePage({ params }: Props) {
       take: 4,
       orderBy: { publishedAt: 'desc' }
     }),
-    prisma.flashNews.findMany({ take: 5, orderBy: { createdAt: 'desc' } })
+    prisma.flashNews.findMany({ take: 5, orderBy: { createdAt: 'desc' } }),
+    prisma.siteSettings.findUnique({ where: { id: "global" } })
   ]);
 
   // session est déjà déclaré plus haut
@@ -428,6 +429,18 @@ export default async function ArticlePage({ params }: Props) {
 
         {/* Newsletter Widget */}
         <NewsletterWidget />
+
+        {/* Facebook Widget */}
+        {siteSettings?.facebookUrl && (
+          <div style={{ backgroundColor: "#1877F2", color: "white", padding: "1.5rem", borderRadius: "var(--radius)", textAlign: "center", marginBottom: "1.5rem" }}>
+            <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>👥</div>
+            <h3 style={{ fontSize: "1.1rem", fontWeight: 800, marginBottom: "0.5rem" }}>Rejoignez-nous</h3>
+            <p style={{ fontSize: "0.85rem", marginBottom: "1rem", opacity: 0.9 }}>Suivez Le Débat Ivoirien sur Facebook pour ne rien manquer.</p>
+            <a href={siteSettings.facebookUrl} target="_blank" rel="noopener noreferrer" style={{ display: "inline-block", backgroundColor: "white", color: "#1877F2", padding: "0.6rem 1.2rem", borderRadius: "4px", fontWeight: "bold", textDecoration: "none", fontSize: "0.9rem" }}>
+              S'abonner à la page
+            </a>
+          </div>
+        )}
 
         {/* Auteur */}
         <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", padding: "1.5rem", textAlign: "center", marginBottom: "1.5rem" }}>
