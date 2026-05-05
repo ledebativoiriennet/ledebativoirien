@@ -27,12 +27,13 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
 
-  const targetSlugs = ["a-la-une", "actualite", "politique", "economie", "diplomatie", "internationale", "societe", "sports", "culture"];
+  const targetSlugs = ["a-la-une", "actualite", "politique", "economie", "diplomatie", "internationale", "societe", "publie-reportage", "sports", "culture"];
   
   // Robustness: Ensure these categories exist in the database
   try {
+    const slugsToEnsure = ["diplomatie", "internationale", "publie-reportage"];
     const existingCats = await prisma.category.findMany({
-      where: { slug: { in: ["diplomatie", "internationale"] } },
+      where: { slug: { in: slugsToEnsure } },
       select: { slug: true }
     });
     const existingSlugs = existingCats.map(c => c.slug);
@@ -42,6 +43,9 @@ export default async function RootLayout({
     }
     if (!existingSlugs.includes("internationale")) {
       await prisma.category.create({ data: { name: "International", slug: "internationale" } }).catch(() => {});
+    }
+    if (!existingSlugs.includes("publie-reportage")) {
+      await prisma.category.create({ data: { name: "Publie-reportage", slug: "publie-reportage" } }).catch(() => {});
     }
   } catch (e) {
     console.error("Error ensuring categories:", e);

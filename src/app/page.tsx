@@ -31,7 +31,8 @@ export default async function Home() {
     quote,
     faitsDiversArticles,
     economieArticles,
-    pressReleases
+    pressReleases,
+    publieReportageArticles
   ] = await Promise.all([
     prisma.article.findMany({
       where: { publishedAt: { not: null } },
@@ -64,7 +65,8 @@ export default async function Home() {
     prisma.quote.findFirst({ where: { isActive: true } }),
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'faits-divers' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'economie' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
-    prisma.pressRelease.findMany({ take: 5, orderBy: { createdAt: 'desc' } })
+    prisma.pressRelease.findMany({ take: 5, orderBy: { createdAt: 'desc' } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'publie-reportage' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } })
   ]);
 
   if (!recentArticles || recentArticles.length === 0) {
@@ -680,6 +682,32 @@ export default async function Home() {
         )}
       </aside>
 
+    </div>
+
+    {/* FULL-WIDTH ESPACE PUBLIE-REPORTAGE */}
+    <div className="container" style={{ marginTop: '3rem' }}>
+      <h2 className="portal-section-title dark" style={{ display: "flex", justifyContent: "space-between", borderBottom: '2px solid #f59e0b', paddingBottom: '0.5rem' }}>
+        <span style={{ fontSize: '1.5rem', fontWeight: 900, color: '#f59e0b' }}>Publie-reportage</span>
+        <Link href="/category/publie-reportage" style={{ fontSize: '0.8rem', color: '#f59e0b', fontWeight: 'bold', alignSelf: 'flex-end' }}>Voir tous les reportages</Link>
+      </h2>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1.5rem", marginTop: "1.5rem" }}>
+        {(publieReportageArticles && publieReportageArticles.length > 0 ? publieReportageArticles : recentArticles.slice(0, 4)).map((article) => {
+          const imgUrl = getArticleImage(article);
+          return (
+            <Link href={`/article/${article.slug}`} key={`pub-${article.id}`} style={{ display: "flex", flexDirection: "column", gap: "0.75rem", backgroundColor: "var(--card-bg)", borderRadius: "var(--radius)", overflow: "hidden", border: "1px solid var(--border)", transition: "transform 0.2s" }} className="hover-scale">
+              <div style={{ aspectRatio: "16/9", backgroundColor: "var(--muted)", overflow: "hidden", position: "relative" }}>
+                {imgUrl ? <img src={imgUrl} alt={article.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{width:'100%',height:'100%',background:'var(--foreground)'}} />}
+                <div style={{ position: "absolute", top: "0.5rem", left: "0.5rem", backgroundColor: "#f59e0b", color: "white", fontSize: "0.65rem", fontWeight: "bold", padding: "0.2rem 0.5rem", borderRadius: "2px", textTransform: "uppercase" }}>Publie-reportage</div>
+              </div>
+              <div style={{ padding: "1rem" }}>
+                <div style={{ fontSize: "0.7rem", color: "var(--muted)", marginBottom: "0.5rem" }}>{new Date(article.publishedAt || new Date()).toLocaleDateString("fr-FR")}</div>
+                <h3 style={{ fontSize: "0.95rem", fontWeight: 700, lineHeight: 1.3 }}>{article.title}</h3>
+                <p style={{ fontSize: "0.8rem", color: "var(--muted)", marginTop: "0.5rem", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{article.excerpt || "Découvrez nos publi-reportages exclusifs mettant en avant les initiatives et les acteurs clés du moment."}</p>
+              </div>
+            </Link>
+          )
+        })}
+      </div>
     </div>
 
     {/* FULL-WIDTH ESPACE PUBLICITAIRE HORIZONTAL */}
