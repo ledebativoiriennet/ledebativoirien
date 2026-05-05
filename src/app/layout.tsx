@@ -378,8 +378,8 @@ export default async function RootLayout({
           </div>
         </footer>
         <PopupAd />
-        </div>
         </Providers>
+        </div>
       </body>
     </html>
   );
