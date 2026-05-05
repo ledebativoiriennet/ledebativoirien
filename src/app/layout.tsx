@@ -29,6 +29,24 @@ export default async function RootLayout({
 
   const targetSlugs = ["a-la-une", "actualite", "politique", "economie", "diplomatie", "internationale", "societe", "sports", "culture"];
   
+  // Robustness: Ensure these categories exist in the database
+  try {
+    const existingCats = await prisma.category.findMany({
+      where: { slug: { in: ["diplomatie", "internationale"] } },
+      select: { slug: true }
+    });
+    const existingSlugs = existingCats.map(c => c.slug);
+    
+    if (!existingSlugs.includes("diplomatie")) {
+      await prisma.category.create({ data: { name: "Diplomatie", slug: "diplomatie" } }).catch(() => {});
+    }
+    if (!existingSlugs.includes("internationale")) {
+      await prisma.category.create({ data: { name: "International", slug: "internationale" } }).catch(() => {});
+    }
+  } catch (e) {
+    console.error("Error ensuring categories:", e);
+  }
+
   let navCategories = await prisma.category.findMany({
     where: { slug: { in: targetSlugs } }
   });
