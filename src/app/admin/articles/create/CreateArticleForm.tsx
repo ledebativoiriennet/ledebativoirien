@@ -211,6 +211,8 @@ export default function CreateArticleForm({ categories }: { categories: Category
             </div>
           </div>
         </div>
+        <div>
+          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Contenu HTML de l'article</label>
           <div style={{ backgroundColor: 'white', borderRadius: '4px' }}>
             {/* @ts-ignore */}
             <ReactQuill 
