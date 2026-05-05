@@ -5,6 +5,20 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 
+export async function recordArticleView(articleId: string) {
+  try {
+    await prisma.articleView.create({
+      data: {
+        articleId: articleId
+      }
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to record view:", error);
+    return { success: false };
+  }
+}
+
 export async function recordArticleRead(articleId: string) {
   const session = await getServerSession(authOptions);
   if (!(session?.user as any)?.id) return { success: false };

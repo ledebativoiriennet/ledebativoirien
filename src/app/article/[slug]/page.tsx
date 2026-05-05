@@ -139,6 +139,21 @@ export default async function ArticlePage({ params }: Props) {
   // Determine if paywall should be shown
   const showPaywall = article.isPremium && !isPremiumSubscriber;
 
+  // Fetch View Statistics
+  const now = new Date();
+  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const startOfWeek = new Date(now);
+  startOfWeek.setDate(now.getDate() - now.getDay());
+  startOfWeek.setHours(0,0,0,0);
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const [todayViews, weekViews, monthViews, totalViews] = await Promise.all([
+    prisma.articleView.count({ where: { articleId: article.id, viewedAt: { gte: startOfDay } } }),
+    prisma.articleView.count({ where: { articleId: article.id, viewedAt: { gte: startOfWeek } } }),
+    prisma.articleView.count({ where: { articleId: article.id, viewedAt: { gte: startOfMonth } } }),
+    prisma.articleView.count({ where: { articleId: article.id } })
+  ]);
+
   let contentToShow = article.content;
   if (showPaywall) {
     contentToShow = truncateHtmlToFirstParagraph(article.content);
@@ -192,10 +207,12 @@ export default async function ArticlePage({ params }: Props) {
             {article.title}
           </h1>
           
-          <div className="article-meta-info">
-            <span>Publié le {new Date(article.publishedAt || new Date()).toLocaleDateString("fr-FR", { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+          <div className="article-meta-info" style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "1.5rem", fontSize: "0.85rem", color: "#64748b" }}>
+            <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>📅 {new Date(article.publishedAt || new Date()).toLocaleDateString("fr-FR", { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+            <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }} title="Lectures depuis la publication">👁️ {totalViews.toLocaleString()} vues</span>
+            <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }} title="Aujourd'hui / Semaine / Mois">📊 {todayViews.toLocaleString()} / {weekViews.toLocaleString()} / {monthViews.toLocaleString()}</span>
             {article.isPremium && <span className="premium-badge">PREMIUM</span>}
-            <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>⏱️ 5 min de lecture</span>
+            <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>⏱️ 5 min</span>
           </div>
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "1.5rem" }}>
