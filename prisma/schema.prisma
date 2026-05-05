@@ -78,6 +78,9 @@ model Article {
   authorId    String?
   author      Author?   @relation(fields: [authorId], references: [id])
 
+  videoUrl    String?
+  videoFile   String?
+
   categories  Category[]
   readingHistory ReadingHistory[]
   likes          ArticleLike[]

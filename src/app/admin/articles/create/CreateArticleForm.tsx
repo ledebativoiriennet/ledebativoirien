@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { publishArticle } from "@/app/actions/admin";
 import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
+import Link from "next/link";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false }) as any;
 
@@ -17,6 +18,7 @@ export default function CreateArticleForm({ categories }: { categories: Category
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [content, setContent] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
   const quillRef = useRef<any>(null);
 
   const imageHandler = () => {
@@ -82,9 +84,10 @@ export default function CreateArticleForm({ categories }: { categories: Category
       const result = await publishArticle(formData);
 
       if (result.success) {
-        alert("Succès ! L'article a été enregistré et publié.");
-        router.push("/admin/articles");
-        router.refresh();
+        setIsSuccess(true);
+        setLoading(false);
+        // Scroll to top to see the success message
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
         setError(result.error || "Une erreur est survenue côté serveur");
         setLoading(false);
@@ -99,6 +102,33 @@ export default function CreateArticleForm({ categories }: { categories: Category
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', backgroundColor: 'white', padding: '2rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
       <h1 style={{ fontSize: '2rem', fontWeight: 900, marginBottom: '2rem', color: '#0f172a' }}>Nouvel Article</h1>
+
+      {isSuccess && (
+        <div style={{ backgroundColor: '#dcfce7', color: '#166534', padding: '1.5rem', borderRadius: '8px', marginBottom: '2rem', border: '1px solid #bbf7d0', textAlign: 'center' }}>
+          <h2 style={{ margin: '0 0 0.5rem 0' }}>✅ Article publié avec succès !</h2>
+          <p style={{ marginBottom: '1rem' }}>Que souhaitez-vous faire maintenant ?</p>
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+            <button 
+              onClick={() => {
+                setIsSuccess(false);
+                setContent("");
+                // Reset form
+                const form = document.querySelector('form') as HTMLFormElement;
+                if (form) form.reset();
+              }}
+              style={{ padding: '0.6rem 1.2rem', backgroundColor: '#166534', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+            >
+              ➕ Créer un nouvel article
+            </button>
+            <Link 
+              href="/admin/articles"
+              style={{ padding: '0.6rem 1.2rem', backgroundColor: 'white', color: '#166534', border: '1px solid #166534', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', textDecoration: 'none' }}
+            >
+              📋 Retour à la liste
+            </Link>
+          </div>
+        </div>
+      )}
 
       {error && (
         <div style={{ backgroundColor: '#fee2e2', color: '#991b1b', padding: '1rem', borderRadius: '4px', marginBottom: '1.5rem', fontWeight: 'bold' }}>
@@ -159,7 +189,28 @@ export default function CreateArticleForm({ categories }: { categories: Category
         </div>
 
         <div>
-          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Contenu HTML de l'article</label>
+          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Vidéo de l'article (Optionnel)</label>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', color: '#64748b', marginBottom: '0.25rem' }}>Upload un fichier vidéo</label>
+              <input 
+                type="file" 
+                name="videoFile" 
+                accept="video/*"
+                style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '0.9rem', backgroundColor: 'white' }}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', color: '#64748b', marginBottom: '0.25rem' }}>OU Lien Vidéo (YouTube, etc.)</label>
+              <input 
+                type="url" 
+                name="videoUrl" 
+                placeholder="https://www.youtube.com/watch?v=..."
+                style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '0.9rem' }}
+              />
+            </div>
+          </div>
+        </div>
           <div style={{ backgroundColor: 'white', borderRadius: '4px' }}>
             {/* @ts-ignore */}
             <ReactQuill 

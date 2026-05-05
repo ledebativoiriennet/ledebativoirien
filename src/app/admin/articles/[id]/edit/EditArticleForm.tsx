@@ -178,7 +178,42 @@ export default function EditArticleForm({ article, categories }: { article: any,
         </div>
 
         <div>
-          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Contenu HTML de l'article</label>
+          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Vidéo de l'article (Optionnel)</label>
+          {article.videoFile && (
+            <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: '#f1f5f9', borderRadius: '4px' }}>
+              <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.8rem', color: '#475569' }}>Vidéo actuelle (uploadée) :</p>
+              <video src={article.videoFile} controls style={{ width: '100%', maxHeight: '200px', borderRadius: '4px' }} />
+              <input type="hidden" name="existingVideoFile" value={article.videoFile} />
+            </div>
+          )}
+          {article.videoUrl && !article.videoFile && (
+            <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: '#f1f5f9', borderRadius: '4px' }}>
+              <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.8rem', color: '#475569' }}>Lien vidéo actuel :</p>
+              <code style={{ fontSize: '0.8rem' }}>{article.videoUrl}</code>
+            </div>
+          )}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', color: '#64748b', marginBottom: '0.25rem' }}>Changer le fichier vidéo</label>
+              <input 
+                type="file" 
+                name="videoFile" 
+                accept="video/*"
+                style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '0.9rem', backgroundColor: 'white' }}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', color: '#64748b', marginBottom: '0.25rem' }}>OU Nouveau lien Vidéo</label>
+              <input 
+                type="url" 
+                name="videoUrl" 
+                defaultValue={article.videoUrl || ""}
+                placeholder="https://www.youtube.com/watch?v=..."
+                style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '0.9rem' }}
+              />
+            </div>
+          </div>
+        </div>
           <div style={{ backgroundColor: 'white', borderRadius: '4px' }}>
             {/* @ts-ignore */}
             <ReactQuill 

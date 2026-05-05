@@ -53,6 +53,14 @@ export async function publishArticle(formData: FormData) {
       slug = `${slug}-${Date.now()}`;
     }
 
+    const videoUrl = formData.get("videoUrl") as string || null;
+    const videoFile = formData.get("videoFile") as File | null;
+    let savedVideoPath = null;
+
+    if (videoFile && videoFile.size > 0) {
+      savedVideoPath = await saveUpload(videoFile);
+    }
+
     const newArticle = await prisma.article.create({
       data: {
         title,
@@ -60,6 +68,8 @@ export async function publishArticle(formData: FormData) {
         excerpt,
         content,
         imageUrl,
+        videoUrl,
+        videoFile: savedVideoPath,
         isPremium,
         publishedAt: role === "CONTRIBUTOR" ? null : new Date(),
         categories: categoryIds.length > 0 ? {
@@ -158,6 +168,14 @@ export async function updateArticle(articleId: string, formData: FormData) {
   }
 
   try {
+    const videoUrl = formData.get("videoUrl") as string || null;
+    const videoFile = formData.get("videoFile") as File | null;
+    let savedVideoPath = formData.get("existingVideoFile") as string || null;
+
+    if (videoFile && videoFile.size > 0) {
+      savedVideoPath = await saveUpload(videoFile);
+    }
+
     await prisma.article.update({
       where: { id: articleId },
       data: {
@@ -165,6 +183,8 @@ export async function updateArticle(articleId: string, formData: FormData) {
         excerpt,
         content,
         imageUrl: imageUrl || null,
+        videoUrl,
+        videoFile: savedVideoPath,
         isPremium,
         categories: {
           set: [],

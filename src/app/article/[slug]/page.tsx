@@ -220,6 +220,58 @@ export default async function ArticlePage({ params }: Props) {
             </div>
           )}
 
+          {/* Vidéo de l'article */}
+          {(article.videoUrl || article.videoFile) && (
+            <div style={{ marginBottom: "2rem" }}>
+              {article.videoFile ? (
+                <div style={{ borderRadius: "8px", overflow: "hidden", backgroundColor: "black" }}>
+                  <video src={article.videoFile} controls style={{ width: "100%", maxHeight: "500px", display: "block" }} />
+                </div>
+              ) : article.videoUrl ? (
+                (() => {
+                  let embedUrl = article.videoUrl;
+                  if (article.videoUrl.includes('youtube.com/watch?v=')) {
+                    const id = article.videoUrl.split('v=')[1]?.split('&')[0];
+                    embedUrl = `https://www.youtube.com/embed/${id}`;
+                  } else if (article.videoUrl.includes('youtu.be/')) {
+                    const id = article.videoUrl.split('youtu.be/')[1]?.split('?')[0];
+                    embedUrl = `https://www.youtube.com/embed/${id}`;
+                  }
+
+                  if (embedUrl.includes('youtube.com/embed/')) {
+                    return (
+                      <div style={{ borderRadius: "8px", overflow: "hidden", position: "relative", paddingBottom: "56.25%", height: 0, backgroundColor: "#000" }}>
+                        <iframe 
+                          src={embedUrl}
+                          style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: 0 }}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                          allowFullScreen
+                        />
+                      </div>
+                    );
+                  }
+                  
+                  if (article.videoUrl.match(/\.(mp4|webm|ogg)$/i)) {
+                    return (
+                      <div style={{ borderRadius: "8px", overflow: "hidden", backgroundColor: "black" }}>
+                        <video src={article.videoUrl} controls style={{ width: "100%", maxHeight: "500px", display: "block" }} />
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div style={{ padding: '1rem', backgroundColor: '#f1f5f9', borderRadius: '8px', textAlign: 'center' }}>
+                      <p style={{ marginBottom: '0.5rem' }}>Vidéo externe disponible :</p>
+                      <a href={article.videoUrl} target="_blank" rel="noopener noreferrer" className="btn btn-secondary">
+                        Regarder la vidéo
+                      </a>
+                    </div>
+                  );
+                })()
+              ) : null}
+            </div>
+          )}
+
           <AdBanner slot="ARTICLE_MIDDLE" />
 
           {/* Chapô (Extrait) */}
