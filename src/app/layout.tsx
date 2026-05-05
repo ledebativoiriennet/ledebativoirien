@@ -27,7 +27,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
 
-  const targetSlugs = ["a-la-une", "actualite", "politique", "economie", "societe", "sports", "culture"];
+  const targetSlugs = ["a-la-une", "actualite", "politique", "economie", "diplomatie", "internationale", "societe", "sports", "culture"];
   
   let navCategories = await prisma.category.findMany({
     where: { slug: { in: targetSlugs } }
