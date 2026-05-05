@@ -33,15 +33,16 @@ function getWeatherCondition(code: number): { condition: string; icon: string } 
 }
 
 export async function fetchWeatherData() {
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current_weather=true&daily=weathercode,temperature_2m_max&timezone=Africa%2FAbidjan`;
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current=temperature_2m,apparent_temperature,weather_code&daily=weathercode,temperature_2m_max&timezone=Africa%2FAbidjan`;
   
   const res = await fetch(url, { cache: 'no-store' });
   if (!res.ok) throw new Error("Erreur de récupération météo");
   
   const data = await res.json();
   
-  const current = data.current_weather;
-  const currentDetails = getWeatherCondition(current.weathercode);
+  const current = data.current;
+  const currentDetails = getWeatherCondition(current.weather_code);
+  const apparentTemperature = Math.round(current.apparent_temperature);
   
   const daily = data.daily;
   
@@ -65,7 +66,8 @@ export async function fetchWeatherData() {
 
   return {
     city: "Abidjan",
-    temperature: Math.round(current.temperature),
+    temperature: Math.round(current.temperature_2m),
+    apparentTemperature,
     condition: currentDetails.condition,
     icon: currentDetails.icon,
     forecast1Day: forecasts[0]?.day,

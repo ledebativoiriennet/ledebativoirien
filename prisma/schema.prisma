@@ -196,11 +196,12 @@ model Advertisement {
 }
 
 model WeatherReport {
-  id          String   @id @default(cuid())
-  city        String   @default("Abidjan")
-  temperature Int      // e.g., 32
-  condition   String   // e.g., "Soleil", "Pluie", "Nuageux"
-  icon        String?  // e.g., "☀️", "🌧️"
+  id                  String   @id @default(cuid())
+  city                String   @default("Abidjan")
+  temperature         Int      // e.g., 32
+  apparentTemperature Int?     // Température ressentie
+  condition           String   // e.g., "Soleil", "Pluie", "Nuageux"
+  icon                String?  // e.g., "☀️", "🌧️"
   
   forecast1Day  String? // e.g., "Ven"
   forecast1Temp Int?

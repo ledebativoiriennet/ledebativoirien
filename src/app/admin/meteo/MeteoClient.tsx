@@ -13,6 +13,7 @@ export default function MeteoClient({ initialWeather }: { initialWeather: any })
     const data = {
       city: formData.get("city") as string,
       temperature: parseInt(formData.get("temperature") as string, 10),
+      apparentTemperature: parseInt(formData.get("apparentTemperature") as string, 10) || undefined,
       condition: formData.get("condition") as string,
       icon: formData.get("icon") as string,
       forecast1Day: formData.get("forecast1Day") as string,
@@ -76,8 +77,12 @@ export default function MeteoClient({ initialWeather }: { initialWeather: any })
               <input type="text" name="condition" defaultValue={defaultW.condition} required style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '4px' }} />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Température (°C)</label>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Température réelle (°C)</label>
               <input type="number" name="temperature" defaultValue={defaultW.temperature} required style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '4px' }} />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Température ressentie (°C)</label>
+              <input type="number" name="apparentTemperature" defaultValue={defaultW.apparentTemperature} style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '4px' }} />
             </div>
             <div>
               <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Icône (Emoji ☀️, 🌧️, ⛅)</label>

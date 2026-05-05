@@ -496,6 +496,12 @@ export default async function Home() {
                  <span style={{ fontSize: '2.5rem', fontWeight: 900, lineHeight: 0.8 }}>{weatherReport.temperature}°</span>
                  <span style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>C</span>
                </div>
+               {weatherReport.apparentTemperature != null && (
+                 <div style={{ position: 'absolute', bottom: '1rem', right: '1rem', fontSize: '0.7rem', opacity: 0.9, textAlign: 'right' }}>
+                   <span>Ressenti&nbsp;</span>
+                   <span style={{ fontWeight: 900 }}>{weatherReport.apparentTemperature}°C</span>
+                 </div>
+               )}
              </div>
              
              {/* 3 Days Forecast */}
