@@ -13,7 +13,8 @@ export default function AdsClient({ initialAds }: { initialAds: any[] }) {
     { id: 'ARTICLE_TOP', label: 'Article - Haut' },
     { id: 'ARTICLE_MIDDLE', label: 'Article - Milieu' },
     { id: 'ARTICLE_BOTTOM', label: 'Article - Bas' },
-    { id: 'GLOBAL_POPUP', label: 'Global - Pop-up' }
+    { id: 'GLOBAL_POPUP', label: 'Global - Pop-up' },
+    { id: 'SITE_SKIN', label: 'Habillage de Site (Arrière-plan)' }
   ];
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {

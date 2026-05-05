@@ -58,10 +58,23 @@ export default async function RootLayout({
   // Sort them to match the targetSlugs array order
   navCategories.sort((a, b) => targetSlugs.indexOf(a.slug) - targetSlugs.indexOf(b.slug));
 
-  const [dbIndicators, liveMarketData, siteSettings] = await Promise.all([
+  const [dbIndicators, liveMarketData, siteSettings, skinAd] = await Promise.all([
     prisma.marketIndicator.findMany({ orderBy: { order: 'asc' } }),
     getLiveMarketData(),
-    prisma.siteSettings.findUnique({ where: { id: "global" } })
+    prisma.siteSettings.findUnique({ where: { id: "global" } }),
+    prisma.advertisement.findFirst({
+      where: {
+        slot: 'SITE_SKIN',
+        status: 'ACTIVE',
+        OR: [
+          { startDate: null },
+          { startDate: { lte: new Date() } }
+        ],
+        AND: [
+          { OR: [{ endDate: null }, { endDate: { gte: new Date() } }] }
+        ]
+      }
+    })
   ]);
 
   const indicators = dbIndicators.map(ind => {
@@ -136,8 +149,21 @@ export default async function RootLayout({
   };
 
   return (
-    <html lang="fr" className={inter.variable}>
+    <html lang="fr">
       <head>
+        <meta name="google-adsense-account" content={process.env.NEXT_PUBLIC_ADSENSE_ID} />
+        {skinAd && (
+          <style dangerouslySetInnerHTML={{ __html: `
+            body {
+              background-image: url('${skinAd.imageUrl}');
+              background-attachment: fixed;
+              background-size: cover;
+              background-position: center top;
+              background-repeat: no-repeat;
+              background-color: #000;
+            }
+          ` }} />
+        )}
         {process.env.NEXT_PUBLIC_ADSENSE_ID && (
           <Script
             id="adsense-init"
@@ -148,7 +174,19 @@ export default async function RootLayout({
           />
         )}
       </head>
-      <body>
+      <body className={inter.variable}>
+        {skinAd && skinAd.linkUrl && (
+          <a 
+            href={skinAd.linkUrl} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0, cursor: 'pointer' }}
+            title={skinAd.title}
+          >
+            <span style={{ display: 'none' }}>{skinAd.title}</span>
+          </a>
+        )}
+        <div style={{ position: 'relative', zIndex: 1, backgroundColor: skinAd ? 'transparent' : 'var(--background)' }}>
         <CookieConsentPopup />
         <PushNotificationPrompt />
         {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
@@ -340,6 +378,7 @@ export default async function RootLayout({
           </div>
         </footer>
         <PopupAd />
+        </div>
         </Providers>
       </body>
     </html>
