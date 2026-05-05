@@ -23,16 +23,15 @@ export function PushNotificationPrompt() {
   }, []);
 
   const handleAccept = async () => {
+    // Masquer immédiatement pour ne pas bloquer l'UI
+    setShowPrompt(false);
+    localStorage.setItem('ldi_push_prompted', 'true');
+    
     try {
-      const permission = await Notification.requestPermission();
-      if (permission === 'granted') {
-        alert('Merci ! Vous recevrez désormais une notification lors de nos publications importantes.');
-      }
+      await Notification.requestPermission();
+      // On retire le alert() qui peut bloquer le thread de rendu du navigateur
     } catch (e) {
       console.error('Error requesting notification permission:', e);
-    } finally {
-      localStorage.setItem('ldi_push_prompted', 'true');
-      setShowPrompt(false);
     }
   };
 
