@@ -13,6 +13,8 @@ import { LikeButton } from "@/components/LikeButton";
 import AdBanner from "@/components/AdBanner";
 import ArticleAudioPlayer from "@/components/ArticleAudioPlayer";
 import TextSizeAdjuster from "@/components/TextSizeAdjuster";
+import TableOfContents from "@/components/TableOfContents";
+import InlineArticleRecommendation from "@/components/InlineArticleRecommendation";
 import { Metadata, ResolvingMetadata } from "next";
 import NewsletterWidget from "@/components/NewsletterWidget";
 import AuthorSubscribeButton from "@/components/AuthorSubscribeButton";
@@ -163,6 +165,17 @@ export default async function ArticlePage({ params }: Props) {
     contentToShow = truncateHtmlToFirstParagraph(article.content);
   }
 
+  // Récupérer un article recommandé pour l'injection au milieu du texte
+  const relatedArticle = await prisma.article.findFirst({
+    where: {
+      id: { not: article.id },
+      categories: { some: { id: article.categories[0]?.id } },
+      publishedAt: { not: null }
+    },
+    orderBy: { publishedAt: 'desc' },
+    select: { slug: true, title: true, categories: { select: { name: true } } }
+  });
+
   // Calcul du temps de lecture (environ 200 mots par minute)
   const wordCount = article.content.replace(/<[^>]*>?/gm, '').split(/\s+/).filter(word => word.length > 0).length;
   const readTime = Math.max(1, Math.ceil(wordCount / 200));
@@ -172,9 +185,14 @@ export default async function ArticlePage({ params }: Props) {
   return (
     <>
       <ReadingProgressBar />
-      <div className="article-layout container" style={{ marginTop: "2rem", marginBottom: "4rem" }}>
+      <div className="article-layout-with-toc container" style={{ marginTop: "2rem", marginBottom: "4rem" }}>
       {session?.user && <ArticleStatsRecorder articleId={article.id} />}
       
+      {/* LEFT COLUMN: Table des Matières (Desktop Only) */}
+      <aside style={{ display: 'none' }} className="xl:block">
+        <TableOfContents />
+      </aside>
+
       {/* CENTER COLUMN: Article Content & Bottom related */}
       <div className="portal-col-center">
         <article className="article-main-container">
@@ -322,7 +340,32 @@ export default async function ArticlePage({ params }: Props) {
                 paddingBottom: showPaywall ? "40px" : "0"
               }} 
             >
+              {(() => {
+            if (!showPaywall && relatedArticle) {
+              // On divise par la balise de fin de paragraphe. Le 'i' rend insensible à la casse.
+              // En utilisant une expression régulière avec capture, on garde le délimiteur dans le tableau résultant.
+              const parts = contentToShow.split(/(<\/p>)/i);
+              
+              // Si on a plus de 3 paragraphes (3 * 2 parts = 6), on injecte après le 3ème
+              if (parts.length > 6) {
+                const chunk1 = parts.slice(0, 6).join('');
+                const chunk2 = parts.slice(6).join('');
+                
+                return (
+                  <>
+                    <div dangerouslySetInnerHTML={{ __html: chunk1 }} />
+                    <InlineArticleRecommendation article={{ slug: relatedArticle.slug, title: relatedArticle.title, categoryName: relatedArticle.categories[0]?.name }} />
+                    <div dangerouslySetInnerHTML={{ __html: chunk2 }} />
+                  </>
+                );
+              }
+            }
+
+            // Fallback (si paywall ou article trop court)
+            return (
               <div dangerouslySetInnerHTML={{ __html: contentToShow }} />
+            );
+          })()}
               
               {showPaywall && (
                 <div style={{

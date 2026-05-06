@@ -625,6 +625,25 @@ a:hover {
   }
 }
 
+.article-layout-with-toc {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .article-layout-with-toc {
+    grid-template-columns: 3fr 1fr;
+  }
+}
+
+@media (min-width: 1280px) {
+  .article-layout-with-toc {
+    grid-template-columns: 200px minmax(0, 1fr) 300px;
+  }
+}
+
 /* ARTICLE CONTENT STYLES */
 .article-content img {
   float: left;
