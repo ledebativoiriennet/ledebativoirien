@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { ReactNode } from "react";
+import LogoutButton from "./LogoutButton";
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const session = await getServerSession(authOptions);
@@ -71,10 +72,11 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           )}
           <Link href="/admin/parametres" style={{ display: 'block', padding: '0.75rem', borderRadius: '8px', color: '#cbd5e1', textDecoration: 'none', fontWeight: 'bold', transition: 'all 0.2s', border: '1px solid #475569', marginTop: '0.5rem', backgroundColor: 'rgba(71, 85, 105, 0.2)' }}>⚙️ Paramètres</Link>
         </nav>
-        <div style={{ padding: '1rem', borderTop: '1px solid #334155' }}>
+        <div style={{ padding: '1rem', borderTop: '1px solid #334155', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           <Link href="/" style={{ display: 'block', padding: '0.75rem', textAlign: 'center', backgroundColor: '#334155', borderRadius: '4px', color: 'white', textDecoration: 'none', fontSize: '0.85rem' }}>
             Retour au site
           </Link>
+          <LogoutButton />
         </div>
       </aside>
 

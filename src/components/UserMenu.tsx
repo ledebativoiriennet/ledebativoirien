@@ -26,7 +26,7 @@ export function UserMenu() {
           <span style={{ fontSize: '0.9rem' }}>Mon Compte</span>
         </Link>
         <button 
-          onClick={() => signOut({ callbackUrl: window.location.origin })} 
+          onClick={() => signOut({ callbackUrl: '/' })} 
           style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.8rem', textDecoration: 'underline' }}
         >
           Déconnexion
