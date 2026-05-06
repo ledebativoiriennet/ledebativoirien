@@ -186,7 +186,7 @@ export default async function ArticlePage({ params }: Props) {
     <>
       <ReadingProgressBar />
       {session?.user && <ArticleStatsRecorder articleId={article.id} />}
-      <div className="article-layout container" style={{ marginTop: "2rem", marginBottom: "4rem" }}>
+      <div className="article-layout container" style={{ marginTop: "clamp(0.5rem, 5vw, 2rem)", marginBottom: "4rem" }}>
       
       {/* CENTER COLUMN: Article Content & Bottom related */}
       <div className="portal-col-center">
