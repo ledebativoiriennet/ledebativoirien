@@ -185,8 +185,8 @@ export default async function ArticlePage({ params }: Props) {
   return (
     <>
       <ReadingProgressBar />
-      <div className="article-layout-with-toc container" style={{ marginTop: "2rem", marginBottom: "4rem" }}>
       {session?.user && <ArticleStatsRecorder articleId={article.id} />}
+      <div className="article-layout-with-toc container" style={{ marginTop: "2rem", marginBottom: "4rem" }}>
       
       {/* LEFT COLUMN: Table des Matières (Desktop Only) */}
       <aside style={{ display: 'none' }} className="xl:block">
