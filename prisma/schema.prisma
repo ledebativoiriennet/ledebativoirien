@@ -80,6 +80,7 @@ model Article {
 
   videoUrl    String?
   videoFile   String?
+  isAudioAvailable Boolean @default(false)
 
   categories  Category[]
   readingHistory ReadingHistory[]

@@ -229,16 +229,30 @@ export default function CreateArticleForm({ categories }: { categories: Category
           <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.25rem' }}>Utilisez l'éditeur pour mettre en forme votre texte, ajouter des liens ou des listes.</p>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', backgroundColor: '#f1f5f9', borderRadius: '4px' }}>
-          <input 
-            type="checkbox" 
-            name="isPremium" 
-            id="isPremium"
-            style={{ width: '20px', height: '20px' }}
-          />
-          <label htmlFor="isPremium" style={{ fontWeight: 'bold', color: '#0f172a', cursor: 'pointer' }}>
-            ⭐ Marquer cet article comme Premium (Réservé aux abonnés)
-          </label>
+        <div style={{ display: 'flex', gap: '2rem', marginBottom: '2rem', backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <input 
+              type="checkbox" 
+              name="isPremium" 
+              id="isPremium"
+              style={{ width: '1.2rem', height: '1.2rem', cursor: 'pointer' }}
+            />
+            <label htmlFor="isPremium" style={{ fontWeight: 'bold', color: '#0f172a', cursor: 'pointer' }}>
+              Article Premium (Réservé aux abonnés)
+            </label>
+          </div>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <input 
+              type="checkbox" 
+              name="isAudioAvailable" 
+              id="isAudioAvailable"
+              style={{ width: '1.2rem', height: '1.2rem', cursor: 'pointer' }}
+            />
+            <label htmlFor="isAudioAvailable" style={{ fontWeight: 'bold', color: '#0f172a', cursor: 'pointer' }}>
+              🎙️ Rendre disponible en audio (Actu Audio)
+            </label>
+          </div>
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>

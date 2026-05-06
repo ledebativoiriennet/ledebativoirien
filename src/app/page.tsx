@@ -34,7 +34,8 @@ export default async function Home() {
     faitsDiversArticles,
     economieArticles,
     pressReleases,
-    publieReportageArticles
+    publieReportageArticles,
+    audioArticles
   ] = await Promise.all([
     prisma.article.findMany({
       where: { publishedAt: { not: null } },
@@ -68,7 +69,8 @@ export default async function Home() {
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'faits-divers' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'economie' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.pressRelease.findMany({ take: 5, orderBy: { createdAt: 'desc' } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'publie-reportage' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } })
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'publie-reportage' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { isAudioAvailable: true, publishedAt: { not: null } }, take: 8, orderBy: { publishedAt: 'desc' }, include: { categories: true } })
   ]);
 
   if (!recentArticles || recentArticles.length === 0) {
@@ -851,7 +853,7 @@ export default async function Home() {
 
     {/* FULL-WIDTH ESPACE ACTU AUDIO */}
     <HomeAudioModule 
-      articles={recentArticles.slice(0, 4).map(a => ({
+      articles={audioArticles.map(a => ({
         id: a.id,
         title: a.title,
         content: a.content,

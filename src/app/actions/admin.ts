@@ -30,6 +30,7 @@ export async function publishArticle(formData: FormData) {
   const excerpt = formData.get("excerpt") as string;
   const content = formData.get("content") as string;
   const isPremium = formData.get("isPremium") === "on";
+  const isAudioAvailable = formData.get("isAudioAvailable") === "on";
   const imageFile = formData.get("image") as File | null;
   const categoryIds = formData.getAll("categories") as string[];
 
@@ -71,6 +72,7 @@ export async function publishArticle(formData: FormData) {
         videoUrl,
         videoFile: savedVideoPath,
         isPremium,
+        isAudioAvailable,
         publishedAt: role === "CONTRIBUTOR" ? null : new Date(),
         categories: categoryIds.length > 0 ? {
           connect: categoryIds.map(id => ({ id }))
@@ -150,6 +152,7 @@ export async function updateArticle(articleId: string, formData: FormData) {
   const excerpt = formData.get("excerpt") as string;
   const content = formData.get("content") as string;
   const isPremium = formData.get("isPremium") === "on";
+  const isAudioAvailable = formData.get("isAudioAvailable") === "on";
   const categoryIds = formData.getAll("categories") as string[];
 
   if (!title || !content) {
@@ -186,6 +189,7 @@ export async function updateArticle(articleId: string, formData: FormData) {
         videoUrl,
         videoFile: savedVideoPath,
         isPremium,
+        isAudioAvailable,
         categories: {
           set: [],
           connect: categoryIds.map(id => ({ id }))

@@ -94,7 +94,11 @@ export default function HomeAudioModule({ articles }: { articles: AudioArticle[]
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
+          gap: '1.5rem' 
+        }} className="audio-grid">
           {articles.map((article) => {
             const isThisPlaying = playingId === article.id;
 
@@ -194,6 +198,11 @@ export default function HomeAudioModule({ articles }: { articles: AudioArticle[]
         @keyframes bounce {
           0% { height: 8px; }
           100% { height: 24px; }
+        }
+        @media (min-width: 1200px) {
+          .audio-grid {
+            grid-template-columns: repeat(4, 1fr) !important;
+          }
         }
       `}} />
     </section>
