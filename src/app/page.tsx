@@ -94,17 +94,25 @@ export default async function Home() {
         <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "1.5rem" }}>
           <h2 className="portal-section-title">En Continu</h2>
           <div className="flash-info-container" style={{ padding: "0 1rem 1rem 1rem" }}>
-            {flashInfo.map((article) => (
-              <div key={article.id} className="flash-item">
-                <span className="time">
-                  {new Date(article.publishedAt || new Date()).toLocaleTimeString("fr-FR", { hour: '2-digit', minute: '2-digit' })}
-                </span>
-                <Link href={`/article/${article.slug}`}>
-                  {article.title}
-                </Link>
-                {article.isPremium && <span className="premium-badge" style={{ marginLeft: '4px', fontSize: '0.6rem' }}>PR</span>}
+            {flashNewsItems.length > 0 ? (
+              flashNewsItems.map((news) => (
+                <div key={news.id} className="flash-item">
+                  <span className="time">{news.time}</span>
+                  {news.link ? (
+                    <a href={news.link} target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'var(--foreground)', fontWeight: 600 }}>
+                      {news.content}
+                    </a>
+                  ) : (
+                    <span style={{ fontWeight: 500, color: 'var(--foreground)', lineHeight: 1.3 }}>{news.content}</span>
+                  )}
+                  {news.source && <span style={{ marginLeft: '0.5rem', fontSize: '0.65rem', backgroundColor: '#e2e8f0', padding: '0.1rem 0.3rem', borderRadius: '2px', color: '#475569', fontWeight: 'bold' }}>{news.source}</span>}
+                </div>
+              ))
+            ) : (
+              <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--muted)', fontSize: '0.85rem' }}>
+                Aucune alerte récente.
               </div>
-            ))}
+            )}
           </div>
           <Link href="/en-continu" style={{ display: "block", textAlign: "center", fontSize: "0.8rem", padding: "0.5rem", backgroundColor: "#f8fafc", color: "var(--primary)", fontWeight: "bold", borderTop: "1px solid var(--border)" }}>Toute l'actualité en continu</Link>
         </div>
