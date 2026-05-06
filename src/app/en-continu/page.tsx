@@ -10,33 +10,34 @@ export const metadata = {
 export const revalidate = 60;
 
 export default async function EnContinuPage() {
-  const flashNews = await prisma.flashNews.findMany({
-    orderBy: { createdAt: 'desc' },
-    take: 100 // Les 100 dernières alertes
+  const recentArticles = await prisma.article.findMany({
+    where: { publishedAt: { not: null } },
+    orderBy: { publishedAt: 'desc' },
+    take: 50,
+    include: { categories: true }
   });
 
   return (
     <>
-      <MainNavigation categories={[]} />
       <main className="container" style={{ padding: '4rem 1rem', maxWidth: '800px', margin: '0 auto', minHeight: '60vh' }}>
         <h1 style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: '0.5rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <span style={{ display: 'inline-block', width: '16px', height: '16px', backgroundColor: 'var(--primary)', borderRadius: '50%', animation: 'pulse 2s infinite' }}></span>
-          Le Direct (Fil Info)
+          Le Fil Info (Direct)
         </h1>
         <p style={{ color: 'var(--muted)', marginBottom: '2.5rem', fontSize: '1.1rem', borderBottom: '4px solid var(--border)', paddingBottom: '1rem' }}>
-          Suivez l'actualité brûlante de la Côte d'Ivoire et du monde, minute par minute.
+          Suivez l'actualité de la Côte d'Ivoire et du monde, minute par minute.
         </p>
         
-        {flashNews.length === 0 ? (
+        {recentArticles.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '4rem 1rem', color: 'var(--muted)', fontSize: '1.2rem' }}>
-            Aucune alerte n'est disponible pour le moment.
+            Aucun article n'est disponible pour le moment.
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {flashNews.map((news) => {
-              const date = new Date(news.createdAt);
+            {recentArticles.map((article) => {
+              const date = new Date(article.publishedAt!);
               return (
-                <div key={news.id} style={{ display: 'flex', gap: '1.5rem', padding: '1.5rem 0', borderBottom: '1px solid var(--border)', position: 'relative' }}>
+                <div key={article.id} style={{ display: 'flex', gap: '1.5rem', padding: '1.5rem 0', borderBottom: '1px solid var(--border)', position: 'relative' }}>
                   
                   {/* Ligne de temps verticale */}
                   <div style={{ position: 'absolute', left: '20px', top: '3rem', bottom: '-1.5rem', width: '2px', backgroundColor: 'var(--border)', zIndex: -1 }}></div>
@@ -44,7 +45,7 @@ export default async function EnContinuPage() {
                   {/* Temps */}
                   <div style={{ width: '60px', flexShrink: 0, textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                     <div style={{ fontSize: '1.3rem', fontWeight: 900, color: 'var(--primary)', backgroundColor: 'var(--background)', padding: '0.2rem 0' }}>
-                      {news.time}
+                      {date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                     </div>
                     <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 'bold', marginTop: '0.2rem', textTransform: 'uppercase' }}>
                       {date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
@@ -53,23 +54,29 @@ export default async function EnContinuPage() {
                   
                   {/* Contenu */}
                   <div style={{ flex: 1, backgroundColor: 'var(--card-bg)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--border)', boxShadow: 'var(--shadow)' }}>
-                    {news.source && (
+                    {article.categories[0] && (
                       <span style={{ fontSize: '0.7rem', fontWeight: 'bold', textTransform: 'uppercase', color: 'white', backgroundColor: '#475569', padding: '0.2rem 0.5rem', borderRadius: '4px', marginBottom: '1rem', display: 'inline-block' }}>
-                        Source : {news.source}
+                        {article.categories[0].name}
                       </span>
                     )}
                     
-                    <p style={{ fontSize: '1.2rem', fontWeight: 600, color: 'var(--foreground)', margin: 0, lineHeight: 1.5 }}>
-                      {news.content}
-                    </p>
+                    <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--foreground)', margin: 0, lineHeight: 1.3 }}>
+                      <Link href={`/article/${article.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        {article.title}
+                      </Link>
+                    </h2>
 
-                    {news.link && (
-                      <div style={{ marginTop: '1rem' }}>
-                        <a href={news.link} target="_blank" rel="noreferrer" style={{ fontSize: '0.9rem', color: 'var(--primary)', fontWeight: 'bold', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
-                          Lire l'article complet →
-                        </a>
-                      </div>
+                    {article.excerpt && (
+                      <p style={{ marginTop: '0.5rem', color: 'var(--muted)', fontSize: '0.9rem', lineHeight: 1.4 }}>
+                        {article.excerpt}
+                      </p>
                     )}
+
+                    <div style={{ marginTop: '1rem' }}>
+                      <Link href={`/article/${article.slug}`} style={{ fontSize: '0.9rem', color: 'var(--primary)', fontWeight: 'bold', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                        Lire l'article complet →
+                      </Link>
+                    </div>
                   </div>
                 </div>
               );
