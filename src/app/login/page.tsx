@@ -28,8 +28,7 @@ export default function LoginPage() {
     } else {
       const urlParams = new URLSearchParams(window.location.search);
       const callbackUrl = urlParams.get('callbackUrl') || "/";
-      router.push(callbackUrl);
-      router.refresh();
+      window.location.href = callbackUrl;
     }
   };
 
