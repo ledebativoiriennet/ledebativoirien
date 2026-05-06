@@ -186,13 +186,8 @@ export default async function ArticlePage({ params }: Props) {
     <>
       <ReadingProgressBar />
       {session?.user && <ArticleStatsRecorder articleId={article.id} />}
-      <div className="article-layout-with-toc container" style={{ marginTop: "2rem", marginBottom: "4rem" }}>
+      <div className="article-layout container" style={{ marginTop: "2rem", marginBottom: "4rem" }}>
       
-      {/* LEFT COLUMN: Table des Matières (Desktop Only) */}
-      <aside className="hidden xl:block">
-        <TableOfContents />
-      </aside>
-
       {/* CENTER COLUMN: Article Content & Bottom related */}
       <div className="portal-col-center">
         <article className="article-main-container">
@@ -446,6 +441,11 @@ export default async function ArticlePage({ params }: Props) {
 
       {/* RIGHT COLUMN: Sidebar widgets */}
       <aside className="portal-col-right">
+        {/* Table des Matières (Sticky) */}
+        <div style={{ marginBottom: "1.5rem" }}>
+          <TableOfContents />
+        </div>
+
         {/* Les Plus Lus */}
         <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "1.5rem" }}>
           <h2 className="portal-section-title dark">Les plus lus</h2>
