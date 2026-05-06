@@ -399,9 +399,10 @@ export default async function RootLayout({
             <div>
               <h4 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '1rem', color: 'var(--primary)' }}>Contact</h4>
               <ul style={{ listStyle: 'none', padding: 0, fontSize: '0.9rem', color: '#cbd5e1', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <li>Abidjan, Côte d'Ivoire</li>
-                <li>redaction@ledebativoirien.net</li>
-                <li>+225 00 00 00 00 00</li>
+                <li>Editeur: OZYL-WHAZNEY EDITIONS</li>
+                <li>E-mail: ledebativoirien@gmail.com</li>
+                <li>Tél: (+225) 07 59 69 79 65</li>
+                <li>Tél: 01 40 00 74 24 / 07 09 60 59 58</li>
               </ul>
             </div>
             <div>

@@ -15,20 +15,23 @@ export default function Page() {
         
         <div style={{ marginTop: '2.5rem', marginBottom: '1.5rem' }}>
           <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#1e293b', marginBottom: '1rem' }}>1. ÉDITEUR DU SITE</h2>
-          <p style={{ marginBottom: '0.8rem' }}>Le site ledebativoirien.net est édité par le groupe de presse Le Débat Ivoirien.</p>
-          <p style={{ marginBottom: '0.8rem' }}>Siège social : Abidjan, Côte d'Ivoire.<br/>Email de contact : redaction@ledebativoirien.net<br/>Téléphone : +225 00 00 00 00 00</p>
+          <p style={{ marginBottom: '0.8rem' }}><strong>Editeur :</strong> OZYL-WHAZNEY EDITIONS</p>
+          <p style={{ marginBottom: '0.8rem' }}><strong>E-mail :</strong> ledebativoirien@gmail.com</p>
+          <p style={{ marginBottom: '0.8rem' }}><strong>Tél :</strong> (+225) 07 59 69 79 65 / 01 40 00 74 24 / 07 09 60 59 58</p>
+          <p style={{ marginBottom: '0.8rem' }}><strong>Récepissé N° :</strong> 007/D-2019 – Dépôt Legal N°17834 du 20 août 2021 – Le debativoirien.net</p>
         </div>
 
         <div style={{ marginTop: '2.5rem', marginBottom: '1.5rem' }}>
-          <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#1e293b', marginBottom: '1rem' }}>2. DIRECTEUR DE LA PUBLICATION</h2>
-          <p style={{ marginBottom: '0.8rem' }}>Le Directeur de la publication est le rédacteur en chef du média "Le Débat Ivoirien".</p>
-          <p style={{ marginBottom: '0.8rem' }}>Pour toute demande relative au contenu éditorial, veuillez nous contacter à l'adresse email de la rédaction.</p>
+          <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#1e293b', marginBottom: '1rem' }}>2. ÉQUIPE RÉDACTIONNELLE</h2>
+          <p style={{ marginBottom: '0.8rem' }}><strong>Directeur de Publication :</strong> MAKRE DABRASSOU HERVE</p>
+          <p style={{ marginBottom: '0.8rem' }}><strong>Rédacteur en Chef :</strong> GRACE OZHYLLY</p>
+          <p style={{ marginBottom: '0.8rem' }}><strong>Rédaction :</strong> Mamadou Karamoko alias H. KARA; Hervé MAKRE</p>
+          <p style={{ marginBottom: '0.8rem' }}><strong>Collaborateurs extérieurs :</strong> Sam Sidibé, Célline M’boukou</p>
         </div>
 
         <div style={{ marginTop: '2.5rem', marginBottom: '1.5rem' }}>
           <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#1e293b', marginBottom: '1rem' }}>3. HÉBERGEMENT</h2>
           <p style={{ marginBottom: '0.8rem' }}>Le site est hébergé par Hostinger International Ltd.<br/>Siège social de l'hébergeur : 61 Lordou Vironos Street, 6023 Larnaca, Chypre.</p>
-          <p style={{ marginBottom: '0.8rem' }}>Les données sont stockées dans des centres de données sécurisés garantissant un haut niveau de disponibilité et de sécurité, conformément aux standards internationaux.</p>
         </div>
 
         <div style={{ marginTop: '2.5rem', marginBottom: '1.5rem' }}>
@@ -39,8 +42,7 @@ export default function Page() {
 
         <div style={{ marginTop: '2.5rem', marginBottom: '1.5rem' }}>
           <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#1e293b', marginBottom: '1rem' }}>5. SIGNALEMENT D'UN CONTENU ILLICITE</h2>
-          <p style={{ marginBottom: '0.8rem' }}>Si vous constatez un contenu illicite, diffamatoire ou portant atteinte à vos droits, vous pouvez nous le signaler en envoyant un email détaillé à redaction@ledebativoirien.net.</p>
-          <p style={{ marginBottom: '0.8rem' }}>Nous nous engageons à traiter votre demande dans les plus brefs délais.</p>
+          <p style={{ marginBottom: '0.8rem' }}>Si vous constatez un contenu illicite, diffamatoire ou portant atteinte à vos droits, vous pouvez nous le signaler en envoyant un email détaillé à ledebativoirien@gmail.com.</p>
         </div>
       </div>
     </div>
