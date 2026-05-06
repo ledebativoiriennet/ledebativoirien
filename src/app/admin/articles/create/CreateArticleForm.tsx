@@ -162,6 +162,17 @@ export default function CreateArticleForm({ categories }: { categories: Category
         </div>
 
         <div>
+          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Tags / Mots-clés (séparés par des virgules)</label>
+          <input 
+            type="text" 
+            name="tags" 
+            placeholder="Ex: Cacao, Economie, Exportation..."
+            style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '1rem', fontFamily: 'inherit' }}
+          />
+          <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.25rem' }}>Les tags s'afficheront en #tendances sur la page d'accueil.</p>
+        </div>
+
+        <div>
           <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Extrait (Chapô)</label>
           <textarea 
             name="excerpt" 

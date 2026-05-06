@@ -7,7 +7,10 @@ export default async function EditArticlePage({ params }: { params: Promise<{ id
   
   const article = await prisma.article.findUnique({
     where: { id },
-    include: { categories: true }
+    include: { 
+      categories: true,
+      tags: true
+    }
   });
 
   if (!article) return notFound();

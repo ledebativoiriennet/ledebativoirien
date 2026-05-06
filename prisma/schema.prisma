@@ -83,6 +83,7 @@ model Article {
   isAudioAvailable Boolean @default(false)
 
   categories  Category[]
+  tags        Tag[]
   readingHistory ReadingHistory[]
   likes          ArticleLike[]
   views          ArticleView[]
@@ -147,6 +148,15 @@ model Activity {
   imageUrl  String?
   link      String?
   createdAt DateTime @default(now())
+}
+
+model Tag {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  slug      String    @unique
+  articles  Article[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model FlashNews {

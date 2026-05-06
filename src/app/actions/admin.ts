@@ -33,6 +33,7 @@ export async function publishArticle(formData: FormData) {
   const isAudioAvailable = formData.get("isAudioAvailable") === "on";
   const imageFile = formData.get("image") as File | null;
   const categoryIds = formData.getAll("categories") as string[];
+  const tagsString = formData.get("tags") as string || "";
 
   if (!title || !content) {
     return { success: false, error: "Le titre et le contenu sont obligatoires." };
@@ -76,6 +77,16 @@ export async function publishArticle(formData: FormData) {
         publishedAt: role === "CONTRIBUTOR" ? null : new Date(),
         categories: categoryIds.length > 0 ? {
           connect: categoryIds.map(id => ({ id }))
+        } : undefined,
+        tags: tagsString.trim() ? {
+          connectOrCreate: tagsString.split(',').map(tag => {
+            const trimmed = tag.trim();
+            const tagSlug = generateSlug(trimmed);
+            return {
+              where: { slug: tagSlug },
+              create: { name: trimmed, slug: tagSlug }
+            };
+          })
         } : undefined
       }
     });
@@ -154,6 +165,7 @@ export async function updateArticle(articleId: string, formData: FormData) {
   const isPremium = formData.get("isPremium") === "on";
   const isAudioAvailable = formData.get("isAudioAvailable") === "on";
   const categoryIds = formData.getAll("categories") as string[];
+  const tagsString = formData.get("tags") as string || "";
 
   if (!title || !content) {
     return { success: false, error: "Le titre et le contenu sont obligatoires." };
@@ -193,6 +205,18 @@ export async function updateArticle(articleId: string, formData: FormData) {
         categories: {
           set: [],
           connect: categoryIds.map(id => ({ id }))
+        },
+        tags: {
+          set: [],
+          connectOrCreate: tagsString.split(',').map(tag => {
+            const trimmed = tag.trim();
+            if (!trimmed) return null;
+            const tagSlug = generateSlug(trimmed);
+            return {
+              where: { slug: tagSlug },
+              create: { name: trimmed, slug: tagSlug }
+            };
+          }).filter(t => t !== null) as any
         }
       }
     });

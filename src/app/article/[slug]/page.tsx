@@ -95,7 +95,7 @@ export default async function ArticlePage({ params }: Props) {
   
   const article = await prisma.article.findUnique({
     where: { slug },
-    include: { author: true, categories: true },
+    include: { author: true, categories: true, tags: true },
   });
 
   if (!article) return notFound();
@@ -382,16 +382,29 @@ export default async function ArticlePage({ params }: Props) {
             )}
           </div>
 
-          {/* Tags */}
-          <div style={{ marginTop: "3rem", paddingTop: "2rem", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
-            <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", alignItems: "center" }}>
-              <span style={{ fontWeight: "bold", marginRight: "0.5rem" }}>Mots-clés :</span>
-              {["Actualité", "Côte d'Ivoire", "Développement", "Politique"].map(tag => (
-                <span key={tag} style={{ backgroundColor: "#f1f5f9", padding: "0.2rem 0.6rem", borderRadius: "15px", fontSize: "0.75rem", color: "var(--muted)" }}>#{tag}</span>
-              ))}
+          {article.tags && article.tags.length > 0 && (
+            <div style={{ marginTop: "3rem", paddingTop: "2rem", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+              <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", alignItems: "center" }}>
+                <span style={{ fontWeight: "bold", marginRight: "0.5rem" }}>Mots-clés :</span>
+                {article.tags.map(tag => (
+                  <Link 
+                    key={tag.id} 
+                    href={`/tag/${tag.slug}`}
+                    style={{ backgroundColor: "#f1f5f9", padding: "0.2rem 0.6rem", borderRadius: "15px", fontSize: "0.75rem", color: "var(--muted)", textDecoration: "none" }}
+                    className="hover-primary"
+                  >
+                    #{tag.name}
+                  </Link>
+                ))}
+              </div>
+              <LikeButton articleId={article.id} initialLiked={initialLiked} initialCount={initialLikeCount} />
             </div>
-            <LikeButton articleId={article.id} initialLiked={initialLiked} initialCount={initialLikeCount} />
-          </div>
+          )}
+          {!article.tags?.length && (
+            <div style={{ marginTop: "3rem", paddingTop: "2rem", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "flex-end" }}>
+              <LikeButton articleId={article.id} initialLiked={initialLiked} initialCount={initialLikeCount} />
+            </div>
+          )}
           
           <SocialShareButtons title={article.title} layout="horizontal" />
         </article>

@@ -36,7 +36,8 @@ export default async function Home() {
     pressReleases,
     publieReportageArticles,
     audioArticles,
-    internationalArticles
+    internationalArticles,
+    trendingTags
   ] = await Promise.all([
     prisma.article.findMany({
       where: { publishedAt: { not: null } },
@@ -72,7 +73,12 @@ export default async function Home() {
     prisma.pressRelease.findMany({ take: 5, orderBy: { createdAt: 'desc' } }),
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'publie-reportage' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.article.findMany({ where: { isAudioAvailable: true, publishedAt: { not: null } }, take: 8, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['international', 'internationale', 'diplomatie'] } } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } })
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['international', 'internationale', 'diplomatie'] } } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.tag.findMany({ 
+      where: { articles: { some: { publishedAt: { not: null } } } },
+      take: 10,
+      orderBy: { articles: { _count: 'desc' } }
+    })
   ]);
 
   if (!recentArticles || recentArticles.length === 0) {
@@ -297,6 +303,38 @@ export default async function Home() {
 
       {/* CENTER COLUMN: A la Une & Categories */}
       <div className="portal-col-center">
+        {/* Trending Tags */}
+        {trendingTags && trendingTags.length > 0 && (
+          <div style={{ 
+            display: 'flex', 
+            gap: '1rem', 
+            overflowX: 'auto', 
+            paddingBottom: '0.75rem', 
+            marginBottom: '1rem',
+            borderBottom: '1px solid var(--border)',
+            scrollbarWidth: 'none',
+            whiteSpace: 'nowrap'
+          }}>
+            <span style={{ fontWeight: 900, color: 'var(--primary)', fontSize: '0.8rem', textTransform: 'uppercase' }}>Tendances :</span>
+            {trendingTags.map(tag => (
+              <Link 
+                key={tag.id} 
+                href={`/tag/${tag.slug}`}
+                style={{ 
+                  fontSize: '0.85rem', 
+                  color: 'var(--foreground)', 
+                  textDecoration: 'none', 
+                  fontWeight: 600,
+                  transition: 'color 0.2s'
+                }}
+                className="hover-primary"
+              >
+                #{tag.name.replace(/\s+/g, '')}
+              </Link>
+            ))}
+          </div>
+        )}
+
         {/* A la Une Mosaic */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "1rem", marginBottom: "2rem" }}>
           <Link href={`/article/${mainFeatured.slug}`} style={{ display: "block" }}>
