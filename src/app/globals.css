@@ -728,3 +728,8 @@ a:hover {
     padding: 1rem;
   }
 }
+@media (max-width: 768px) {
+  .kiosque-link-desktop {
+    display: none !important;
+  }
+}

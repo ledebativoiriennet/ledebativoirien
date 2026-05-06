@@ -13,6 +13,8 @@ import { getLiveMarketData } from "@/lib/marketData";
 import { PushNotificationPrompt, ConsentManagerButton } from "@/components/PushNotificationPrompt";
 import { CookieConsentPopup } from "@/components/CookieConsentPopup";
 import PopupAd from "@/components/PopupAd";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -26,7 +28,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
+  const session = await getServerSession(authOptions);
+  
   const targetSlugs = ["a-la-une", "actualite", "politique", "economie", "diplomatie", "internationale", "societe", "publie-reportage", "sports", "culture"];
   
   // Robustness: Ensure these categories exist in the database
@@ -197,6 +200,28 @@ export default async function RootLayout({
             <a href="/" className="logo-container" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
               <img src="/logo.png" alt="Logo Le Débat Ivoirien" style={{ height: '60px', width: 'auto', objectFit: 'contain' }} />
             </a>
+
+            {/* Kiosque PDF prominent link after connection */}
+            {session && (
+              <Link href="/marketplace" style={{ 
+                backgroundColor: '#ffeb3b', 
+                color: '#111', 
+                padding: '0.5rem 1rem', 
+                borderRadius: '4px', 
+                fontWeight: 'bold', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '0.5rem', 
+                textDecoration: 'none', 
+                fontSize: '0.85rem', 
+                border: '1px solid #fbc02d', 
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                marginLeft: '1rem'
+              }} className="kiosque-link-desktop">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                KIOSQUE PDF
+              </Link>
+            )}
             <div className="header-actions">
                <input type="text" placeholder="Rechercher..." className="input search-input" style={{ padding: '0.5rem' }} />
                <UserMenu />
