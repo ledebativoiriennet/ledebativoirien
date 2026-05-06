@@ -60,7 +60,7 @@ export default async function Home() {
     prisma.video.findMany({ take: 4, orderBy: { createdAt: 'desc' } }),
     prisma.activity.findMany({ take: 3, orderBy: { createdAt: 'desc' } }),
     prisma.flashNews.findMany({ take: 6, orderBy: { createdAt: 'desc' } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'culture' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['culture', 'arts'] } } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.jobOffer.findMany({ take: 4, orderBy: { createdAt: 'desc' }, where: { isActive: true } }),
     prisma.weatherReport.findFirst({ orderBy: { date: 'desc' } }),
     prisma.breakingNews.findMany({ where: { isActive: true }, orderBy: { createdAt: 'desc' } }),
@@ -793,7 +793,7 @@ export default async function Home() {
     <div className="container" style={{ marginTop: '3rem' }}>
       <h2 className="portal-section-title dark" style={{ display: "flex", justifyContent: "space-between", borderBottom: '2px solid #9333ea', paddingBottom: '0.5rem' }}>
         <span style={{ fontSize: '1.5rem', fontWeight: 900, color: '#9333ea' }}>Culture & Arts</span>
-        <Link href="#" style={{ fontSize: '0.8rem', color: '#9333ea', fontWeight: 'bold', alignSelf: 'flex-end' }}>Voir plus de culture</Link>
+        <Link href="/category/culture" style={{ fontSize: '0.8rem', color: '#9333ea', fontWeight: 'bold', alignSelf: 'flex-end' }}>Voir plus de culture</Link>
       </h2>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1.5rem", marginTop: "1.5rem" }}>
         {(cultureArticles.length > 0 ? cultureArticles : recentArticles.slice(6, 10)).slice(0, 4).map((article) => {
