@@ -97,6 +97,39 @@ export default async function Home() {
     <div className="container">
       <AdBanner slot="HOME_TOP" />
       <SportsModule />
+
+      {/* Trending Tags (Hashtags) */}
+      {trendingTags && trendingTags.length > 0 && (
+        <div style={{ 
+          display: 'flex', 
+          gap: '1rem', 
+          overflowX: 'auto', 
+          padding: '0.75rem 0', 
+          marginBottom: '1rem',
+          borderBottom: '1px solid var(--border)',
+          scrollbarWidth: 'none',
+          whiteSpace: 'nowrap',
+          alignItems: 'center'
+        }}>
+          <span style={{ fontWeight: 900, color: 'var(--primary)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}># Tendances :</span>
+          {trendingTags.map(tag => (
+            <Link 
+              key={tag.id} 
+              href={`/tag/${tag.slug}`}
+              style={{ 
+                fontSize: '0.85rem', 
+                color: 'var(--foreground)', 
+                textDecoration: 'none', 
+                fontWeight: 600,
+                transition: 'color 0.2s'
+              }}
+              className="hover-primary"
+            >
+              #{tag.name.replace(/\s+/g, '')}
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
 
     <div className="portal-layout">
@@ -303,38 +336,6 @@ export default async function Home() {
 
       {/* CENTER COLUMN: A la Une & Categories */}
       <div className="portal-col-center">
-        {/* Trending Tags */}
-        {trendingTags && trendingTags.length > 0 && (
-          <div style={{ 
-            display: 'flex', 
-            gap: '1rem', 
-            overflowX: 'auto', 
-            paddingBottom: '0.75rem', 
-            marginBottom: '1rem',
-            borderBottom: '1px solid var(--border)',
-            scrollbarWidth: 'none',
-            whiteSpace: 'nowrap'
-          }}>
-            <span style={{ fontWeight: 900, color: 'var(--primary)', fontSize: '0.8rem', textTransform: 'uppercase' }}>Tendances :</span>
-            {trendingTags.map(tag => (
-              <Link 
-                key={tag.id} 
-                href={`/tag/${tag.slug}`}
-                style={{ 
-                  fontSize: '0.85rem', 
-                  color: 'var(--foreground)', 
-                  textDecoration: 'none', 
-                  fontWeight: 600,
-                  transition: 'color 0.2s'
-                }}
-                className="hover-primary"
-              >
-                #{tag.name.replace(/\s+/g, '')}
-              </Link>
-            ))}
-          </div>
-        )}
-
         {/* A la Une Mosaic */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "1rem", marginBottom: "2rem" }}>
           <Link href={`/article/${mainFeatured.slug}`} style={{ display: "block" }}>
