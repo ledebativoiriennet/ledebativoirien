@@ -35,7 +35,8 @@ export default async function Home() {
     economieArticles,
     pressReleases,
     publieReportageArticles,
-    audioArticles
+    audioArticles,
+    internationalArticles
   ] = await Promise.all([
     prisma.article.findMany({
       where: { publishedAt: { not: null } },
@@ -70,7 +71,8 @@ export default async function Home() {
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'economie' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.pressRelease.findMany({ take: 5, orderBy: { createdAt: 'desc' } }),
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'publie-reportage' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
-    prisma.article.findMany({ where: { isAudioAvailable: true, publishedAt: { not: null } }, take: 8, orderBy: { publishedAt: 'desc' }, include: { categories: true } })
+    prisma.article.findMany({ where: { isAudioAvailable: true, publishedAt: { not: null } }, take: 8, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['international', 'internationale', 'diplomatie'] } } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } })
   ]);
 
   if (!recentArticles || recentArticles.length === 0) {
@@ -739,10 +741,10 @@ export default async function Home() {
     <div className="container" style={{ marginTop: '3rem' }}>
       <h2 className="portal-section-title dark" style={{ display: "flex", justifyContent: "space-between", borderBottom: '2px solid var(--primary)', paddingBottom: '0.5rem' }}>
         <span style={{ fontSize: '1.5rem', fontWeight: 900 }}>International & Diplomatie</span>
-        <Link href="#" style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 'bold', alignSelf: 'flex-end' }}>Voir plus d'actualités internationales</Link>
+        <Link href="/category/internationale" style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 'bold', alignSelf: 'flex-end' }}>Voir plus d'actualités internationales</Link>
       </h2>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1.5rem", marginTop: "1.5rem" }}>
-        {recentArticles.slice(19, 23).map((article) => {
+        {internationalArticles.map((article) => {
           const imgUrl = getArticleImage(article);
           return (
             <Link href={`/article/${article.slug}`} key={`intl-${article.id}`} style={{ display: "flex", flexDirection: "column", gap: "0.75rem", backgroundColor: "var(--card-bg)", borderRadius: "var(--radius)", overflow: "hidden", border: "1px solid var(--border)", transition: "transform 0.2s" }} className="hover-scale">
