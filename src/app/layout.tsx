@@ -55,16 +55,25 @@ export default async function RootLayout({
     console.error("Error ensuring categories:", e);
   }
 
-  let navCategories = await prisma.category.findMany({
-    where: { slug: { in: targetSlugs } },
-    include: {
-      articles: {
-        where: { publishedAt: { not: null } },
+  let rawCategories = await prisma.category.findMany({
+    where: { slug: { in: targetSlugs } }
+  });
+
+  // Fetch articles separately to avoid SQLite parameter limit errors with nested not:null filters
+  let navCategories = await Promise.all(
+    rawCategories.map(async (category) => {
+      const articles = await prisma.article.findMany({
+        where: {
+          categories: { some: { id: category.id } },
+          publishedAt: { not: null }
+        },
         take: 3,
         orderBy: { publishedAt: 'desc' },
-      }
-    }
-  });
+        select: { id: true, slug: true, title: true, imageUrl: true, publishedAt: true }
+      });
+      return { ...category, articles };
+    })
+  );
 
   // Sort them to match the targetSlugs array order
   navCategories.sort((a, b) => targetSlugs.indexOf(a.slug) - targetSlugs.indexOf(b.slug));
