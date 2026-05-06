@@ -81,7 +81,6 @@ export default function FloatingSocialPill({ siteSettings }: Props) {
 
       <div 
         style={{
-          width: "55px",
           height: "55px",
           borderRadius: "9999px",
           backgroundColor: "var(--primary)",
