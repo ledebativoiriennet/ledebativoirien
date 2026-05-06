@@ -76,14 +76,31 @@ export default async function Home() {
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['international', 'internationale', 'diplomatie'] } } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.tag.findMany({ 
       where: { articles: { some: { publishedAt: { not: null } } } },
-      take: 7,
-      orderBy: { articles: { _count: 'desc' } }
+      include: {
+        articles: {
+          where: { publishedAt: { not: null } },
+          select: {
+            _count: {
+              select: { views: true }
+            }
+          }
+        }
+      }
     })
   ]);
 
   if (!recentArticles || recentArticles.length === 0) {
     return <div>Aucun article disponible. Le chargement des données est peut-être en cours.</div>;
   }
+
+  // Trier les tags par nombre total de vues des articles associés
+  const processedTrendingTags = trendingTags
+    .map(tag => ({
+      ...tag,
+      totalViews: tag.articles.reduce((sum, art) => sum + art._count.views, 0)
+    }))
+    .sort((a, b) => b.totalViews - a.totalViews)
+    .slice(0, 7);
 
   // Split recent articles for "A la Une"
   const aLaUne = recentArticles.slice(0, 5);
@@ -99,7 +116,7 @@ export default async function Home() {
       <SportsModule />
 
       {/* Trending Tags (Hashtags) */}
-      {trendingTags && trendingTags.length > 0 && (
+      {processedTrendingTags && processedTrendingTags.length > 0 && (
         <div style={{ 
           display: 'flex', 
           gap: '1rem', 
@@ -112,7 +129,7 @@ export default async function Home() {
           alignItems: 'center'
         }}>
           <span style={{ fontWeight: 900, color: 'var(--primary)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}># Tendances :</span>
-          {trendingTags.map(tag => (
+          {processedTrendingTags.map(tag => (
             <Link 
               key={tag.id} 
               href={`/tag/${tag.slug}`}
