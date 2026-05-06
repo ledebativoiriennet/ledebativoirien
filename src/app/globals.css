@@ -97,7 +97,7 @@ a:hover {
 }
 
 .article-content p {
-  font-size: 1.15rem !important;
+  font-size: var(--article-font-size, 1.15rem) !important;
   line-height: 1.9 !important;
   margin-bottom: 1.5rem !important;
   color: var(--foreground);

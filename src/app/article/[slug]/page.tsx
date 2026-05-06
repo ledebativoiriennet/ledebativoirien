@@ -11,6 +11,8 @@ import ArticleStatsRecorder from "@/components/ArticleStatsRecorder";
 import DownloadPdfButton from "@/components/DownloadPdfButton";
 import { LikeButton } from "@/components/LikeButton";
 import AdBanner from "@/components/AdBanner";
+import ArticleAudioPlayer from "@/components/ArticleAudioPlayer";
+import TextSizeAdjuster from "@/components/TextSizeAdjuster";
 import { Metadata, ResolvingMetadata } from "next";
 import NewsletterWidget from "@/components/NewsletterWidget";
 import AuthorSubscribeButton from "@/components/AuthorSubscribeButton";
@@ -224,16 +226,22 @@ export default async function ArticlePage({ params }: Props) {
           </div>
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "1.5rem" }}>
-            <SocialShareButtons title={article.title} layout="horizontal" />
-            <DownloadPdfButton 
-              articleTitle={article.title}
-              articleContent={article.content}
-              articleDate={new Date(article.publishedAt || new Date()).toLocaleDateString("fr-FR", { year: 'numeric', month: 'long', day: 'numeric' })}
-              articleImage={article.imageUrl || mainImageUrl || undefined}
-              authorName={article.author?.name || undefined}
-              isPremium={article.isPremium}
-              userHasAccess={!showPaywall}
-            />
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
+              <ArticleAudioPlayer title={article.title} content={contentToShow} />
+              <TextSizeAdjuster />
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
+              <SocialShareButtons title={article.title} layout="horizontal" />
+              <DownloadPdfButton 
+                articleTitle={article.title}
+                articleContent={article.content}
+                articleDate={new Date(article.publishedAt || new Date()).toLocaleDateString("fr-FR", { year: 'numeric', month: 'long', day: 'numeric' })}
+                articleImage={article.imageUrl || mainImageUrl || undefined}
+                authorName={article.author?.name || undefined}
+                isPremium={article.isPremium}
+                userHasAccess={!showPaywall}
+              />
+            </div>
           </div>
 
           <AdBanner slot="ARTICLE_TOP" />
