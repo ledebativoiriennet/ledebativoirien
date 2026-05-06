@@ -21,6 +21,7 @@ import { authOptions } from "@/lib/auth";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://ledebativoirien.net'),
   title: "Le Débat Ivoirien - Actualités en continu",
   description: "Portail d'informations et d'investigations. L'actualité en Côte d'Ivoire et dans le monde.",
 };
