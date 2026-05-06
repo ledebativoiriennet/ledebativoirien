@@ -9,6 +9,7 @@ import AdBanner from "@/components/AdBanner";
 import SportsModule from "@/components/SportsModule";
 import { PollWidget } from "@/components/PollWidget";
 import PersonalizedFeed from "@/components/PersonalizedFeed";
+import HomeAudioModule from "@/components/HomeAudioModule";
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -844,6 +845,18 @@ export default async function Home() {
         </div>
       </div>
     </section>
+
+    {/* FULL-WIDTH ESPACE ACTU AUDIO */}
+    <HomeAudioModule 
+      articles={recentArticles.slice(0, 4).map(a => ({
+        id: a.id,
+        title: a.title,
+        content: a.content,
+        slug: a.slug,
+        imageUrl: getArticleImage(a) as string | null,
+        categoryName: a.categories[0]?.name
+      }))} 
+    />
 
     </>
   );
