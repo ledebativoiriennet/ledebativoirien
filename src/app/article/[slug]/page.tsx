@@ -189,7 +189,7 @@ export default async function ArticlePage({ params }: Props) {
       <div className="article-layout-with-toc container" style={{ marginTop: "2rem", marginBottom: "4rem" }}>
       
       {/* LEFT COLUMN: Table des Matières (Desktop Only) */}
-      <aside style={{ display: 'none' }} className="xl:block">
+      <aside className="hidden xl:block">
         <TableOfContents />
       </aside>
 
