@@ -14,6 +14,7 @@ import { getLiveMarketData } from "@/lib/marketData";
 import { PushNotificationPrompt, ConsentManagerButton } from "@/components/PushNotificationPrompt";
 import { CookieConsentPopup } from "@/components/CookieConsentPopup";
 import PopupAd from "@/components/PopupAd";
+import FloatingSocialPill from "@/components/FloatingSocialPill";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
@@ -422,6 +423,7 @@ export default async function RootLayout({
           </div>
         </footer>
         <PopupAd />
+        <FloatingSocialPill siteSettings={siteSettings} />
         </Providers>
         </div>
       </body>
