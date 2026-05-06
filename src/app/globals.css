@@ -199,12 +199,19 @@ a:hover {
 }
 
 .main-header {
-  padding: 1.5rem 0;
+  padding: 1rem 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 1.5rem;
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .main-header {
+    flex-direction: column;
+    text-align: center;
+  }
 }
 
 .logo-text-primary, .logo-text-secondary {
@@ -634,6 +641,15 @@ a:hover {
   border-radius: var(--radius);
 }
 
+@media (max-width: 640px) {
+  .article-content img {
+    float: none;
+    margin-right: 0;
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
 .article-content iframe,
 .article-content video {
   max-width: 100%;
@@ -651,7 +667,7 @@ a:hover {
 
 .admin-sidebar {
   width: 250px;
-  background-color: #1e293b;
+  background-color: #111111;
   color: white;
   display: flex;
   flex-direction: column;
@@ -730,5 +746,28 @@ a:hover {
 @media (max-width: 768px) {
   .kiosque-link-desktop {
     display: none !important;
+  }
+}
+
+.main-featured-card {
+  height: 250px;
+}
+
+@media (min-width: 768px) {
+  .main-featured-card {
+    height: 450px;
+  }
+}
+
+/* Indicators on mobile */
+@media (max-width: 640px) {
+  .container > div[style*="flexWrap: wrap"] > div {
+    min-width: 100% !important;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1rem;
+  }
+  .container > div[style*="flexWrap: wrap"] > div:last-child {
+    border-bottom: none;
   }
 }

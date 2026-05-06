@@ -319,7 +319,7 @@ export default async function Home() {
         {/* A la Une Mosaic */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "1rem", marginBottom: "2rem" }}>
           <Link href={`/article/${mainFeatured.slug}`} style={{ display: "block" }}>
-            <div style={{ position: "relative", height: "350px", backgroundColor: "#e2e8f0", borderRadius: "var(--radius)", overflow: "hidden" }}>
+            <div className="main-featured-card" style={{ position: "relative", backgroundColor: "#e2e8f0", borderRadius: "var(--radius)", overflow: "hidden" }}>
               {getArticleImage(mainFeatured) ? (
                 <img src={getArticleImage(mainFeatured) as string} alt={mainFeatured.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (

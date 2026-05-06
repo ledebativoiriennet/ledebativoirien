@@ -270,7 +270,7 @@ export default async function RootLayout({
           
           {/* Indicators Strip - Abidjan.net Style */}
           <div style={{ backgroundColor: 'white', borderBottom: '1px solid var(--border)', padding: '1rem 0' }}>
-            <div className="container" style={{ display: 'flex', gap: '2rem', overflowX: 'auto', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div className="container" style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'flex-start' }}>
               
               {/* Block 1: Cacao */}
               {cacaoGrp.length > 0 && (
