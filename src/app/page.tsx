@@ -8,6 +8,7 @@ import { AdSlot } from "@/components/AdSlot";
 import AdBanner from "@/components/AdBanner";
 import SportsModule from "@/components/SportsModule";
 import { PollWidget } from "@/components/PollWidget";
+import PersonalizedFeed from "@/components/PersonalizedFeed";
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -331,6 +332,9 @@ export default async function Home() {
 
         {/* Publicité Milieu de page */}
         <AdBanner slot="HOME_MIDDLE" />
+
+        {/* Flux Personnalisé pour l'utilisateur (Server Component) */}
+        <PersonalizedFeed />
 
         {/* Thematic Blocks */}
         <div className="grid-responsive-2col" style={{ gap: "1.5rem" }}>

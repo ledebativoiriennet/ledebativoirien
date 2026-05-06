@@ -13,9 +13,8 @@
   --header-bg: #ffffff;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --primary: #ff1a1a;
+.dark {
+  --primary: #ff1a1a;
     --primary-hover: #e60000;
     --secondary: #ffffff;
     --secondary-hover: #e2e8f0;
@@ -26,7 +25,6 @@
     --muted: #94a3b8;
     --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
     --header-bg: #0f172a;
-  }
 }
 
 *, *::before, *::after {
@@ -41,6 +39,7 @@ html, body {
   color: var(--foreground);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Media Reset to prevent overflow */

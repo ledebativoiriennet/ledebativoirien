@@ -9,6 +9,7 @@ import { prisma } from "@/lib/prisma";
 import { GoogleAnalytics } from '@next/third-parties/google';
 import Script from "next/script";
 import MainNavigation from "@/components/MainNavigation";
+import ThemeToggle from "@/components/ThemeToggle";
 import { getLiveMarketData } from "@/lib/marketData";
 import { PushNotificationPrompt, ConsentManagerButton } from "@/components/PushNotificationPrompt";
 import { CookieConsentPopup } from "@/components/CookieConsentPopup";
@@ -55,7 +56,14 @@ export default async function RootLayout({
   }
 
   let navCategories = await prisma.category.findMany({
-    where: { slug: { in: targetSlugs } }
+    where: { slug: { in: targetSlugs } },
+    include: {
+      articles: {
+        where: { publishedAt: { not: null } },
+        take: 3,
+        orderBy: { publishedAt: 'desc' },
+      }
+    }
   });
 
   // Sort them to match the targetSlugs array order
@@ -152,7 +160,7 @@ export default async function RootLayout({
   };
 
   return (
-    <html lang="fr">
+    <html lang="fr" suppressHydrationWarning>
       <head>
         <meta name="google-adsense-account" content={process.env.NEXT_PUBLIC_ADSENSE_ID} />
         {skinAd && (
@@ -224,6 +232,7 @@ export default async function RootLayout({
             )}
             <div className="header-actions">
                <input type="text" placeholder="Rechercher..." className="input search-input" style={{ padding: '0.5rem' }} />
+               <ThemeToggle />
                <UserMenu />
             </div>
           </div>

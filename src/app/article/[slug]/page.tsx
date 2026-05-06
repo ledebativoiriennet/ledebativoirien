@@ -14,6 +14,7 @@ import AdBanner from "@/components/AdBanner";
 import { Metadata, ResolvingMetadata } from "next";
 import NewsletterWidget from "@/components/NewsletterWidget";
 import AuthorSubscribeButton from "@/components/AuthorSubscribeButton";
+import ReadingProgressBar from "@/components/ReadingProgressBar";
 
 export const revalidate = 60;
 
@@ -160,10 +161,16 @@ export default async function ArticlePage({ params }: Props) {
     contentToShow = truncateHtmlToFirstParagraph(article.content);
   }
 
+  // Calcul du temps de lecture (environ 200 mots par minute)
+  const wordCount = article.content.replace(/<[^>]*>?/gm, '').split(/\s+/).filter(word => word.length > 0).length;
+  const readTime = Math.max(1, Math.ceil(wordCount / 200));
+
   const mainImageUrl = getArticleImage(article);
 
   return (
-    <div className="article-layout container" style={{ marginTop: "2rem", marginBottom: "4rem" }}>
+    <>
+      <ReadingProgressBar />
+      <div className="article-layout container" style={{ marginTop: "2rem", marginBottom: "4rem" }}>
       {session?.user && <ArticleStatsRecorder articleId={article.id} />}
       
       {/* CENTER COLUMN: Article Content & Bottom related */}
@@ -213,7 +220,7 @@ export default async function ArticlePage({ params }: Props) {
             <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }} title="Lectures depuis la publication">👁️ {totalViews.toLocaleString()} vues</span>
             <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }} title="Aujourd'hui / Semaine / Mois">📊 {todayViews.toLocaleString()} / {weekViews.toLocaleString()} / {monthViews.toLocaleString()}</span>
             {article.isPremium && <span className="premium-badge">PREMIUM</span>}
-            <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>⏱️ 5 min</span>
+            <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }} title="Temps de lecture estimé">⏱️ {readTime} min</span>
           </div>
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "1.5rem" }}>
@@ -459,5 +466,6 @@ export default async function ArticlePage({ params }: Props) {
         </div>
       </aside>
     </div>
+    </>
   );
 }
