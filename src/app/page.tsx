@@ -76,7 +76,7 @@ export default async function Home() {
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['international', 'internationale', 'diplomatie'] } } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.tag.findMany({ 
       where: { articles: { some: { publishedAt: { not: null } } } },
-      take: 10,
+      take: 7,
       orderBy: { articles: { _count: 'desc' } }
     })
   ]);
