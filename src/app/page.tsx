@@ -473,19 +473,22 @@ export default async function Home() {
           <h2 className="portal-section-title dark" style={{ display: "flex", justifyContent: "space-between", borderBottom: '2px solid var(--primary)' }}>
             <span>Plus de News</span>
           </h2>
-          <div className="grid-responsive-2col" style={{ marginTop: "1rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1.5rem", marginTop: "1.5rem" }}>
             {recentArticles.slice(10, 16).map((article) => {
               const imgUrl = getArticleImage(article);
+              const catName = article.categories[0]?.name || "Général";
               return (
-                <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", gap: "0.75rem", backgroundColor: "var(--card-bg)", padding: "0.5rem", borderRadius: "var(--radius)", border: "1px solid var(--border)" }}>
-                  <div style={{ width: "80px", height: "80px", backgroundColor: "var(--muted)", flexShrink: 0, overflow: "hidden", borderRadius: "4px" }}>
-                    {imgUrl ? <img src={imgUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : null}
+                <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", flexDirection: "column", gap: "0.75rem", backgroundColor: "var(--card-bg)", borderRadius: "var(--radius)", overflow: "hidden", border: "1px solid var(--border)", transition: "transform 0.2s" }} className="hover-scale">
+                  <div style={{ aspectRatio: "16/9", backgroundColor: "var(--muted)", overflow: "hidden", position: "relative" }}>
+                    {imgUrl ? <img src={imgUrl} alt={article.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{width:'100%',height:'100%',background:'var(--foreground)'}} />}
+                    <div style={{ position: "absolute", top: "0.5rem", left: "0.5rem", backgroundColor: "var(--primary)", color: "white", fontSize: "0.65rem", fontWeight: "bold", padding: "0.2rem 0.5rem", borderRadius: "2px", textTransform: "uppercase" }}>{catName}</div>
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: "0.65rem", color: "var(--primary)", fontWeight: "bold", textTransform: "uppercase", marginBottom: "0.2rem" }}>
-                      {article.categories[0]?.name || "Général"}
-                    </div>
-                    <h3 style={{ fontSize: "0.8rem", fontWeight: 700, lineHeight: 1.3 }}>{article.title}</h3>
+                  <div style={{ padding: "1rem" }}>
+                    <div style={{ fontSize: "0.7rem", color: "var(--muted)", marginBottom: "0.5rem" }}>{new Date(article.publishedAt || new Date()).toLocaleDateString("fr-FR")}</div>
+                    <h3 style={{ fontSize: "0.95rem", fontWeight: 700, lineHeight: 1.3 }}>{article.title}</h3>
+                    {article.excerpt && (
+                      <p style={{ fontSize: "0.8rem", color: "var(--muted)", marginTop: "0.5rem", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{article.excerpt}</p>
+                    )}
                   </div>
                 </Link>
               )
