@@ -399,7 +399,7 @@ export default async function RootLayout({
             </div>
           </div>
           <div className="container" style={{ textAlign: 'center', fontSize: '0.85rem', color: '#64748b', borderTop: '1px solid #334155', paddingTop: '2rem' }}>
-            © {new Date().getFullYear()} Le Débat Ivoirien. Tous droits réservés. - Développée par <a href="https://www.cornerstonros.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Cornerstoneros</a>
+            © {new Date().getFullYear()} Le Débat Ivoirien. Tous droits réservés. - Développée par <a href="https://www.cornerstoneros.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Cornerstoneros</a>
           </div>
         </footer>
         <PopupAd />
