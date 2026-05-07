@@ -52,7 +52,7 @@ export async function GET(request: Request) {
   }
 
   // Fetch toutes les données en parallèle
-  const [cocoa, coffee, brent, cotton, gas, gold, silver, aluminium, rates] = await Promise.all([
+  const [cocoa, coffee, brent, cotton, gas, gold, silver, aluminium, zinc, rates] = await Promise.all([
     fetchYahoo('CC=F'),   // Cacao
     fetchYahoo('KC=F'),   // Café
     fetchYahoo('BZ=F'),   // Pétrole Brent
@@ -61,6 +61,7 @@ export async function GET(request: Request) {
     fetchYahoo('GC=F'),   // Or
     fetchYahoo('SI=F'),   // Argent
     fetchYahoo('ALI=F'),  // Aluminium
+    fetchYahoo('ZN=F'),   // Zinc
     fetchRates(),          // Devises
   ]);
 
@@ -94,9 +95,13 @@ export async function GET(request: Request) {
       const priceCFA = gas.price * xofRate;
       await updateIndicator(ind.id, `${priceCFA.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} FCFA / MMBtu`, getTrend(gas.price, gas.prev));
     }
-    if (ind.label === 'Or (Once)' && gold) {
+    if (ind.label === 'Or' && gold) {
       const priceCFA = gold.price * xofRate;
-      await updateIndicator(ind.id, `${priceCFA.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} FCFA`, getTrend(gold.price, gold.prev));
+      await updateIndicator(ind.id, `${priceCFA.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} FCFA / once`, getTrend(gold.price, gold.prev));
+    }
+    if (ind.label === 'Zinc' && zinc) {
+      const priceCFA = zinc.price * xofRate;
+      await updateIndicator(ind.id, `${priceCFA.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} FCFA`, getTrend(zinc.price, zinc.prev));
     }
     if (ind.label === 'Argent' && silver) {
       const priceCFA = silver.price * xofRate;
