@@ -326,6 +326,36 @@ export default async function Home() {
             </div>
           </div>
         )}
+
+        {/* Faits Divers - DÉPLACÉ ICI (colonne gauche) */}
+        {faitsDiversItems && faitsDiversItems.length > 0 && (
+          <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginTop: "1.5rem" }}>
+            <h2 className="portal-section-title" style={{ backgroundColor: "#b91c1c", borderColor: "#991b1b", display: "flex", justifyContent: "space-between" }}>
+              <span>Faits Divers</span>
+              <Link href="/category/faits-divers" style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.8)", textDecoration: "none", fontWeight: "normal" }}>Voir tout</Link>
+            </h2>
+            <div style={{ padding: "0" }}>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                {faitsDiversItems.map((article) => {
+                  const imgUrl = getArticleImage(article);
+                  return (
+                    <li key={article.id} style={{ borderBottom: "1px solid var(--border)", padding: "0.75rem 1rem" }}>
+                      <Link href={`/article/${article.slug}`} style={{ display: "flex", gap: "0.75rem" }}>
+                        <div style={{ width: "60px", height: "60px", backgroundColor: "var(--muted)", flexShrink: 0, borderRadius: "4px", overflow: "hidden" }}>
+                          {imgUrl && <img src={imgUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: "0.65rem", color: "#b91c1c", fontWeight: "bold", textTransform: "uppercase", marginBottom: "0.2rem" }}>Faits Divers</div>
+                          <h3 style={{ fontSize: "0.8rem", fontWeight: 700, lineHeight: 1.3 }}>{article.title}</h3>
+                        </div>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
+        )}
       </aside>
 
       {/* CENTER COLUMN: Thematic Hub */}
@@ -500,67 +530,42 @@ export default async function Home() {
           )}
         </div>
 
-        {/* Economie */}
-        {economieItems && economieItems.length > 0 && (
-          <div style={{ marginTop: "2rem" }}>
-            <h2 className="portal-section-title" style={{ display: "flex", justifyContent: "space-between", borderBottom: '2px solid var(--primary)' }}>
-              <span>Économie</span>
-              <Link href="/category/economie" style={{ fontSize: "0.8rem", color: "var(--muted)", textDecoration: "none", fontWeight: "normal" }}>Voir tout</Link>
-            </h2>
-            <div className="grid-responsive-2col" style={{ marginTop: "1rem" }}>
-              {economieItems.map((article) => {
-                const imgUrl = getArticleImage(article);
-                return (
-                  <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", gap: "0.75rem", backgroundColor: "var(--card-bg)", padding: "0.5rem", borderRadius: "var(--radius)", border: "1px solid var(--border)" }}>
-                    <div style={{ width: "80px", height: "80px", backgroundColor: "var(--muted)", flexShrink: 0, overflow: "hidden", borderRadius: "4px" }}>
-                      {imgUrl ? <img src={imgUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : null}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: "0.65rem", color: "var(--primary)", fontWeight: "bold", textTransform: "uppercase", marginBottom: "0.2rem" }}>
-                        Économie
-                      </div>
-                      <h3 style={{ fontSize: "0.8rem", fontWeight: 700, lineHeight: 1.3 }}>{article.title}</h3>
-                    </div>
-                  </Link>
-                )
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* Faits Divers */}
-        {faitsDiversItems && faitsDiversItems.length > 0 && (
-          <div style={{ marginTop: "2rem" }}>
-            <h2 className="portal-section-title" style={{ display: "flex", justifyContent: "space-between", borderBottom: '2px solid var(--primary)' }}>
-              <span>Faits Divers</span>
-              <Link href="/category/faits-divers" style={{ fontSize: "0.8rem", color: "var(--muted)", textDecoration: "none", fontWeight: "normal" }}>Voir tout</Link>
-            </h2>
-            <div className="grid-responsive-2col" style={{ marginTop: "1rem" }}>
-              {faitsDiversItems.map((article) => {
-                const imgUrl = getArticleImage(article);
-                return (
-                  <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", gap: "0.75rem", backgroundColor: "var(--card-bg)", padding: "0.5rem", borderRadius: "var(--radius)", border: "1px solid var(--border)" }}>
-                    <div style={{ width: "80px", height: "80px", backgroundColor: "var(--muted)", flexShrink: 0, overflow: "hidden", borderRadius: "4px" }}>
-                      {imgUrl ? <img src={imgUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : null}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: "0.65rem", color: "var(--primary)", fontWeight: "bold", textTransform: "uppercase", marginBottom: "0.2rem" }}>
-                        Faits Divers
-                      </div>
-                      <h3 style={{ fontSize: "0.8rem", fontWeight: 700, lineHeight: 1.3 }}>{article.title}</h3>
-                    </div>
-                  </Link>
-                )
-              })}
-            </div>
-          </div>
-        )}
-
 
       </div>
 
       {/* RIGHT COLUMN: Pubs & Les Plus Lus */}
       <aside className="portal-col-right">
+
+        {/* Économie - DÉPLACÉ ICI (colonne droite) */}
+        {economieItems && economieItems.length > 0 && (
+          <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "1.5rem" }}>
+            <h2 className="portal-section-title" style={{ backgroundColor: "#0369a1", borderColor: "#075985", display: "flex", justifyContent: "space-between" }}>
+              <span>Économie</span>
+              <Link href="/category/economie" style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.8)", textDecoration: "none", fontWeight: "normal" }}>Voir tout</Link>
+            </h2>
+            <div style={{ padding: "0" }}>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                {economieItems.map((article) => {
+                  const imgUrl = getArticleImage(article);
+                  return (
+                    <li key={article.id} style={{ borderBottom: "1px solid var(--border)", padding: "0.75rem 1rem" }}>
+                      <Link href={`/article/${article.slug}`} style={{ display: "flex", gap: "0.75rem" }}>
+                        <div style={{ width: "60px", height: "60px", backgroundColor: "var(--muted)", flexShrink: 0, borderRadius: "4px", overflow: "hidden" }}>
+                          {imgUrl && <img src={imgUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: "0.65rem", color: "#0369a1", fontWeight: "bold", textTransform: "uppercase", marginBottom: "0.2rem" }}>Économie</div>
+                          <h3 style={{ fontSize: "0.8rem", fontWeight: 700, lineHeight: 1.3 }}>{article.title}</h3>
+                        </div>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
+        )}
+
         {/* Météo Widget */}
         {weatherReport && (
           <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "1.5rem", position: 'relative', backgroundImage: 'linear-gradient(to bottom, #38bdf8, #0ea5e9)', color: 'white' }}>
