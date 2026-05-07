@@ -227,19 +227,21 @@ export default async function RootLayout({
           {/* Indicators Strip - Abidjan.net Style */}
           <div style={{ backgroundColor: 'white', borderBottom: '1px solid var(--border)', padding: '1rem 0' }}>
             <div className="container" style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'flex-start' }}>
-              
-              {/* Block 1: Cacao */}
+                {/* Block 1: Café-Cacao */}
               {cacaoGrp.length > 0 && (
-                <div style={{ display: 'flex', flexDirection: 'column', minWidth: '150px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', minWidth: '160px', position: 'relative', borderRight: '1px solid #e2e8f0', paddingRight: '1rem' }}>
+                  <div style={{ position: 'absolute', top: '-15px', left: 0, fontSize: '0.5rem', color: '#cbd5e1', fontWeight: 600 }}>MONDIAL</div>
                   <div style={{ height: '35px', display: 'flex', alignItems: 'center' }}>
-                    <div style={{ border: '1px solid #16a34a', padding: '0.1rem 0.3rem', display: 'flex', gap: '0.2rem', alignItems: 'center', fontSize: '0.65rem', fontWeight: 900, color: '#3f2a14' }}>
-                       <span style={{color: '#d97706'}}>🌍</span> BOURSE MOND. <span style={{color: '#15803d'}}>CAFÉ-CACAO</span>
+                    <div style={{ fontWeight: 900, fontSize: '0.65rem', lineHeight: 1.1, color: '#111827', textTransform: 'uppercase' }}>
+                      <span style={{color: '#d97706'}}>🌍</span> Bourse Mond.<br/>
+                      <span style={{color: '#15803d'}}>CAFÉ-CACAO</span>
                     </div>
                   </div>
                   <div style={{ fontSize: '0.55rem', color: '#9ca3af', textTransform: 'uppercase', margin: '0.4rem 0 0.2rem 0' }}>{cacaoGrp[0].dateLabel}</div>
                   {cacaoGrp.map(ind => (
                     <div key={ind.id} style={{ fontSize: '0.75rem', fontWeight: 700, color: '#111827', display: 'flex', justifyContent: 'space-between', marginTop: '0.2rem' }}>
-                      {ind.label} <span style={{ color: getTrendColor(ind.trend), fontWeight: 400 }}>{getTrendIcon(ind.trend)} {ind.value} {ind.extraText ? `${ind.extraText}` : ''}</span>
+                      <span style={{ color: '#64748b' }}>{ind.label}</span> 
+                      <span style={{ color: getTrendColor(ind.trend), fontWeight: 400 }}>{getTrendIcon(ind.trend)} {ind.value}</span>
                     </div>
                   ))}
                 </div>
@@ -247,15 +249,17 @@ export default async function RootLayout({
 
               {/* Block 2: Anacarde */}
               {anacardeGrp.length > 0 && (
-                <div style={{ display: 'flex', flexDirection: 'column', minWidth: '150px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', minWidth: '160px', position: 'relative', borderRight: '1px solid #e2e8f0', paddingRight: '1rem' }}>
+                  <div style={{ position: 'absolute', top: '-15px', left: 0, fontSize: '0.5rem', color: '#cbd5e1', fontWeight: 600 }}>LOCAL</div>
                   <div style={{ height: '35px', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                     <span style={{ fontSize: '1.2rem' }}>🥜</span>
-                    <span style={{ fontWeight: 800, fontSize: '0.65rem', lineHeight: 1, color: '#166534' }}>Le Conseil du Coton<br/>et de l'Anacarde</span>
+                    <span style={{ fontWeight: 800, fontSize: '0.65rem', lineHeight: 1.1, color: '#166534', textTransform: 'uppercase' }}>Conseil du Coton<br/>& de l'Anacarde</span>
                   </div>
                   <div style={{ fontSize: '0.55rem', color: '#9ca3af', textTransform: 'uppercase', margin: '0.4rem 0 0.2rem 0' }}>{anacardeGrp[0].dateLabel}</div>
                   {anacardeGrp.map(ind => (
                     <div key={ind.id} style={{ fontSize: '0.75rem', fontWeight: 700, color: '#111827', display: 'flex', justifyContent: 'space-between', marginTop: '0.2rem' }}>
-                      {ind.label} <span style={{ color: getTrendColor(ind.trend), fontWeight: 400 }}>{getTrendIcon(ind.trend)} {ind.value} {ind.extraText ? `${ind.extraText}` : ''}</span>
+                      <span style={{ color: '#64748b' }}>{ind.label}</span>
+                      <span style={{ color: getTrendColor(ind.trend), fontWeight: 400 }}>{getTrendIcon(ind.trend)} {ind.value}</span>
                     </div>
                   ))}
                 </div>
@@ -263,14 +267,16 @@ export default async function RootLayout({
 
               {/* Block 3: Métaux Précieux (Or, Zinc) */}
               {metaux1Grp.length > 0 && (
-                <div style={{ display: 'flex', flexDirection: 'column', minWidth: '150px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', minWidth: '160px', position: 'relative', borderRight: '1px solid #e2e8f0', paddingRight: '1rem' }}>
+                  <div style={{ position: 'absolute', top: '-15px', left: 0, fontSize: '0.5rem', color: '#cbd5e1', fontWeight: 600 }}>PRECIEUX</div>
                   <div style={{ height: '35px', display: 'flex', alignItems: 'center' }}>
-                    <span style={{ fontWeight: 900, fontSize: '1.2rem', color: '#b45309', fontStyle: 'italic', letterSpacing: '-1px' }}>MINERAIS & OR</span>
+                    <span style={{ fontWeight: 900, fontSize: '0.85rem', color: '#b45309', fontStyle: 'italic', letterSpacing: '-0.5px' }}>MINERAIS & OR</span>
                   </div>
                   <div style={{ fontSize: '0.55rem', color: '#9ca3af', textTransform: 'uppercase', margin: '0.4rem 0 0.2rem 0' }}>{metaux1Grp[0].dateLabel}</div>
                   {metaux1Grp.map(ind => (
                     <div key={ind.id} style={{ fontSize: '0.75rem', fontWeight: 700, color: '#111827', display: 'flex', justifyContent: 'space-between', marginTop: '0.2rem' }}>
-                      {ind.label} <span style={{ color: getTrendColor(ind.trend), fontWeight: 400 }}>{getTrendIcon(ind.trend)} {ind.value} {ind.extraText ? `${ind.extraText}` : ''}</span>
+                      <span style={{ color: '#64748b' }}>{ind.label}</span>
+                      <span style={{ color: getTrendColor(ind.trend), fontWeight: 400 }}>{getTrendIcon(ind.trend)} {ind.value}</span>
                     </div>
                   ))}
                 </div>
@@ -278,14 +284,16 @@ export default async function RootLayout({
 
               {/* Block 4: Aluminium */}
               {metaux2Grp.length > 0 && (
-                <div style={{ display: 'flex', flexDirection: 'column', minWidth: '150px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', minWidth: '160px', position: 'relative', borderRight: '1px solid #e2e8f0', paddingRight: '1rem' }}>
+                  <div style={{ position: 'absolute', top: '-15px', left: 0, fontSize: '0.5rem', color: '#cbd5e1', fontWeight: 600 }}>COMMODITY</div>
                   <div style={{ height: '35px', display: 'flex', alignItems: 'center' }}>
-                    <span style={{ fontWeight: 900, fontSize: '1.2rem', color: '#475569' }}>INDUSTRIE</span>
+                    <span style={{ fontWeight: 900, fontSize: '0.85rem', color: '#475569', textTransform: 'uppercase' }}>INDUSTRIE</span>
                   </div>
                   <div style={{ fontSize: '0.55rem', color: '#9ca3af', textTransform: 'uppercase', margin: '0.4rem 0 0.2rem 0' }}>{metaux2Grp[0].dateLabel}</div>
                   {metaux2Grp.map(ind => (
                     <div key={ind.id} style={{ fontSize: '0.75rem', fontWeight: 700, color: '#111827', display: 'flex', justifyContent: 'space-between', marginTop: '0.2rem' }}>
-                      {ind.label} <span style={{ color: getTrendColor(ind.trend), fontWeight: 400 }}>{getTrendIcon(ind.trend)} {ind.value} {ind.extraText ? `${ind.extraText}` : ''}</span>
+                      <span style={{ color: '#64748b' }}>{ind.label}</span>
+                      <span style={{ color: getTrendColor(ind.trend), fontWeight: 400 }}>{getTrendIcon(ind.trend)} {ind.value}</span>
                     </div>
                   ))}
                 </div>
@@ -309,16 +317,17 @@ export default async function RootLayout({
 
               {/* Block 6: Énergie & Coton */}
               {energieGrp.length > 0 && (
-                <div style={{ display: 'flex', flexDirection: 'column', minWidth: '150px', position: 'relative' }}>
-                  <div style={{ position: 'absolute', top: '-15px', left: 0, fontSize: '0.5rem', color: '#cbd5e1' }}>ÉNERGIE & TEXTILE</div>
+                <div style={{ display: 'flex', flexDirection: 'column', minWidth: '160px', position: 'relative' }}>
+                  <div style={{ position: 'absolute', top: '-15px', left: 0, fontSize: '0.5rem', color: '#cbd5e1', fontWeight: 600 }}>ÉNERGIE & TEXTILE</div>
                   <div style={{ height: '35px', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                     <span style={{ fontSize: '1.2rem' }}>🛢️</span>
-                    <span style={{ fontWeight: 800, fontSize: '0.65rem', lineHeight: 1, color: '#7c3aed' }}>Énergie &<br/>Matières</span>
+                    <span style={{ fontWeight: 800, fontSize: '0.65rem', lineHeight: 1.1, color: '#7c3aed', textTransform: 'uppercase' }}>Énergie &<br/>Matières</span>
                   </div>
                   <div style={{ fontSize: '0.55rem', color: '#9ca3af', textTransform: 'uppercase', margin: '0.4rem 0 0.2rem 0' }}>{energieGrp[0].dateLabel}</div>
                   {energieGrp.map(ind => (
                     <div key={ind.id} style={{ fontSize: '0.75rem', fontWeight: 700, color: '#111827', display: 'flex', justifyContent: 'space-between', marginTop: '0.2rem' }}>
-                      {ind.label} <span style={{ color: getTrendColor(ind.trend), fontWeight: 400 }}>{getTrendIcon(ind.trend)} {ind.value}</span>
+                      <span style={{ color: '#64748b' }}>{ind.label}</span>
+                      <span style={{ color: getTrendColor(ind.trend), fontWeight: 400 }}>{getTrendIcon(ind.trend)} {ind.value}</span>
                     </div>
                   ))}
                 </div>
