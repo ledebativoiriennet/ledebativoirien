@@ -7,26 +7,26 @@ async function main() {
   const nextOrder = (maxOrder?.order ?? 0) + 1;
 
   const toSeed = [
-    { id: 'brent-crude',  label: 'Pétrole Brent', order: nextOrder },
-    { id: 'cotton',       label: 'Coton',          order: nextOrder + 1 },
-    { id: 'natural-gas',  label: 'Gaz Naturel',    order: nextOrder + 2 },
+    { id: 'cotton',       label: 'Coton',          group: 'ANACARDE', order: nextOrder },
+    { id: 'brent-crude',  label: 'Pétrole Brent',  group: 'ENERGIE',  order: nextOrder + 1 },
+    { id: 'natural-gas',  label: 'Gaz Naturel',    group: 'ENERGIE',  order: nextOrder + 2 },
   ];
 
   for (const ind of toSeed) {
     await prisma.marketIndicator.upsert({
       where: { id: ind.id },
-      update: { label: ind.label },
+      update: { label: ind.label, group: ind.group },
       create: {
         id: ind.id,
         label: ind.label,
         value: 'N/A',
-        group: 'ENERGIE',
+        group: ind.group,
         trend: 'FLAT',
         dateLabel: today,
         order: ind.order,
       }
     });
-    console.log('Added: ' + ind.label);
+    console.log('Added: ' + ind.label + ' [' + ind.group + ']');
   }
   await prisma.$disconnect();
 }
