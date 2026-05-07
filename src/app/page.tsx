@@ -54,7 +54,7 @@ export default async function Home() {
     prisma.category.findMany({
       where: { 
         articles: { some: {} },
-        slug: { notIn: ['politique', 'politiques', 'economie', 'economie-finances', 'faits-divers', 'actualite', 'a-la-une', 'societe', 'chronique'] }
+        slug: { notIn: ['politique', 'politiques', 'economie', 'economie-finances', 'faits-divers', 'actualite', 'a-la-une', 'societe', 'chronique', 'sport', 'sports', 'football', 'culture', 'arts'] }
       },
       orderBy: { articles: { _count: 'desc' } }, // Order by most articles
       take: 6, // Fetch more to ensure diversity
@@ -910,7 +910,7 @@ export default async function Home() {
     {/* FULL-WIDTH ESPACE CULTURE */}
     <div className="container" style={{ marginTop: '3rem' }}>
       <h2 className="portal-section-title dark" style={{ display: "flex", justifyContent: "space-between", borderBottom: '2px solid #9333ea', paddingBottom: '0.5rem' }}>
-        <span style={{ fontSize: '1.5rem', fontWeight: 900, color: '#9333ea' }}>Culture & Arts</span>
+        <span style={{ fontSize: '1.5rem', fontWeight: 900, color: '#9333ea' }}>Culture &amp; Arts</span>
         <Link href="/category/culture" style={{ fontSize: '0.8rem', color: '#9333ea', fontWeight: 'bold', alignSelf: 'flex-end' }}>Voir plus de culture</Link>
       </h2>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1.5rem", marginTop: "1.5rem" }}>
