@@ -81,7 +81,7 @@ export default async function Home() {
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'publie-reportage' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.article.findMany({ where: { isAudioAvailable: true, publishedAt: { not: null } }, take: 8, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['international', 'internationale', 'diplomatie'] } } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['cedeau', 'afrique', 'benin', 'togo', 'mali', 'burkina-faso', 'senegal', 'guinee', 'afrique-occidentale'] } } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['afrique-occidentale', 'cedeau', 'afrique', 'benin', 'togo', 'mali', 'burkina-faso', 'senegal', 'guinee'] } } } }, take: 10, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'a-la-une' } } }, take: 5, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'actualite' } } }, take: 15, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.marketIndicator.findMany({ where: { group: 'BRVM' }, take: 3, orderBy: { order: 'asc' } }),
@@ -495,11 +495,10 @@ export default async function Home() {
           </div>
         )}
 
-        {/* Afrique & CEDEAO */}
-        {cedeauItems && cedeauItems.length > 0 && (
+          {cedeauItems && cedeauItems.length > 0 && (
           <div style={{ marginTop: "2rem" }}>
             <h2 className="portal-section-title" style={{ display: "flex", justifyContent: "space-between", borderBottom: '2px solid #059669' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>🌍 Afrique & CEDEAO</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>🌍 Afrique de l'Ouest</span>
               <Link href="/category/internationale" style={{ fontSize: "0.8rem", color: "var(--muted)", textDecoration: "none", fontWeight: "normal" }}>Voir tout</Link>
             </h2>
             <div className="grid-responsive-2col" style={{ marginTop: "1rem" }}>
@@ -512,7 +511,7 @@ export default async function Home() {
                     </div>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: "0.65rem", color: "#059669", fontWeight: "bold", textTransform: "uppercase", marginBottom: "0.2rem" }}>
-                        Afrique
+                        Afrique de l'Ouest
                       </div>
                       <h3 style={{ fontSize: "0.8rem", fontWeight: 700, lineHeight: 1.3 }}>{article.title}</h3>
                     </div>
