@@ -40,8 +40,8 @@ export default async function Home() {
     cedeauArticles,
     aLaUneArticles,
     actualiteArticles,
-    trendingTags,
-    brvmIndicators
+    brvmIndicators,
+    trendingTags
   ] = await Promise.all([
     prisma.article.findMany({
       where: { publishedAt: { not: null } },
@@ -108,7 +108,7 @@ export default async function Home() {
   const processedTrendingTags = trendingTags
     .map(tag => ({
       ...tag,
-      totalViews: tag.articles.reduce((sum, art) => sum + art._count.views, 0)
+      totalViews: tag.articles.reduce((sum: number, art: any) => sum + (art._count?.views || 0), 0)
     }))
     .sort((a, b) => b.totalViews - a.totalViews)
     .slice(0, 7);
@@ -159,6 +159,7 @@ export default async function Home() {
       {/* Trending Tags (Hashtags) */}
     </div>
 
+    <div className="portal-layout">
       {/* LEFT COLUMN: Titrologie & Services */}
       <aside className="portal-col-left">
 
