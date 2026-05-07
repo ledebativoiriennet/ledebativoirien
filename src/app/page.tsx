@@ -45,12 +45,15 @@ export default async function Home() {
   ] = await Promise.all([
     prisma.article.findMany({
       where: { publishedAt: { not: null } },
-      take: 100, // Increase pool for deduplication
+      take: 150, // Increase pool for deduplication
       orderBy: { publishedAt: "desc" },
       include: { categories: true },
     }),
     prisma.category.findMany({
-      where: { articles: { some: {} } },
+      where: { 
+        articles: { some: {} },
+        slug: { notIn: ['politique', 'politiques', 'economie', 'economie-finances', 'faits-divers', 'actualite', 'a-la-une'] }
+      },
       take: 4,
       include: {
         articles: {
@@ -61,7 +64,7 @@ export default async function Home() {
     }),
     prisma.poll.findFirst({ where: { isActive: true }, include: { options: true }, orderBy: { createdAt: 'desc' } }),
     prisma.obituary.findMany({ take: 5, orderBy: { createdAt: 'desc' } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'politique' } } }, take: 10, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['politique', 'politiques'] } } } }, take: 15, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.video.findMany({ take: 4, orderBy: { createdAt: 'desc' } }),
     prisma.activity.findMany({ take: 3, orderBy: { createdAt: 'desc' } }),
     prisma.flashNews.findMany({ take: 6, orderBy: { createdAt: 'desc' } }),
@@ -72,8 +75,8 @@ export default async function Home() {
     prisma.titrologie.findMany({ orderBy: { date: 'desc' }, take: 4 }),
     prisma.siteSettings.findUnique({ where: { id: "global" } }),
     prisma.quote.findFirst({ where: { isActive: true } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'faits-divers' } } }, take: 10, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'economie' } } }, take: 10, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['faits-divers', 'faits_divers', 'societe'] } } } }, take: 15, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['economie', 'economie-finances', 'finances'] } } } }, take: 15, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.pressRelease.findMany({ take: 5, orderBy: { createdAt: 'desc' } }),
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'publie-reportage' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.article.findMany({ where: { isAudioAvailable: true, publishedAt: { not: null } }, take: 8, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
@@ -402,7 +405,7 @@ export default async function Home() {
           ))}
 
           {/* Politique Block */}
-          {politiqueArticles && politiqueArticles.length > 0 && (
+          {politiqueItems && politiqueItems.length > 0 && (
             <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", gridColumn: "1 / -1" }}>
               <h2 className="portal-section-title dark" style={{ display: "flex", justifyContent: "space-between" }}>
                 <span>Politique</span>
@@ -433,7 +436,7 @@ export default async function Home() {
         </div>
 
         {/* Economie */}
-        {economieArticles.length > 0 && (
+        {economieItems && economieItems.length > 0 && (
           <div style={{ marginTop: "2rem" }}>
             <h2 className="portal-section-title" style={{ display: "flex", justifyContent: "space-between", borderBottom: '2px solid var(--primary)' }}>
               <span>Économie</span>
@@ -461,7 +464,7 @@ export default async function Home() {
         )}
 
         {/* Faits Divers */}
-        {faitsDiversArticles.length > 0 && (
+        {faitsDiversItems && faitsDiversItems.length > 0 && (
           <div style={{ marginTop: "2rem" }}>
             <h2 className="portal-section-title" style={{ display: "flex", justifyContent: "space-between", borderBottom: '2px solid var(--primary)' }}>
               <span>Faits Divers</span>
@@ -489,7 +492,7 @@ export default async function Home() {
         )}
 
         {/* Afrique & CEDEAO */}
-        {cedeauArticles && cedeauArticles.length > 0 && (
+        {cedeauItems && cedeauItems.length > 0 && (
           <div style={{ marginTop: "2rem" }}>
             <h2 className="portal-section-title" style={{ display: "flex", justifyContent: "space-between", borderBottom: '2px solid #059669' }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>🌍 Afrique & CEDEAO</span>
