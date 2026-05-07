@@ -67,33 +67,44 @@ export async function GET(request: Request) {
   const getTrend = (price: number, prev: number) =>
     price > prev ? 'UP' : price < prev ? 'DOWN' : 'FLAT';
 
+  // Taux de change USD/XOF
+  const xofRate = rates?.XOF || 600; // Fallback à 600 si l'API échoue
+
   // Récupérer tous les indicateurs en DB
   const indicators = await prisma.marketIndicator.findMany();
 
   for (const ind of indicators) {
     if (ind.label === 'Cacao' && cocoa) {
-      await updateIndicator(ind.id, `${cocoa.price.toFixed(0)} $ / MT`, getTrend(cocoa.price, cocoa.prev));
+      const priceCFA = cocoa.price * xofRate;
+      await updateIndicator(ind.id, `${priceCFA.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} FCFA / MT`, getTrend(cocoa.price, cocoa.prev));
     }
     if (ind.label === 'Café' && coffee) {
-      await updateIndicator(ind.id, `${coffee.price.toFixed(2)} ¢ / lb`, getTrend(coffee.price, coffee.prev));
+      const priceCFA = (coffee.price / 100) * xofRate;
+      await updateIndicator(ind.id, `${priceCFA.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} FCFA / lb`, getTrend(coffee.price, coffee.prev));
     }
     if (ind.label === 'Pétrole Brent' && brent) {
-      await updateIndicator(ind.id, `${brent.price.toFixed(2)} $ / b`, getTrend(brent.price, brent.prev));
+      const priceCFA = brent.price * xofRate;
+      await updateIndicator(ind.id, `${priceCFA.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} FCFA / b`, getTrend(brent.price, brent.prev));
     }
     if (ind.label === 'Coton' && cotton) {
-      await updateIndicator(ind.id, `${cotton.price.toFixed(2)} ¢ / lb`, getTrend(cotton.price, cotton.prev));
+      const priceCFA = (cotton.price / 100) * xofRate;
+      await updateIndicator(ind.id, `${priceCFA.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} FCFA / lb`, getTrend(cotton.price, cotton.prev));
     }
     if (ind.label === 'Gaz Naturel' && gas) {
-      await updateIndicator(ind.id, `${gas.price.toFixed(2)} $ / MMBtu`, getTrend(gas.price, gas.prev));
+      const priceCFA = gas.price * xofRate;
+      await updateIndicator(ind.id, `${priceCFA.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} FCFA / MMBtu`, getTrend(gas.price, gas.prev));
     }
     if (ind.label === 'Or (Once)' && gold) {
-      await updateIndicator(ind.id, `${gold.price.toFixed(2)} $`, getTrend(gold.price, gold.prev));
+      const priceCFA = gold.price * xofRate;
+      await updateIndicator(ind.id, `${priceCFA.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} FCFA`, getTrend(gold.price, gold.prev));
     }
     if (ind.label === 'Argent' && silver) {
-      await updateIndicator(ind.id, `${silver.price.toFixed(2)} $`, getTrend(silver.price, silver.prev));
+      const priceCFA = silver.price * xofRate;
+      await updateIndicator(ind.id, `${priceCFA.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} FCFA`, getTrend(silver.price, silver.prev));
     }
     if (ind.label === 'Aluminium' && aluminium) {
-      await updateIndicator(ind.id, `${aluminium.price.toFixed(2)} $`, getTrend(aluminium.price, aluminium.prev));
+      const priceCFA = aluminium.price * xofRate;
+      await updateIndicator(ind.id, `${priceCFA.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} FCFA`, getTrend(aluminium.price, aluminium.prev));
     }
     if (ind.label === 'USD / XOF' && rates?.XOF) {
       await updateIndicator(ind.id, `${rates.XOF.toFixed(2)} FCFA`, 'FLAT');
