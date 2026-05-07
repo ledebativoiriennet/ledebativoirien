@@ -303,43 +303,46 @@ export default async function Home() {
         <div style={{ marginBottom: "2.5rem" }}>
           <Link href={`/article/${mainFeatured.slug}`} style={{ textDecoration: 'none' }}>
             <div style={{ 
-              position: 'relative', 
-              height: '500px', 
               borderRadius: '24px', 
               overflow: 'hidden', 
               boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
-              backgroundColor: '#0f172a'
+              backgroundColor: '#fff',
+              border: '1px solid var(--border)'
             }}>
-              {getArticleImage(mainFeatured) ? (
-                <img src={getArticleImage(mainFeatured) as string} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85 }} />
-              ) : (
-                <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #0f172a, #334155)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <span style={{ fontSize: '4rem', fontWeight: 900, color: 'white', opacity: 0.1 }}>LE DÉBAT IVOIRIEN</span>
-                </div>
-              )}
               <div style={{ 
-                position: 'absolute', 
-                bottom: 0, 
-                left: 0, 
-                width: '100%', 
-                padding: '4rem 2.5rem', 
-                background: 'linear-gradient(to top, rgba(15, 23, 42, 1) 0%, rgba(15, 23, 42, 0.4) 60%, transparent 100%)',
-                color: 'white'
+                position: 'relative', 
+                height: '450px', 
+                backgroundColor: '#0f172a'
               }}>
-                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+                {getArticleImage(mainFeatured) ? (
+                  <img src={getArticleImage(mainFeatured) as string} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #0f172a, #334155)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <span style={{ fontSize: '4rem', fontWeight: 900, color: 'white', opacity: 0.1 }}>LE DÉBAT IVOIRIEN</span>
+                  </div>
+                )}
+                <div style={{ position: 'absolute', top: '1.5rem', left: '1.5rem', display: 'flex', gap: '0.5rem' }}>
                    <span style={{ backgroundColor: 'var(--primary)', color: 'white', padding: '0.3rem 0.8rem', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase' }}>
                     À LA UNE
                   </span>
-                  <span style={{ backgroundColor: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(4px)', color: 'white', padding: '0.3rem 0.8rem', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase' }}>
-                    {mainFeatured.categories[0]?.name || "ACTUALITÉ"}
-                  </span>
                 </div>
-                <h1 style={{ fontSize: '3rem', fontWeight: 900, lineHeight: 1, margin: '0.5rem 0', letterSpacing: '-0.03em' }}>
+              </div>
+              <div style={{ 
+                padding: '2rem 2.5rem', 
+                color: 'var(--foreground)'
+              }}>
+                <div style={{ color: 'var(--primary)', fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+                  {mainFeatured.categories[0]?.name || "ACTUALITÉ"}
+                </div>
+                <h1 style={{ fontSize: '2.5rem', fontWeight: 900, lineHeight: 1.1, margin: '0.5rem 0', letterSpacing: '-0.03em', color: 'var(--foreground)' }}>
                   {mainFeatured.title}
                 </h1>
-                <p style={{ fontSize: '1.1rem', opacity: 0.8, maxWidth: '900px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', marginTop: '1rem' }}>
+                <p style={{ fontSize: '1.1rem', color: 'var(--muted)', maxWidth: '100%', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden', marginTop: '1rem', lineHeight: 1.6 }}>
                   {mainFeatured.excerpt || "L'information brute, l'analyse experte, le débat indépendant."}
                 </p>
+                <div style={{ marginTop: '1.5rem', fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--primary)' }}>
+                  Lire la suite →
+                </div>
               </div>
             </div>
           </Link>
@@ -372,7 +375,7 @@ export default async function Home() {
         <div className="grid-responsive-2col" style={{ gap: "1.5rem" }}>
           {topCategories.map((category) => (
             <div key={category.id} style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden" }}>
-              <h2 className="portal-section-title">{category.name}</h2>
+              <h2 className="portal-section-title">{category.name === "Activité gouvernementale" ? "Activité Gouv" : category.name}</h2>
               <div className="compact-list" style={{ padding: "1rem" }}>
                 {category.articles.filter(a => !displayedIds.has(a.id)).slice(0, 5).map((article, idx) => {
                   const imgUrl = getArticleImage(article);
@@ -597,7 +600,7 @@ export default async function Home() {
 
         {/* Activités Widget */}
         <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "1.5rem" }}>
-          <h2 className="portal-section-title dark">Agenda / Activités</h2>
+          <h2 className="portal-section-title dark">Activités Gouv</h2>
           <div style={{ padding: "1rem" }}>
             <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
               {activities.map((activity) => (
