@@ -164,6 +164,35 @@ export default async function Home() {
       <SportsModule />
 
       {/* Trending Tags (Hashtags) */}
+      {processedTrendingTags && processedTrendingTags.length > 0 && (
+        <div style={{ padding: '0.5rem 0', borderTop: '1px solid var(--border)', marginTop: '0.5rem' }}>
+          <div className="container" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--muted)', textTransform: 'uppercase', flexShrink: 0 }}>
+              🔥 Tendances :
+            </span>
+            {processedTrendingTags.map((tag: any) => (
+              <a
+                key={tag.id}
+                href={`/tag/${tag.slug}`}
+                style={{
+                  display: 'inline-block',
+                  backgroundColor: 'var(--card-bg)',
+                  border: '1px solid var(--border)',
+                  color: 'var(--foreground)',
+                  padding: '0.2rem 0.65rem',
+                  borderRadius: '9999px',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  transition: 'background 0.15s',
+                }}
+              >
+                #{tag.name}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
 
     <div className="portal-layout">

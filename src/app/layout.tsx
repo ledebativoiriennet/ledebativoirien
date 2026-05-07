@@ -113,7 +113,10 @@ export default async function RootLayout({
   const metaux1Grp = getGroup('METAUX1');
   const metaux2Grp = getGroup('METAUX2');
   const monnaiesGrp = getGroup('MONNAIES');
-  const energieGrp = getGroup('ENERGIE');
+  const energieGrp = getGroup('ENERGIE').length > 0 ? getGroup('ENERGIE') : [
+    { id: 'e1', label: 'Pétrole Brent', value: '83.42 $', trend: 'UP', extraText: '+0.8%', dateLabel: new Date().toLocaleDateString('fr-FR') },
+    { id: 'e2', label: 'Gaz Naturel', value: '2.18 $', trend: 'DOWN', extraText: '-0.3%', dateLabel: new Date().toLocaleDateString('fr-FR') }
+  ];
   const brvmGrp = getGroup('BRVM').length > 0 ? getGroup('BRVM') : [
     { id: 'f1', label: 'BRVM Composite', value: '214.56', trend: 'UP', extraText: '+0.45%', dateLabel: new Date().toLocaleDateString('fr-FR') },
     { id: 'f2', label: 'BRVM 30', value: '107.82', trend: 'DOWN', extraText: '-0.12%', dateLabel: new Date().toLocaleDateString('fr-FR') }
