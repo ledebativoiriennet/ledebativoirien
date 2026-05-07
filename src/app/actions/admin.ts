@@ -166,6 +166,8 @@ export async function updateArticle(articleId: string, formData: FormData) {
   const isAudioAvailable = formData.get("isAudioAvailable") === "on";
   const categoryIds = formData.getAll("categories") as string[];
   const tagsString = formData.get("tags") as string || "";
+  const imageCaption = formData.get("imageCaption") as string || null;
+  const videoCaption = formData.get("videoCaption") as string || null;
 
   if (!title || !content) {
     return { success: false, error: "Le titre et le contenu sont obligatoires." };
@@ -198,8 +200,10 @@ export async function updateArticle(articleId: string, formData: FormData) {
         excerpt,
         content,
         imageUrl: imageUrl || null,
+        imageCaption: imageCaption || null,
         videoUrl,
         videoFile: savedVideoPath,
+        videoCaption: videoCaption || null,
         isPremium,
         isAudioAvailable,
         categories: {
