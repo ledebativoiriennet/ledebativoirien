@@ -54,10 +54,11 @@ export default async function Home() {
         articles: { some: {} },
         slug: { notIn: ['politique', 'politiques', 'economie', 'economie-finances', 'faits-divers', 'actualite', 'a-la-une'] }
       },
-      take: 4,
+      orderBy: { articles: { _count: 'desc' } }, // Order by most articles
+      take: 6, // Fetch more to ensure diversity
       include: {
         articles: {
-          take: 5,
+          take: 6,
           orderBy: { publishedAt: "desc" },
         }
       }
@@ -133,13 +134,12 @@ export default async function Home() {
   // Ensure IDs are tracked even if we use category-specific fetch
   aLaUne.forEach(a => displayedIds.add(a.id));
 
-  const flashInfo = getUnique(actualiteArticles.length > 0 ? actualiteArticles : recentArticles, 15);
-
-  // Prioritize Afrique de l'Ouest so it doesn't get drained by less specific pools
+  // Select items for the main grid categories
   const cedeauItems = getUnique(cedeauArticles, 4);
   const politiqueItems = getUnique(politiqueArticles, 4);
   const economieItems = getUnique(economieArticles, 4);
   const faitsDiversItems = getUnique(faitsDiversArticles, 4);
+  const flashInfo = getUnique(actualiteArticles.length > 0 ? actualiteArticles : recentArticles, 15);
 
   const brvmGrp = brvmIndicators.length > 0 ? brvmIndicators : [
     { id: 'f1', label: 'BRVM Composite', value: '214.56', trend: 'UP', extraText: '+0.45%', dateLabel: new Date().toLocaleDateString('fr-FR') },
@@ -438,6 +438,36 @@ export default async function Home() {
               </div>
             </div>
           )}
+
+          {/* Relocated Afrique de l'Ouest Block (Prominent Hub Position) */}
+          {cedeauItems && cedeauItems.length > 0 && (
+            <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", gridColumn: "1 / -1", marginTop: "1rem" }}>
+              <h2 className="portal-section-title" style={{ display: "flex", justifyContent: "space-between", borderBottom: '2px solid #059669', backgroundColor: '#ecfdf5' }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#065f46' }}>🌍 Afrique de l'Ouest</span>
+                <Link href="/category/afrique-occidentale" style={{ fontSize: "0.8rem", color: "#059669", textDecoration: "none", fontWeight: "bold" }}>Voir tout</Link>
+              </h2>
+              <div style={{ padding: "1rem" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
+                  {cedeauItems.map((article) => {
+                    const imgUrl = getArticleImage(article);
+                    return (
+                      <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                        <div style={{ height: "120px", backgroundColor: "#f0fdf4", overflow: "hidden", borderRadius: "8px", border: "1px solid #d1fae5" }}>
+                          {imgUrl ? <img src={imgUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : null}
+                        </div>
+                        <div>
+                          <div style={{ fontSize: "0.65rem", color: "#059669", fontWeight: 800, textTransform: "uppercase", marginBottom: "0.2rem" }}>
+                            Afrique de l'Ouest
+                          </div>
+                          <h3 style={{ fontSize: "0.85rem", fontWeight: 700, lineHeight: 1.3 }}>{article.title}</h3>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Economie */}
@@ -496,32 +526,6 @@ export default async function Home() {
           </div>
         )}
 
-          {cedeauItems && cedeauItems.length > 0 && (
-          <div style={{ marginTop: "2rem" }}>
-            <h2 className="portal-section-title" style={{ display: "flex", justifyContent: "space-between", borderBottom: '2px solid #059669' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>🌍 Afrique de l'Ouest</span>
-              <Link href="/category/internationale" style={{ fontSize: "0.8rem", color: "var(--muted)", textDecoration: "none", fontWeight: "normal" }}>Voir tout</Link>
-            </h2>
-            <div className="grid-responsive-2col" style={{ marginTop: "1rem" }}>
-              {cedeauItems.map((article) => {
-                const imgUrl = getArticleImage(article);
-                return (
-                  <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", gap: "0.75rem", backgroundColor: "var(--card-bg)", padding: "0.5rem", borderRadius: "var(--radius)", border: "1px solid var(--border)" }}>
-                    <div style={{ width: "80px", height: "80px", backgroundColor: "var(--muted)", flexShrink: 0, overflow: "hidden", borderRadius: "4px" }}>
-                      {imgUrl ? <img src={imgUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : null}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: "0.65rem", color: "#059669", fontWeight: "bold", textTransform: "uppercase", marginBottom: "0.2rem" }}>
-                        Afrique de l'Ouest
-                      </div>
-                      <h3 style={{ fontSize: "0.8rem", fontWeight: 700, lineHeight: 1.3 }}>{article.title}</h3>
-                    </div>
-                  </Link>
-                )
-              })}
-            </div>
-          </div>
-        )}
 
       </div>
 
