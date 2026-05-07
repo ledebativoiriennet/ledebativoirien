@@ -63,21 +63,21 @@ a:hover {
   background-color: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 0.75rem;
+  padding: 1rem;
 }
 
 @media (max-width: 640px) {
   .article-main-container {
     border: none;
     border-radius: 0;
-    padding: 0;
+    padding: 1rem; /* Cadrage du texte */
     background: transparent;
   }
 }
 
 @media (min-width: 768px) {
   .article-main-container {
-    padding: 2rem;
+    padding: 2.5rem;
   }
 }
 
@@ -107,10 +107,20 @@ a:hover {
 }
 
 .article-content img {
+  width: 100% !important;
   max-width: 100% !important;
   height: auto !important;
   border-radius: 4px;
   margin: 1.5rem 0;
+  display: block;
+}
+
+@media (max-width: 640px) {
+  .article-content img {
+    float: none !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
 }
 
 .article-content p {
