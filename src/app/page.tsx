@@ -135,10 +135,11 @@ export default async function Home() {
 
   const flashInfo = getUnique(actualiteArticles.length > 0 ? actualiteArticles : recentArticles, 15);
 
+  // Prioritize Afrique de l'Ouest so it doesn't get drained by less specific pools
+  const cedeauItems = getUnique(cedeauArticles, 4);
   const politiqueItems = getUnique(politiqueArticles, 4);
   const economieItems = getUnique(economieArticles, 4);
   const faitsDiversItems = getUnique(faitsDiversArticles, 4);
-  const cedeauItems = getUnique(cedeauArticles, 4);
 
   const brvmGrp = brvmIndicators.length > 0 ? brvmIndicators : [
     { id: 'f1', label: 'BRVM Composite', value: '214.56', trend: 'UP', extraText: '+0.45%', dateLabel: new Date().toLocaleDateString('fr-FR') },
