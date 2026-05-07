@@ -64,6 +64,7 @@ a:hover {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 1rem;
+  overflow: hidden; /* Empêche tout débordement */
 }
 
 @media (max-width: 640px) {
@@ -102,7 +103,7 @@ a:hover {
 .article-content {
   word-wrap: break-word;
   overflow-wrap: break-word;
-  max-width: 800px;
+  width: 100%;
   margin: 0 auto;
 }
 
