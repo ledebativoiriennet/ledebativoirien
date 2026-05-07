@@ -14,7 +14,7 @@ function getString(val: any): string | null {
 }
 
 async function main() {
-  const filePath = 'C:\\Users\\hecki\\Downloads\\ledebativoirien.WordPress.2026-05-01.xml';
+  const filePath = 'C:\\Users\\hecki\\Downloads\\ledebativoirien.WordPress.2026-05-07.xml';
   console.log(`Reading XML from ${filePath}...`);
   const xmlData = fs.readFileSync(filePath, 'utf8');
 
@@ -87,6 +87,34 @@ async function main() {
     }
   }
 
+// Alias map: normalize WP slugs to DB slugs
+const SLUG_ALIASES: Record<string, string> = {
+  'art-culture': 'culture',
+  'arts':        'culture',
+  'politique':   'politique',
+  'politiques':  'politique',
+  'economie-finances': 'economie',
+  'finances':    'economie',
+  'faits_divers': 'faits-divers',
+  'international': 'internationale',
+};
+
+function normalizeSlug(slug: string): string {
+  return SLUG_ALIASES[slug] || slug;
+}
+
+async function ensureCategory(slug: string, name: string) {
+  const normalized = normalizeSlug(slug);
+  let cat = await prisma.category.findUnique({ where: { slug: normalized } });
+  if (!cat) {
+    cat = await prisma.category.create({
+      data: { slug: normalized, name: name || normalized }
+    });
+    console.log(`  → Created missing category: "${name}" (${normalized})`);
+  }
+  return cat;
+}
+
   // 3. Articles (Items)
   const items = channel.item || [];
   const itemArray = Array.isArray(items) ? items : [items];
@@ -94,6 +122,7 @@ async function main() {
   console.log(`Found ${articles.length} published articles. Importing...`);
 
   let count = 0;
+  let skipped = 0;
   for (const item of articles) {
     const wpId = parseInt(item['wp:post_id']);
     const title = getString(item.title) || 'Untitled';
@@ -111,13 +140,25 @@ async function main() {
 
     const categoriesList = item.category || [];
     const catArray = Array.isArray(categoriesList) ? categoriesList : [categoriesList];
-    const categorySlugs = catArray.map((c: any) => getString(c['@_nicename'])).filter(Boolean);
 
     const categoriesConnect = [];
-    for (const catSlug of categorySlugs) {
+    for (const catItem of catArray) {
+      const catSlug = getString(catItem['@_nicename']);
+      const catName = getString(catItem['#text'] ?? catItem.__cdata ?? catItem) || catSlug;
       if (!catSlug) continue;
-      const dbCat = await prisma.category.findUnique({ where: { slug: catSlug } });
+      const dbCat = await ensureCategory(catSlug, catName || catSlug);
       if (dbCat) categoriesConnect.push({ id: dbCat.id });
+    }
+
+    // Extract featured image from WordPress meta
+    const postMeta = item['wp:postmeta'] || [];
+    const metaArray = Array.isArray(postMeta) ? postMeta : [postMeta];
+    let featuredImageUrl: string | null = null;
+    for (const meta of metaArray) {
+      if (getString(meta['wp:meta_key']) === '_thumbnail_id') {
+        // Store the thumbnail ID reference if needed in future
+        break;
+      }
     }
 
     try {
@@ -140,17 +181,18 @@ async function main() {
           publishedAt,
           authorId,
           categories: { connect: categoriesConnect },
-          isPremium: Math.random() > 0.8 // Simulate 20% premium
+          isPremium: false
         }
       });
       count++;
-      if (count % 100 === 0) console.log(`Imported ${count}/${articles.length} articles`);
+      console.log(`  [${count}/${articles.length}] "${title.substring(0, 60)}..." → cats: [${categoriesConnect.map((c: any) => c.id).join(', ')}]`);
     } catch (e: any) {
-      console.error(`Error importing article ${wpId}:`, e.message);
+      console.error(`  ✗ Error importing article ${wpId} (${slug}):`, e.message);
+      skipped++;
     }
   }
 
-  console.log(`Import completed successfully! Total imported: ${count}`);
+  console.log(`\n✅ Import completed! Imported: ${count} | Errors: ${skipped}`);
 }
 
 main()
