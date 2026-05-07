@@ -407,6 +407,35 @@ export default async function ArticlePage({ params }: Props) {
           )}
           
           <SocialShareButtons title={article.title} layout="horizontal" />
+
+          {/* Mention droits d'auteur */}
+          <div style={{
+            marginTop: "2rem",
+            padding: "1rem 1.25rem",
+            backgroundColor: "var(--background)",
+            border: "1px solid var(--border)",
+            borderLeft: "4px solid var(--primary)",
+            borderRadius: "var(--radius)",
+            display: "flex",
+            alignItems: "flex-start",
+            gap: "0.75rem",
+          }}>
+            <span style={{ fontSize: "1.2rem", flexShrink: 0 }}>©</span>
+            <p style={{
+              margin: 0,
+              fontSize: "0.78rem",
+              color: "var(--muted)",
+              lineHeight: 1.6,
+              fontStyle: "italic",
+            }}>
+              <strong style={{ color: "var(--foreground)", fontStyle: "normal" }}>Droits d'auteur :</strong>{" "}
+              Sauf autorisation de la rédaction ou partenariat pré-établi, la reprise des articles de{" "}
+              <a href="https://www.ledebativoirien.net" style={{ color: "var(--primary)", fontWeight: "bold" }}>
+                www.ledebativoirien.net
+              </a>
+              , même partielle, est strictement interdite. Tout contrevenant s'expose à des poursuites.
+            </p>
+          </div>
         </article>
 
         <AdBanner slot="ARTICLE_BOTTOM" />
