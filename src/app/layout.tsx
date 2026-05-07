@@ -316,21 +316,6 @@ export default async function RootLayout({
                 </div>
               )}
 
-              {/* Block 4: Aluminium */}
-              {metaux2Grp.length > 0 && (
-                <div style={{ display: 'flex', flexDirection: 'column', minWidth: '160px', flexShrink: 0, borderRight: '1px solid #e2e8f0', paddingRight: '1rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.3rem', marginBottom: '0.3rem' }}>
-                    <span style={{ fontWeight: 900, fontSize: '0.7rem', color: '#475569', textTransform: 'uppercase' }}>INDUSTRIE</span>
-                    <div style={{ fontSize: '0.5rem', color: '#9ca3af', textTransform: 'uppercase' }}>{metaux2Grp[0].dateLabel}</div>
-                  </div>
-                  {metaux2Grp.map(ind => (
-                    <div key={ind.id} style={{ fontSize: '0.75rem', fontWeight: 700, color: '#111827', display: 'flex', justifyContent: 'space-between', marginTop: '0.2rem' }}>
-                      <span style={{ color: '#64748b' }}>{ind.label}</span>
-                      <span style={{ color: getTrendColor(ind.trend), fontWeight: 400 }}>{getTrendIcon(ind.trend)} {ind.value}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
 
               {/* Block 5: Monnaies */}
               {monnaiesGrp.length > 0 && (
