@@ -8,29 +8,21 @@ export const metadata: Metadata = {
 };
 
 export default async function RedactionPage() {
-  const team = await prisma.user.findMany({
-    where: {
-      role: { in: ["ADMIN", "EDITOR", "CONTRIBUTOR"] }
-    },
+  const team = await prisma.author.findMany({
     orderBy: { name: 'asc' },
     select: {
       id: true,
       name: true,
-      role: true,
-      image: true,
+      slug: true,
       _count: {
         select: { articles: true }
       }
     }
   });
 
-  const getRoleLabel = (role: string) => {
-    switch (role) {
-      case "ADMIN": return "Directeur de Publication";
-      case "EDITOR": return "Rédacteur en Chef";
-      case "CONTRIBUTOR": return "Journaliste / Reporter";
-      default: return "Collaborateur";
-    }
+  const getRoleLabel = (name: string) => {
+    if (name.includes("Rédaction") || name.includes("Admin")) return "Direction de Rédaction";
+    return "Journaliste / Reporter";
   };
 
   return (
@@ -46,15 +38,11 @@ export default async function RedactionPage() {
         {team.map((member) => (
           <div key={member.id} style={{ textAlign: 'center', backgroundColor: 'var(--card-bg)', padding: '2rem', borderRadius: '12px', border: '1px solid var(--border)', transition: 'transform 0.2s' }} className="hover-scale">
             <div style={{ width: '120px', height: '120px', backgroundColor: '#f1f5f9', borderRadius: '50%', margin: '0 auto 1.5rem auto', overflow: 'hidden', border: '4px solid var(--primary)' }}>
-              {member.image ? (
-                <img src={member.image} alt={member.name || ""} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              ) : (
-                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem' }}>👤</div>
-              )}
+              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem' }}>👤</div>
             </div>
             <h2 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '0.5rem' }}>{member.name || "Anonyme"}</h2>
             <div style={{ color: 'var(--primary)', fontWeight: 'bold', fontSize: '0.9rem', textTransform: 'uppercase', marginBottom: '1rem' }}>
-              {getRoleLabel(member.role)}
+              {getRoleLabel(member.name)}
             </div>
             <p style={{ fontSize: '0.85rem', color: 'var(--muted)', marginBottom: '1.5rem' }}>
               Passionné par l'information et le débat public en Côte d'Ivoire.
