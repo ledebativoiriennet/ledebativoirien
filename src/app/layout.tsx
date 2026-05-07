@@ -10,7 +10,6 @@ import { GoogleAnalytics } from '@next/third-parties/google';
 import Script from "next/script";
 import MainNavigation from "@/components/MainNavigation";
 import ThemeToggle from "@/components/ThemeToggle";
-import { getLiveMarketData } from "@/lib/marketData";
 import { PushNotificationPrompt, ConsentManagerButton } from "@/components/PushNotificationPrompt";
 import { CookieConsentPopup } from "@/components/CookieConsentPopup";
 import PopupAd from "@/components/PopupAd";
@@ -80,9 +79,8 @@ export default async function RootLayout({
   // Sort them to match the targetSlugs array order
   navCategories.sort((a, b) => targetSlugs.indexOf(a.slug) - targetSlugs.indexOf(b.slug));
 
-  const [dbIndicators, liveMarketData, siteSettings, skinAd] = await Promise.all([
+  const [indicators, siteSettings, skinAd] = await Promise.all([
     prisma.marketIndicator.findMany({ orderBy: { order: 'asc' } }),
-    getLiveMarketData(),
     prisma.siteSettings.findUnique({ where: { id: "global" } }),
     prisma.advertisement.findFirst({
       where: {
@@ -99,65 +97,6 @@ export default async function RootLayout({
     })
   ]);
 
-  const indicators = dbIndicators.map(ind => {
-    // Clone object to avoid mutating Prisma result directly
-    const indicator = { ...ind };
-    const today = new Date().toLocaleDateString("fr-FR");
-
-    if (indicator.label === "Cacao" && liveMarketData.cocoa) {
-      indicator.value = `${liveMarketData.cocoa.price.toFixed(0)} $ / MT`;
-      indicator.trend = liveMarketData.cocoa.price > liveMarketData.cocoa.prev ? "UP" : liveMarketData.cocoa.price < liveMarketData.cocoa.prev ? "DOWN" : "FLAT";
-      indicator.dateLabel = today;
-    }
-    if (indicator.label === "Café" && liveMarketData.coffee) {
-      indicator.value = `${liveMarketData.coffee.price.toFixed(2)} ¢ / lb`;
-      indicator.trend = liveMarketData.coffee.price > liveMarketData.coffee.prev ? "UP" : liveMarketData.coffee.price < liveMarketData.coffee.prev ? "DOWN" : "FLAT";
-      indicator.dateLabel = today;
-    }
-    if (indicator.label === "Or (Once)" && liveMarketData.gold) {
-      indicator.value = `${liveMarketData.gold.price.toFixed(2)} $`;
-      indicator.trend = liveMarketData.gold.price > liveMarketData.gold.prev ? "UP" : liveMarketData.gold.price < liveMarketData.gold.prev ? "DOWN" : "FLAT";
-      indicator.dateLabel = today;
-    }
-    if (indicator.label === "Argent" && liveMarketData.silver) {
-      indicator.value = `${liveMarketData.silver.price.toFixed(2)} $`;
-      indicator.trend = liveMarketData.silver.price > liveMarketData.silver.prev ? "UP" : liveMarketData.silver.price < liveMarketData.silver.prev ? "DOWN" : "FLAT";
-      indicator.dateLabel = today;
-    }
-    if (indicator.label === "Aluminium" && liveMarketData.aluminium) {
-      indicator.value = `${liveMarketData.aluminium.price.toFixed(2)} $`;
-      indicator.trend = liveMarketData.aluminium.price > liveMarketData.aluminium.prev ? "UP" : liveMarketData.aluminium.price < liveMarketData.aluminium.prev ? "DOWN" : "FLAT";
-      indicator.dateLabel = today;
-    }
-    if (indicator.label === "USD / XOF" && liveMarketData.rates && liveMarketData.rates.XOF) {
-      indicator.value = `${liveMarketData.rates.XOF.toFixed(2)} FCFA`;
-      indicator.trend = "FLAT";
-      indicator.dateLabel = today;
-    }
-    if (indicator.label === "EUR / XOF") {
-      indicator.value = `655.957 FCFA`;
-      indicator.trend = "FLAT";
-      indicator.dateLabel = "Fixe";
-    }
-
-    if (indicator.label === "Pétrole Brent" && liveMarketData.brent) {
-      indicator.value = `${liveMarketData.brent.price.toFixed(2)} $ / b`;
-      indicator.trend = liveMarketData.brent.price > liveMarketData.brent.prev ? "UP" : liveMarketData.brent.price < liveMarketData.brent.prev ? "DOWN" : "FLAT";
-      indicator.dateLabel = today;
-    }
-    if (indicator.label === "Coton" && liveMarketData.cotton) {
-      indicator.value = `${liveMarketData.cotton.price.toFixed(2)} ¢ / lb`;
-      indicator.trend = liveMarketData.cotton.price > liveMarketData.cotton.prev ? "UP" : liveMarketData.cotton.price < liveMarketData.cotton.prev ? "DOWN" : "FLAT";
-      indicator.dateLabel = today;
-    }
-    if (indicator.label === "Gaz Naturel" && liveMarketData.gas) {
-      indicator.value = `${liveMarketData.gas.price.toFixed(2)} $ / MMBtu`;
-      indicator.trend = liveMarketData.gas.price > liveMarketData.gas.prev ? "UP" : liveMarketData.gas.price < liveMarketData.gas.prev ? "DOWN" : "FLAT";
-      indicator.dateLabel = today;
-    }
-
-    return indicator;
-  });
 
   const breakingNews = await prisma.breakingNews.findMany({
     where: { isActive: true },
