@@ -41,7 +41,9 @@ export default async function Home() {
     aLaUneArticles,
     actualiteArticles,
     brvmIndicators,
-    trendingTags
+    trendingTags,
+    societeArticles,
+    chroniqueArticles
   ] = await Promise.all([
     prisma.article.findMany({
       where: { publishedAt: { not: null } },
@@ -98,7 +100,9 @@ export default async function Home() {
           }
         }
       }
-    })
+    }),
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'societe' } } }, take: 10, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'chronique' } } }, take: 10, orderBy: { publishedAt: 'desc' }, include: { categories: true } })
   ]);
 
   if (!recentArticles || recentArticles.length === 0) {
@@ -140,6 +144,8 @@ export default async function Home() {
   const economieItems = getUnique(economieArticles, 4);
   const faitsDiversItems = getUnique(faitsDiversArticles, 4);
   const flashInfo = getUnique(actualiteArticles.length > 0 ? actualiteArticles : recentArticles, 15);
+  const societeItems = getUnique(societeArticles, 5);
+  const chroniqueItems = getUnique(chroniqueArticles, 5);
 
   const brvmGrp = brvmIndicators.length > 0 ? brvmIndicators : [
     { id: 'f1', label: 'BRVM Composite', value: '214.56', trend: 'UP', extraText: '+0.45%', dateLabel: new Date().toLocaleDateString('fr-FR') },
@@ -293,6 +299,30 @@ export default async function Home() {
                 ))}
               </ul>
               <Link href="/communiques" style={{ display: "block", textAlign: "center", fontSize: "0.8rem", padding: "0.5rem", backgroundColor: "#f8fafc", color: "var(--primary)", fontWeight: "bold", borderTop: "1px solid var(--border)" }}>Voir tous les communiqués</Link>
+            </div>
+          </div>
+        )}
+
+        {/* Chronique Widget - NEW POSITION LEFT */}
+        {chroniqueItems && chroniqueItems.length > 0 && (
+          <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "1.5rem" }}>
+            <h2 className="portal-section-title" style={{ backgroundColor: "#1e3a8a" }}>Chroniques</h2>
+            <div style={{ padding: "1rem" }}>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
+                {chroniqueItems.map((article) => {
+                  const imgUrl = getArticleImage(article);
+                  return (
+                    <li key={article.id} style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start" }}>
+                      <div style={{ width: "50px", height: "50px", backgroundColor: "var(--muted)", flexShrink: 0, borderRadius: "4px", overflow: "hidden" }}>
+                        {imgUrl && <img src={imgUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                      </div>
+                      <Link href={`/article/${article.slug}`} style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--foreground)", lineHeight: 1.2, flex: 1 }}>
+                        {article.title}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
           </div>
         )}
@@ -648,6 +678,34 @@ export default async function Home() {
             </ul>
           </div>
         </div>
+
+        {/* Société Widget - NEW POSITION RIGHT */}
+        {societeItems && societeItems.length > 0 && (
+          <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "1.5rem" }}>
+            <h2 className="portal-section-title dark">Société</h2>
+            <div style={{ padding: "0" }}>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                {societeItems.map((article) => {
+                  const imgUrl = getArticleImage(article);
+                  return (
+                    <li key={article.id} style={{ borderBottom: "1px solid var(--border)", padding: "0.75rem 1rem" }}>
+                      <Link href={`/article/${article.slug}`} style={{ display: "flex", gap: "0.75rem" }}>
+                        <div style={{ width: "60px", height: "60px", backgroundColor: "var(--muted)", flexShrink: 0, borderRadius: "4px", overflow: "hidden" }}>
+                          {imgUrl && <img src={imgUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--foreground)", lineHeight: 1.3 }}>{article.title}</div>
+                          <div style={{ fontSize: "0.65rem", color: "var(--muted)", marginTop: "0.25rem" }}>{new Date(article.publishedAt).toLocaleDateString('fr-FR')}</div>
+                        </div>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+              <Link href="/category/societe" style={{ display: "block", textAlign: "center", fontSize: "0.8rem", padding: "0.5rem", backgroundColor: "#f8fafc", color: "var(--primary)", fontWeight: "bold", borderTop: "1px solid var(--border)" }}>Voir tout Société</Link>
+            </div>
+          </div>
+        )}
 
         <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginTop: "1.5rem" }}>
           <h2 className="portal-section-title" style={{ backgroundColor: "black", borderColor: "gray" }}>Nécrologie</h2>
