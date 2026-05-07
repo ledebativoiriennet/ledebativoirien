@@ -54,7 +54,7 @@ export default async function Home() {
     prisma.category.findMany({
       where: { 
         articles: { some: {} },
-        slug: { notIn: ['politique', 'politiques', 'economie', 'economie-finances', 'faits-divers', 'actualite', 'a-la-une'] }
+        slug: { notIn: ['politique', 'politiques', 'economie', 'economie-finances', 'faits-divers', 'actualite', 'a-la-une', 'societe', 'chronique'] }
       },
       orderBy: { articles: { _count: 'desc' } }, // Order by most articles
       take: 6, // Fetch more to ensure diversity
