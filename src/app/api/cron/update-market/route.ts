@@ -8,6 +8,22 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  // 1. Dédoublonnement de sécurité (Nettoyage de la DB de production)
+  const allIndicators = await prisma.marketIndicator.findMany({ orderBy: { updatedAt: 'desc' } });
+  const seenKeys = new Set();
+  const duplicates = [];
+  for (const ind of allIndicators) {
+    const key = `${ind.label.trim()}-${ind.group}`;
+    if (seenKeys.has(key)) {
+      duplicates.push(ind.id);
+    } else {
+      seenKeys.add(key);
+    }
+  }
+  if (duplicates.length > 0) {
+    await prisma.marketIndicator.deleteMany({ where: { id: { in: duplicates } } });
+  }
+
   const today = new Date().toLocaleDateString('fr-FR');
   const results: string[] = [];
 
