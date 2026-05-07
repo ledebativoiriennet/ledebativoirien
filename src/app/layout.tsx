@@ -245,7 +245,8 @@ export default async function RootLayout({
               <div className="container" style={{ display: 'flex', gap: '2rem', flexWrap: 'nowrap', overflowX: 'auto', alignItems: 'center', scrollbarWidth: 'none', msOverflowStyle: 'none', padding: '0.5rem 1rem' }}>
                 <style dangerouslySetInnerHTML={{ __html: `.container::-webkit-scrollbar { display: none; }` }} />
                 {/* Block 1: Café-Cacao */}
-                  <div style={{ display: 'flex', flexDirection: 'column', minWidth: '160px', flexShrink: 0, borderRight: '1px solid #e2e8f0', paddingRight: '1rem' }}>
+              {cacaoGrp.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', minWidth: '160px', flexShrink: 0, borderRight: '1px solid #e2e8f0', paddingRight: '1rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.3rem', marginBottom: '0.3rem' }}>
                       <div style={{ fontWeight: 900, fontSize: '0.6rem', lineHeight: 1, color: '#111827', textTransform: 'uppercase' }}>
                         <span style={{color: '#d97706'}}>🌍</span> Bourse Mond.<br/>
