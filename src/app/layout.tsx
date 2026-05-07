@@ -140,6 +140,22 @@ export default async function RootLayout({
       indicator.dateLabel = "Fixe";
     }
 
+    if (indicator.label === "Pétrole Brent" && liveMarketData.brent) {
+      indicator.value = `${liveMarketData.brent.price.toFixed(2)} $ / b`;
+      indicator.trend = liveMarketData.brent.price > liveMarketData.brent.prev ? "UP" : liveMarketData.brent.price < liveMarketData.brent.prev ? "DOWN" : "FLAT";
+      indicator.dateLabel = today;
+    }
+    if (indicator.label === "Coton" && liveMarketData.cotton) {
+      indicator.value = `${liveMarketData.cotton.price.toFixed(2)} ¢ / lb`;
+      indicator.trend = liveMarketData.cotton.price > liveMarketData.cotton.prev ? "UP" : liveMarketData.cotton.price < liveMarketData.cotton.prev ? "DOWN" : "FLAT";
+      indicator.dateLabel = today;
+    }
+    if (indicator.label === "Gaz Naturel" && liveMarketData.gas) {
+      indicator.value = `${liveMarketData.gas.price.toFixed(2)} $ / MMBtu`;
+      indicator.trend = liveMarketData.gas.price > liveMarketData.gas.prev ? "UP" : liveMarketData.gas.price < liveMarketData.gas.prev ? "DOWN" : "FLAT";
+      indicator.dateLabel = today;
+    }
+
     return indicator;
   });
 
@@ -158,6 +174,7 @@ export default async function RootLayout({
   const metaux1Grp = getGroup('METAUX1');
   const metaux2Grp = getGroup('METAUX2');
   const monnaiesGrp = getGroup('MONNAIES');
+  const energieGrp = getGroup('ENERGIE');
 
   const getTrendIcon = (trend: string) => {
     if (trend === 'UP') return '↑';
@@ -346,6 +363,23 @@ export default async function RootLayout({
                   {monnaiesGrp.map(ind => (
                     <div key={ind.id} style={{ fontSize: '0.75rem', fontWeight: 700, color: '#111827', display: 'flex', justifyContent: 'space-between', marginTop: '0.2rem' }}>
                       {ind.label} <span style={{ color: getTrendColor(ind.trend), fontWeight: 400 }}>{getTrendIcon(ind.trend)} {ind.value} {ind.extraText ? `${ind.extraText}` : ''}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Block 6: Énergie & Coton */}
+              {energieGrp.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', minWidth: '150px', position: 'relative' }}>
+                  <div style={{ position: 'absolute', top: '-15px', left: 0, fontSize: '0.5rem', color: '#cbd5e1' }}>ÉNERGIE & TEXTILE</div>
+                  <div style={{ height: '35px', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <span style={{ fontSize: '1.2rem' }}>🛢️</span>
+                    <span style={{ fontWeight: 800, fontSize: '0.65rem', lineHeight: 1, color: '#7c3aed' }}>Énergie &<br/>Matières</span>
+                  </div>
+                  <div style={{ fontSize: '0.55rem', color: '#9ca3af', textTransform: 'uppercase', margin: '0.4rem 0 0.2rem 0' }}>{energieGrp[0].dateLabel}</div>
+                  {energieGrp.map(ind => (
+                    <div key={ind.id} style={{ fontSize: '0.75rem', fontWeight: 700, color: '#111827', display: 'flex', justifyContent: 'space-between', marginTop: '0.2rem' }}>
+                      {ind.label} <span style={{ color: getTrendColor(ind.trend), fontWeight: 400 }}>{getTrendIcon(ind.trend)} {ind.value}</span>
                     </div>
                   ))}
                 </div>

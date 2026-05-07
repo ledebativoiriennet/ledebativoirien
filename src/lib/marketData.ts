@@ -25,14 +25,17 @@ export async function fetchCurrencies() {
 }
 
 export async function getLiveMarketData() {
-  const [gold, silver, aluminium, cocoa, coffee, rates] = await Promise.all([
-    fetchYahoo("GC=F"), // Or
-    fetchYahoo("SI=F"), // Argent
-    fetchYahoo("ALI=F"), // Aluminium
-    fetchYahoo("CC=F"), // Cacao
-    fetchYahoo("KC=F"), // Café
+  const [gold, silver, aluminium, cocoa, coffee, brent, cotton, gas, rates] = await Promise.all([
+    fetchYahoo("GC=F"),   // Or
+    fetchYahoo("SI=F"),   // Argent
+    fetchYahoo("ALI=F"),  // Aluminium
+    fetchYahoo("CC=F"),   // Cacao
+    fetchYahoo("KC=F"),   // Café
+    fetchYahoo("BZ=F"),   // Pétrole Brent
+    fetchYahoo("CT=F"),   // Coton
+    fetchYahoo("NG=F"),   // Gaz Naturel
     fetchCurrencies()
   ]);
 
-  return { gold, silver, aluminium, cocoa, coffee, rates };
+  return { gold, silver, aluminium, cocoa, coffee, brent, cotton, gas, rates };
 }
