@@ -408,6 +408,20 @@ export default async function ArticlePage({ params }: Props) {
           
           <SocialShareButtons title={article.title} layout="horizontal" />
 
+          {/* Signature Journaliste */}
+          <div style={{ marginTop: "3rem", padding: "1.5rem", border: "1px solid var(--border)", borderRadius: "var(--radius)", backgroundColor: "#f8fafc", display: "flex", gap: "1.5rem", alignItems: "center" }}>
+            <div style={{ width: "60px", height: "60px", borderRadius: "50%", backgroundColor: "#e2e8f0", overflow: "hidden", flexShrink: 0 }}>
+              <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem" }}>👤</div>
+            </div>
+            <div>
+              <div style={{ fontSize: "0.8rem", color: "var(--primary)", fontWeight: "bold", textTransform: "uppercase" }}>Article rédigé par</div>
+              <Link href="/redaction" style={{ fontSize: "1.2rem", fontWeight: 800, color: "var(--foreground)", textDecoration: "none" }}>
+                {article.author?.name || "La Rédaction"}
+              </Link>
+              <p style={{ fontSize: "0.85rem", color: "var(--muted)", margin: "0.2rem 0 0 0" }}>Journaliste / Le Débat Ivoirien</p>
+            </div>
+          </div>
+
           {/* Mention droits d'auteur */}
           <div style={{
             marginTop: "2rem",
@@ -547,7 +561,9 @@ export default async function ArticlePage({ params }: Props) {
           <div style={{ width: "80px", height: "80px", backgroundColor: "#e2e8f0", borderRadius: "50%", margin: "0 auto 1rem auto", overflow: "hidden" }}>
             <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem" }}>👤</div>
           </div>
-          <h3 style={{ fontSize: "1.1rem", fontWeight: 800 }}>{article.author?.name || "La Rédaction"}</h3>
+          <Link href="/redaction" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <h3 style={{ fontSize: "1.1rem", fontWeight: 800 }}>{article.author?.name || "La Rédaction"}</h3>
+          </Link>
           <p style={{ fontSize: "0.8rem", color: "var(--muted)", margin: "0.5rem 0 1rem 0" }}>Journaliste / Éditorialiste</p>
           <AuthorSubscribeButton authorId={article.authorId as string | undefined} authorName={article.author?.name} />
         </div>

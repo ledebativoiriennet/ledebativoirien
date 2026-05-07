@@ -138,6 +138,29 @@ model MarketIndicator {
   dateLabel String   // e.g., '30 AVRIL 2026'
   order     Int      @default(0)
   updatedAt DateTime @updatedAt
+  history   MarketHistory[]
+}
+
+model MarketHistory {
+  id          String   @id @default(cuid())
+  indicatorId String
+  indicator   MarketIndicator @relation(fields: [indicatorId], references: [id], onDelete: Cascade)
+  value       Float
+  date        DateTime @default(now())
+
+  @@index([indicatorId, date])
+}
+
+model EconomicalIndicator {
+  id          String   @id @default(cuid())
+  country     String   // e.g., 'Côte d\'Ivoire', 'UEMOA'
+  category    String   // e.g., 'PIB', 'Inflation', 'Dette'
+  value       String
+  unit        String?
+  year        Int
+  trend       String?  // UP, DOWN, FLAT
+  source      String?
+  updatedAt   DateTime @updatedAt
 }
 
 model Activity {

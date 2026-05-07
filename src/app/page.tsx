@@ -37,11 +37,12 @@ export default async function Home() {
     publieReportageArticles,
     audioArticles,
     internationalArticles,
+    cedeauArticles,
     trendingTags
   ] = await Promise.all([
     prisma.article.findMany({
       where: { publishedAt: { not: null } },
-      take: 25,
+      take: 100, // Increase pool for deduplication
       orderBy: { publishedAt: "desc" },
       include: { categories: true },
     }),
@@ -74,6 +75,7 @@ export default async function Home() {
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'publie-reportage' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.article.findMany({ where: { isAudioAvailable: true, publishedAt: { not: null } }, take: 8, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['international', 'internationale', 'diplomatie'] } } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['cedeau', 'afrique', 'benin', 'togo', 'mali', 'burkina', 'senegal', 'guinee'] } } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.tag.findMany({ 
       where: { articles: { some: { publishedAt: { not: null } } } },
       include: {
@@ -102,9 +104,25 @@ export default async function Home() {
     .sort((a, b) => b.totalViews - a.totalViews)
     .slice(0, 7);
 
+  // Deduplication tracking
+  const displayedIds = new Set<string>();
+
+  const getUnique = (articles: any[], count: number) => {
+    const unique = [];
+    for (const art of articles) {
+      if (!displayedIds.has(art.id)) {
+        unique.push(art);
+        displayedIds.add(art.id);
+        if (unique.length === count) break;
+      }
+    }
+    return unique;
+  };
+
   // Split recent articles for "A la Une"
-  const aLaUne = recentArticles.slice(0, 5);
-  const flashInfo = recentArticles.slice(0, 15); // Show all recent articles in En Continu
+  const aLaUne = getUnique(recentArticles, 5);
+  const flashInfo = getUnique(recentArticles, 15);
+  const plusDeNews = getUnique(recentArticles, 8); // For the bottom section
 
   const mainFeatured = aLaUne[0];
   const subFeatured = aLaUne.slice(1);
@@ -374,8 +392,9 @@ export default async function Home() {
             <div key={category.id} style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden" }}>
               <h2 className="portal-section-title">{category.name}</h2>
               <div className="compact-list" style={{ padding: "1rem" }}>
-                {category.articles.map((article, idx) => {
+                {category.articles.filter(a => !displayedIds.has(a.id)).slice(0, 5).map((article, idx) => {
                   const imgUrl = getArticleImage(article);
+                  displayedIds.add(article.id);
                   return (
                     <Link href={`/article/${article.slug}`} key={article.id} className="compact-item">
                       {idx === 0 && (
@@ -413,7 +432,8 @@ export default async function Home() {
               </h2>
               <div style={{ padding: "1rem" }}>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
-                  {politiqueArticles.map((article) => {
+                  {politiqueArticles.filter(a => !displayedIds.has(a.id)).slice(0, 4).map((article) => {
+                    displayedIds.add(article.id);
                     const imgUrl = getArticleImage(article);
                     return (
                       <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
@@ -443,7 +463,8 @@ export default async function Home() {
               <Link href="/category/economie" style={{ fontSize: "0.8rem", color: "var(--muted)", textDecoration: "none", fontWeight: "normal" }}>Voir tout</Link>
             </h2>
             <div className="grid-responsive-2col" style={{ marginTop: "1rem" }}>
-              {economieArticles.map((article) => {
+              {economieArticles.filter(a => !displayedIds.has(a.id)).slice(0, 4).map((article) => {
+                displayedIds.add(article.id);
                 const imgUrl = getArticleImage(article);
                 return (
                   <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", gap: "0.75rem", backgroundColor: "var(--card-bg)", padding: "0.5rem", borderRadius: "var(--radius)", border: "1px solid var(--border)" }}>
@@ -471,7 +492,8 @@ export default async function Home() {
               <Link href="/category/faits-divers" style={{ fontSize: "0.8rem", color: "var(--muted)", textDecoration: "none", fontWeight: "normal" }}>Voir tout</Link>
             </h2>
             <div className="grid-responsive-2col" style={{ marginTop: "1rem" }}>
-              {faitsDiversArticles.map((article) => {
+              {faitsDiversArticles.filter(a => !displayedIds.has(a.id)).slice(0, 4).map((article) => {
+                displayedIds.add(article.id);
                 const imgUrl = getArticleImage(article);
                 return (
                   <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", gap: "0.75rem", backgroundColor: "var(--card-bg)", padding: "0.5rem", borderRadius: "var(--radius)", border: "1px solid var(--border)" }}>
@@ -481,6 +503,35 @@ export default async function Home() {
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: "0.65rem", color: "var(--primary)", fontWeight: "bold", textTransform: "uppercase", marginBottom: "0.2rem" }}>
                         Faits Divers
+                      </div>
+                      <h3 style={{ fontSize: "0.8rem", fontWeight: 700, lineHeight: 1.3 }}>{article.title}</h3>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Afrique & CEDEAO */}
+        {cedeauArticles && cedeauArticles.length > 0 && (
+          <div style={{ marginTop: "2rem" }}>
+            <h2 className="portal-section-title" style={{ display: "flex", justifyContent: "space-between", borderBottom: '2px solid #059669' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>🌍 Afrique & CEDEAO</span>
+              <Link href="/category/internationale" style={{ fontSize: "0.8rem", color: "var(--muted)", textDecoration: "none", fontWeight: "normal" }}>Voir tout</Link>
+            </h2>
+            <div className="grid-responsive-2col" style={{ marginTop: "1rem" }}>
+              {cedeauArticles.filter(a => !displayedIds.has(a.id)).slice(0, 4).map((article) => {
+                displayedIds.add(article.id);
+                const imgUrl = getArticleImage(article);
+                return (
+                  <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", gap: "0.75rem", backgroundColor: "var(--card-bg)", padding: "0.5rem", borderRadius: "var(--radius)", border: "1px solid var(--border)" }}>
+                    <div style={{ width: "80px", height: "80px", backgroundColor: "var(--muted)", flexShrink: 0, overflow: "hidden", borderRadius: "4px" }}>
+                      {imgUrl ? <img src={imgUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : null}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: "0.65rem", color: "#059669", fontWeight: "bold", textTransform: "uppercase", marginBottom: "0.2rem" }}>
+                        Afrique
                       </div>
                       <h3 style={{ fontSize: "0.8rem", fontWeight: 700, lineHeight: 1.3 }}>{article.title}</h3>
                     </div>
@@ -703,7 +754,7 @@ export default async function Home() {
         <Link href="/en-continu" style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 'bold', alignSelf: 'flex-end' }}>Voir tout le flux</Link>
       </h2>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1.5rem", marginTop: "1.5rem" }}>
-        {recentArticles.slice(10, 18).map((article) => {
+        {plusDeNews.map((article) => {
           const imgUrl = getArticleImage(article);
           const catName = article.categories[0]?.name || "Général";
           return (

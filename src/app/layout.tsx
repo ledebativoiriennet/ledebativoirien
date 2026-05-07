@@ -198,7 +198,18 @@ export default async function RootLayout({
               </Link>
             )}
             <div className="header-actions">
-               <input type="text" placeholder="Rechercher..." className="input search-input" style={{ padding: '0.5rem' }} />
+               <form action="/search" method="GET" style={{ display: 'flex', flex: 1, position: 'relative' }}>
+                 <input 
+                   name="q" 
+                   type="text" 
+                   placeholder="Rechercher..." 
+                   className="input search-input" 
+                   style={{ padding: '0.5rem', width: '100%', paddingRight: '2rem' }} 
+                 />
+                 <button type="submit" style={{ position: 'absolute', right: '0.5rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem' }}>
+                   🔍
+                 </button>
+               </form>
                <ThemeToggle />
                <UserMenu />
             </div>
@@ -226,7 +237,8 @@ export default async function RootLayout({
           
           {/* Indicators Strip - Abidjan.net Style */}
           <div style={{ backgroundColor: 'white', borderBottom: '1px solid var(--border)', padding: '1rem 0' }}>
-            <div className="container" style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'flex-start' }}>
+            <Link href="/economie/dashboard" style={{ textDecoration: 'none', display: 'block' }} title="Voir le Dashboard Économique complet">
+              <div className="container" style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'flex-start' }}>
                 {/* Block 1: Café-Cacao */}
               {cacaoGrp.length > 0 && (
                 <div style={{ display: 'flex', flexDirection: 'column', minWidth: '160px', position: 'relative', borderRight: '1px solid #e2e8f0', paddingRight: '1rem' }}>
@@ -334,7 +346,8 @@ export default async function RootLayout({
               )}
 
             </div>
-          </div>
+          </Link>
+        </div>
         
         <main className="container" style={{ minHeight: '60vh' }}>
           {children}
@@ -376,8 +389,8 @@ export default async function RootLayout({
               <ul style={{ listStyle: 'none', padding: 0, fontSize: '0.9rem', color: '#cbd5e1', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <li><Link href="/abonnement">Abonnement Premium</Link></li>
                 <li><Link href="/annonceurs">Espace Annonceurs</Link></li>
-                <li><Link href="#">Archives</Link></li>
-                <li><Link href="#">Newsletter</Link></li>
+                <li><Link href="/archives">Archives</Link></li>
+                <li><Link href="/#newsletter">Newsletter</Link></li>
               </ul>
             </div>
             <div>

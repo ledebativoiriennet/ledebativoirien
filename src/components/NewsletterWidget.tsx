@@ -25,7 +25,7 @@ export default function NewsletterWidget() {
   }
 
   return (
-    <div style={{ backgroundColor: "var(--primary)", color: "white", padding: "1.5rem", borderRadius: "var(--radius)", marginTop: "1.5rem", textAlign: "center" }}>
+    <div id="newsletter" style={{ backgroundColor: "var(--primary)", color: "white", padding: "1.5rem", borderRadius: "var(--radius)", marginTop: "1.5rem", textAlign: "center" }}>
       <h3 style={{ fontSize: "1.2rem", fontWeight: 800, marginBottom: "0.5rem" }}>Restez informé</h3>
       <p style={{ fontSize: "0.8rem", marginBottom: "1rem" }}>Recevez l'essentiel de l'actualité ivoirienne chaque matin.</p>
       

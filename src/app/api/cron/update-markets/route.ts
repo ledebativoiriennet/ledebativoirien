@@ -39,41 +39,70 @@ export async function GET(request: Request) {
 
     const updates = [];
 
+    // Helper to update and record history
+    async function updateIndicator(label: string, value: string, numericValue: number, trend: string, extra?: string) {
+      const indicator = await prisma.marketIndicator.findFirst({ where: { label } });
+      if (indicator) {
+        await prisma.marketIndicator.update({
+          where: { id: indicator.id },
+          data: { 
+            value, 
+            trend, 
+            extraText: extra || indicator.extraText,
+            dateLabel: new Date().toLocaleDateString("fr-FR") 
+          }
+        });
+
+        // Record history (max one per day per indicator to avoid bloat)
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const existingHistory = await prisma.marketHistory.findFirst({
+          where: {
+            indicatorId: indicator.id,
+            date: { gte: today }
+          }
+        });
+
+        if (!existingHistory) {
+          await prisma.marketHistory.create({
+            data: {
+              indicatorId: indicator.id,
+              value: numericValue,
+              date: new Date()
+            }
+          });
+        }
+      }
+    }
+
     // METAUX 1: OR
     if (gold) {
       const trend = gold.price > gold.prev ? "UP" : gold.price < gold.prev ? "DOWN" : "FLAT";
-      updates.push(prisma.marketIndicator.updateMany({
-        where: { label: "Or (Once)" },
-        data: { value: `${gold.price.toFixed(2)} $`, trend, dateLabel: new Date().toLocaleDateString("fr-FR") }
-      }));
+      const varPct = ((gold.price - gold.prev) / gold.prev * 100).toFixed(2);
+      await updateIndicator("Or (Once)", `${gold.price.toFixed(2)} $`, gold.price, trend, `${varPct}%`);
     }
 
     // METAUX 1: ARGENT
     if (silver) {
       const trend = silver.price > silver.prev ? "UP" : silver.price < silver.prev ? "DOWN" : "FLAT";
-      updates.push(prisma.marketIndicator.updateMany({
-        where: { label: "Argent" },
-        data: { value: `${silver.price.toFixed(2)} $`, trend, dateLabel: new Date().toLocaleDateString("fr-FR") }
-      }));
+      const varPct = ((silver.price - silver.prev) / silver.prev * 100).toFixed(2);
+      await updateIndicator("Argent", `${silver.price.toFixed(2)} $`, silver.price, trend, `${varPct}%`);
+    }
+
+    // CACAO
+    if (cocoa) {
+      const trend = cocoa.price > cocoa.prev ? "UP" : cocoa.price < cocoa.prev ? "DOWN" : "FLAT";
+      const varPct = ((cocoa.price - cocoa.prev) / cocoa.prev * 100).toFixed(2);
+      await updateIndicator("Cacao (Bourse)", `${cocoa.price.toFixed(0)} $`, cocoa.price, trend, `${varPct}%`);
     }
 
     // MONNAIES
     if (rates && rates.XOF) {
-      // USD to XOF
       const usdXof = rates.XOF;
-      updates.push(prisma.marketIndicator.updateMany({
-        where: { label: "USD / XOF" },
-        data: { value: `${usdXof.toFixed(2)} FCFA`, dateLabel: new Date().toLocaleDateString("fr-FR") }
-      }));
-
-      // EUR is fixed
-      updates.push(prisma.marketIndicator.updateMany({
-        where: { label: "EUR / XOF" },
-        data: { value: `655.957 FCFA`, trend: "FLAT", dateLabel: new Date().toLocaleDateString("fr-FR") }
-      }));
+      await updateIndicator("USD / XOF", `${usdXof.toFixed(2)} FCFA`, usdXof, "FLAT");
+      await updateIndicator("EUR / XOF", `655.957 FCFA`, 655.957, "FLAT");
     }
-
-    await Promise.all(updates);
 
     return NextResponse.json({ success: true, message: "Marchés mis à jour" });
   } catch (error: any) {
