@@ -114,6 +114,7 @@ export default async function RootLayout({
   const metaux2Grp = getGroup('METAUX2');
   const monnaiesGrp = getGroup('MONNAIES');
   const energieGrp = getGroup('ENERGIE');
+  const brvmGrp = getGroup('BRVM');
 
   const getTrendIcon = (trend: string) => {
     if (trend === 'UP') return '↑';
@@ -258,6 +259,23 @@ export default async function RootLayout({
                   ))}
                 </div>
               )}
+               {/* Block 1.5: BRVM */}
+               {brvmGrp.length > 0 && (
+                 <div style={{ display: 'flex', flexDirection: 'column', minWidth: '160px', position: 'relative', borderRight: '1px solid #e2e8f0', paddingRight: '1rem' }}>
+                   <div style={{ position: 'absolute', top: '-15px', left: 0, fontSize: '0.5rem', color: '#cbd5e1', fontWeight: 600 }}>RÉGIONAL</div>
+                   <div style={{ height: '35px', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                     <span style={{ fontSize: '1.2rem' }}>📈</span>
+                     <span style={{ fontWeight: 800, fontSize: '0.7rem', color: '#1e3a8a', textTransform: 'uppercase' }}>Indices BRVM</span>
+                   </div>
+                   <div style={{ fontSize: '0.55rem', color: '#9ca3af', textTransform: 'uppercase', margin: '0.4rem 0 0.2rem 0' }}>{brvmGrp[0].dateLabel}</div>
+                   {brvmGrp.map(ind => (
+                     <div key={ind.id} style={{ fontSize: '0.75rem', fontWeight: 700, color: '#111827', display: 'flex', justifyContent: 'space-between', marginTop: '0.2rem' }}>
+                       <span style={{ color: '#64748b' }}>{ind.label}</span>
+                       <span style={{ color: getTrendColor(ind.trend), fontWeight: 400 }}>{getTrendIcon(ind.trend)} {ind.value}</span>
+                     </div>
+                   ))}
+                 </div>
+               )}
 
               {/* Block 2: Anacarde */}
               {anacardeGrp.length > 0 && (

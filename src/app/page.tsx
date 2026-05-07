@@ -38,6 +38,8 @@ export default async function Home() {
     audioArticles,
     internationalArticles,
     cedeauArticles,
+    aLaUneArticles,
+    actualiteArticles,
     trendingTags
   ] = await Promise.all([
     prisma.article.findMany({
@@ -75,7 +77,9 @@ export default async function Home() {
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'publie-reportage' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.article.findMany({ where: { isAudioAvailable: true, publishedAt: { not: null } }, take: 8, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['international', 'internationale', 'diplomatie'] } } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['cedeau', 'afrique', 'benin', 'togo', 'mali', 'burkina', 'senegal', 'guinee'] } } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['cedeau', 'afrique', 'benin', 'togo', 'mali', 'burkina-faso', 'senegal', 'guinee', 'afrique-occidentale'] } } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'a-la-une' } } }, take: 5, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'actualite' } } }, take: 15, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.tag.findMany({ 
       where: { articles: { some: { publishedAt: { not: null } } } },
       include: {
@@ -120,8 +124,13 @@ export default async function Home() {
   };
 
   // Split recent articles for "A la Une"
-  const aLaUne = getUnique(recentArticles, 5);
-  const flashInfo = getUnique(recentArticles, 15);
+  const aLaUne = aLaUneArticles.length >= 5 ? aLaUneArticles : getUnique(recentArticles, 5);
+  // Ensure IDs are tracked even if we use category-specific fetch
+  aLaUne.forEach(a => displayedIds.add(a.id));
+
+  const flashInfo = actualiteArticles.length >= 5 ? actualiteArticles : getUnique(recentArticles, 15);
+  flashInfo.forEach(a => displayedIds.add(a.id));
+
   const plusDeNews = getUnique(recentArticles, 8); // For the bottom section
 
   const mainFeatured = aLaUne[0];
