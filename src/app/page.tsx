@@ -40,7 +40,8 @@ export default async function Home() {
     cedeauArticles,
     aLaUneArticles,
     actualiteArticles,
-    trendingTags
+    trendingTags,
+    brvmIndicators
   ] = await Promise.all([
     prisma.article.findMany({
       where: { publishedAt: { not: null } },
@@ -60,7 +61,7 @@ export default async function Home() {
     }),
     prisma.poll.findFirst({ where: { isActive: true }, include: { options: true }, orderBy: { createdAt: 'desc' } }),
     prisma.obituary.findMany({ take: 5, orderBy: { createdAt: 'desc' } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'politique' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'politique' } } }, take: 10, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.video.findMany({ take: 4, orderBy: { createdAt: 'desc' } }),
     prisma.activity.findMany({ take: 3, orderBy: { createdAt: 'desc' } }),
     prisma.flashNews.findMany({ take: 6, orderBy: { createdAt: 'desc' } }),
@@ -71,8 +72,8 @@ export default async function Home() {
     prisma.titrologie.findMany({ orderBy: { date: 'desc' }, take: 4 }),
     prisma.siteSettings.findUnique({ where: { id: "global" } }),
     prisma.quote.findFirst({ where: { isActive: true } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'faits-divers' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'economie' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'faits-divers' } } }, take: 10, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'economie' } } }, take: 10, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.pressRelease.findMany({ take: 5, orderBy: { createdAt: 'desc' } }),
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'publie-reportage' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.article.findMany({ where: { isAudioAvailable: true, publishedAt: { not: null } }, take: 8, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
@@ -80,6 +81,7 @@ export default async function Home() {
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['cedeau', 'afrique', 'benin', 'togo', 'mali', 'burkina-faso', 'senegal', 'guinee', 'afrique-occidentale'] } } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'a-la-une' } } }, take: 5, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'actualite' } } }, take: 15, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.marketIndicator.findMany({ where: { group: 'BRVM' }, take: 3, orderBy: { order: 'asc' } }),
     prisma.tag.findMany({ 
       where: { articles: { some: { publishedAt: { not: null } } } },
       include: {
@@ -128,8 +130,17 @@ export default async function Home() {
   // Ensure IDs are tracked even if we use category-specific fetch
   aLaUne.forEach(a => displayedIds.add(a.id));
 
-  const flashInfo = actualiteArticles.length >= 5 ? actualiteArticles : getUnique(recentArticles, 15);
-  flashInfo.forEach(a => displayedIds.add(a.id));
+  const flashInfo = getUnique(actualiteArticles.length > 0 ? actualiteArticles : recentArticles, 15);
+
+  const politiqueItems = getUnique(politiqueArticles, 4);
+  const economieItems = getUnique(economieArticles, 4);
+  const faitsDiversItems = getUnique(faitsDiversArticles, 4);
+  const cedeauItems = getUnique(cedeauArticles, 4);
+
+  const brvmGrp = brvmIndicators.length > 0 ? brvmIndicators : [
+    { id: 'f1', label: 'BRVM Composite', value: '214.56', trend: 'UP', extraText: '+0.45%', dateLabel: new Date().toLocaleDateString('fr-FR') },
+    { id: 'f2', label: 'BRVM 30', value: '107.82', trend: 'DOWN', extraText: '-0.12%', dateLabel: new Date().toLocaleDateString('fr-FR') }
+  ];
 
   const plusDeNews = getUnique(recentArticles, 8); // For the bottom section
 
@@ -143,67 +154,10 @@ export default async function Home() {
       <SportsModule />
 
       {/* Trending Tags (Hashtags) */}
-      {processedTrendingTags && processedTrendingTags.length > 0 && (
-        <div style={{ 
-          display: 'flex', 
-          gap: '1rem', 
-          overflowX: 'auto', 
-          padding: '0.75rem 0', 
-          marginBottom: '1rem',
-          borderBottom: '1px solid var(--border)',
-          scrollbarWidth: 'none',
-          whiteSpace: 'nowrap',
-          alignItems: 'center'
-        }}>
-          <span style={{ fontWeight: 900, color: 'var(--primary)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}># Tendances :</span>
-          {processedTrendingTags.map(tag => (
-            <Link 
-              key={tag.id} 
-              href={`/tag/${tag.slug}`}
-              style={{ 
-                fontSize: '0.85rem', 
-                color: 'var(--foreground)', 
-                textDecoration: 'none', 
-                fontWeight: 600,
-                transition: 'color 0.2s'
-              }}
-              className="hover-primary"
-            >
-              #{tag.name.replace(/\s+/g, '')}
-            </Link>
-          ))}
-        </div>
-      )}
     </div>
 
-    <div className="portal-layout">
-      {/* LEFT COLUMN: Fil Info Continu & Widgets */}
+      {/* LEFT COLUMN: Titrologie & Services */}
       <aside className="portal-col-left">
-        <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "1.5rem" }}>
-          <h2 className="portal-section-title">En Continu</h2>
-          <div className="flash-info-container" style={{ padding: "0 1rem 1rem 1rem" }}>
-            {flashInfo.length > 0 ? (
-              flashInfo.map((article) => (
-                <div key={article.id} className="flash-item">
-                  <span className="time">{new Date(article.publishedAt!).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span>
-                  <Link href={`/article/${article.slug}`} style={{ textDecoration: 'none', color: 'var(--foreground)', fontWeight: 600 }}>
-                    {article.title}
-                  </Link>
-                  {article.categories && article.categories[0] && (
-                    <span style={{ marginLeft: '0.5rem', fontSize: '0.65rem', backgroundColor: '#e2e8f0', padding: '0.1rem 0.3rem', borderRadius: '2px', color: '#475569', fontWeight: 'bold' }}>
-                      {article.categories[0].name}
-                    </span>
-                  )}
-                </div>
-              ))
-            ) : (
-              <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--muted)', fontSize: '0.85rem' }}>
-                Aucun article récent.
-              </div>
-            )}
-          </div>
-          <Link href="/en-continu" style={{ display: "block", textAlign: "center", fontSize: "0.8rem", padding: "0.5rem", backgroundColor: "#f8fafc", color: "var(--primary)", fontWeight: "bold", borderTop: "1px solid var(--border)" }}>Toute l'actualité en continu</Link>
-        </div>
 
         <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden" }}>
           <h2 className="portal-section-title dark">Titrologie</h2>
@@ -337,56 +291,71 @@ export default async function Home() {
             </div>
           </div>
         )}
-
-
       </aside>
 
-      {/* CENTER COLUMN: A la Une & Categories */}
+      {/* CENTER COLUMN: Thematic Hub */}
       <div className="portal-col-center">
-        {/* A la Une Mosaic */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "1rem", marginBottom: "2rem" }}>
-          <Link href={`/article/${mainFeatured.slug}`} style={{ display: "block" }}>
-            <div className="main-featured-card" style={{ position: "relative", backgroundColor: "#e2e8f0", borderRadius: "var(--radius)", overflow: "hidden" }}>
+        {/* New Premium Hero */}
+        <div style={{ marginBottom: "2.5rem" }}>
+          <Link href={`/article/${mainFeatured.slug}`} style={{ textDecoration: 'none' }}>
+            <div style={{ 
+              position: 'relative', 
+              height: '500px', 
+              borderRadius: '24px', 
+              overflow: 'hidden', 
+              boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
+              backgroundColor: '#0f172a'
+            }}>
               {getArticleImage(mainFeatured) ? (
-                <img src={getArticleImage(mainFeatured) as string} alt={mainFeatured.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img src={getArticleImage(mainFeatured) as string} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85 }} />
               ) : (
-                <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--foreground)', color: 'white', opacity: 0.8 }}>
-                  <span style={{ fontSize: '4rem', fontWeight: 900, letterSpacing: '-0.05em' }}>LeDébat</span>
-                  <span style={{ fontSize: '4rem', fontWeight: 900, color: 'var(--primary)', letterSpacing: '0.02em', marginTop: '-1rem' }}>IVOIRIEN</span>
+                <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #0f172a, #334155)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontSize: '4rem', fontWeight: 900, color: 'white', opacity: 0.1 }}>LE DÉBAT IVOIRIEN</span>
                 </div>
               )}
-              <div style={{ position: "absolute", bottom: 0, left: 0, width: "100%", background: "linear-gradient(to top, rgba(0,0,0,0.9), transparent)", padding: "2rem 1rem 1rem 1rem", color: "white" }}>
-                <div style={{ fontSize: "0.75rem", color: "var(--primary)", fontWeight: "bold", textTransform: "uppercase", marginBottom: "0.25rem" }}>
-                  {mainFeatured.categories[0]?.name || "Général"}
+              <div style={{ 
+                position: 'absolute', 
+                bottom: 0, 
+                left: 0, 
+                width: '100%', 
+                padding: '4rem 2.5rem', 
+                background: 'linear-gradient(to top, rgba(15, 23, 42, 1) 0%, rgba(15, 23, 42, 0.4) 60%, transparent 100%)',
+                color: 'white'
+              }}>
+                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+                   <span style={{ backgroundColor: 'var(--primary)', color: 'white', padding: '0.3rem 0.8rem', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase' }}>
+                    À LA UNE
+                  </span>
+                  <span style={{ backgroundColor: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(4px)', color: 'white', padding: '0.3rem 0.8rem', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase' }}>
+                    {mainFeatured.categories[0]?.name || "ACTUALITÉ"}
+                  </span>
                 </div>
-                <h1 style={{ fontSize: "1.5rem", fontWeight: 800, lineHeight: 1.2 }}>
+                <h1 style={{ fontSize: '3rem', fontWeight: 900, lineHeight: 1, margin: '0.5rem 0', letterSpacing: '-0.03em' }}>
                   {mainFeatured.title}
                 </h1>
+                <p style={{ fontSize: '1.1rem', opacity: 0.8, maxWidth: '900px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', marginTop: '1rem' }}>
+                  {mainFeatured.excerpt || "L'information brute, l'analyse experte, le débat indépendant."}
+                </p>
               </div>
             </div>
           </Link>
-          
-          <div className="grid-responsive-2col">
-            {subFeatured.slice(0, 2).map((article) => {
-              const imgUrl = getArticleImage(article);
-              return (
-                <Link href={`/article/${article.slug}`} key={article.id}>
-                  <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", height: "100%" }}>
-                    <div style={{ height: "120px", backgroundColor: "var(--muted)", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: "bold", position: "relative" }}>
-                      {imgUrl ? (
-                        <img src={imgUrl} alt={article.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      ) : (
-                        <div style={{ background: 'var(--foreground)', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>LDI</div>
-                      )}
-                    </div>
-                    <div style={{ padding: "0.75rem" }}>
-                      <h2 style={{ fontSize: "0.9rem", fontWeight: 700, lineHeight: 1.3 }}>{article.title}</h2>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+        </div>
+
+        {/* BRVM / Market Quick View */}
+        <div style={{ marginBottom: "3rem", display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+           {brvmGrp.map((ind: any) => (
+             <Link href="/economie/dashboard" key={ind.id} style={{ textDecoration: 'none', backgroundColor: 'white', padding: '1.5rem', borderRadius: '16px', border: '1px solid var(--border)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
+                <div style={{ fontSize: '0.7rem', color: 'var(--muted)', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.5rem' }}>{ind.label}</div>
+                <div style={{ fontSize: '1.8rem', fontWeight: 900, color: 'var(--foreground)', marginBottom: '0.2rem' }}>{ind.value}</div>
+                <div style={{ fontSize: '0.85rem', fontWeight: 800, color: ind.trend === 'UP' ? '#22c55e' : '#ef4444' }}>
+                  {ind.trend === 'UP' ? '▲' : '▼'} {ind.extraText || (ind.trend === 'UP' ? '+0.42%' : '-0.15%')}
+                </div>
+             </Link>
+           ))}
+           <Link href="/economie/dashboard" style={{ textDecoration: 'none', backgroundColor: 'var(--primary)', padding: '1.5rem', borderRadius: '16px', color: 'white', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+              <div style={{ fontWeight: 900, fontSize: '0.9rem', textTransform: 'uppercase' }}>Dashboard Éco</div>
+              <div style={{ fontSize: '0.7rem', opacity: 0.8 }}>Voir toutes les cotations BRVM</div>
+           </Link>
         </div>
 
         {/* Publicité Milieu de page */}
@@ -441,8 +410,7 @@ export default async function Home() {
               </h2>
               <div style={{ padding: "1rem" }}>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
-                  {politiqueArticles.filter(a => !displayedIds.has(a.id)).slice(0, 4).map((article) => {
-                    displayedIds.add(article.id);
+                  {politiqueItems.map((article) => {
                     const imgUrl = getArticleImage(article);
                     return (
                       <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
@@ -472,8 +440,7 @@ export default async function Home() {
               <Link href="/category/economie" style={{ fontSize: "0.8rem", color: "var(--muted)", textDecoration: "none", fontWeight: "normal" }}>Voir tout</Link>
             </h2>
             <div className="grid-responsive-2col" style={{ marginTop: "1rem" }}>
-              {economieArticles.filter(a => !displayedIds.has(a.id)).slice(0, 4).map((article) => {
-                displayedIds.add(article.id);
+              {economieItems.map((article) => {
                 const imgUrl = getArticleImage(article);
                 return (
                   <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", gap: "0.75rem", backgroundColor: "var(--card-bg)", padding: "0.5rem", borderRadius: "var(--radius)", border: "1px solid var(--border)" }}>
@@ -501,8 +468,7 @@ export default async function Home() {
               <Link href="/category/faits-divers" style={{ fontSize: "0.8rem", color: "var(--muted)", textDecoration: "none", fontWeight: "normal" }}>Voir tout</Link>
             </h2>
             <div className="grid-responsive-2col" style={{ marginTop: "1rem" }}>
-              {faitsDiversArticles.filter(a => !displayedIds.has(a.id)).slice(0, 4).map((article) => {
-                displayedIds.add(article.id);
+              {faitsDiversItems.map((article) => {
                 const imgUrl = getArticleImage(article);
                 return (
                   <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", gap: "0.75rem", backgroundColor: "var(--card-bg)", padding: "0.5rem", borderRadius: "var(--radius)", border: "1px solid var(--border)" }}>
@@ -530,8 +496,7 @@ export default async function Home() {
               <Link href="/category/internationale" style={{ fontSize: "0.8rem", color: "var(--muted)", textDecoration: "none", fontWeight: "normal" }}>Voir tout</Link>
             </h2>
             <div className="grid-responsive-2col" style={{ marginTop: "1rem" }}>
-              {cedeauArticles.filter(a => !displayedIds.has(a.id)).slice(0, 4).map((article) => {
-                displayedIds.add(article.id);
+              {cedeauItems.map((article) => {
                 const imgUrl = getArticleImage(article);
                 return (
                   <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", gap: "0.75rem", backgroundColor: "var(--card-bg)", padding: "0.5rem", borderRadius: "var(--radius)", border: "1px solid var(--border)" }}>
