@@ -292,6 +292,19 @@ export default function EditArticleForm({ article, categories }: { article: any,
               🎙️ Rendre disponible en audio (Actu Audio)
             </label>
           </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <input 
+              type="checkbox" 
+              name="isConfidentiel" 
+              id="isConfidentiel"
+              defaultChecked={article.isConfidentiel}
+              style={{ width: '1.2rem', height: '1.2rem', cursor: 'pointer' }}
+            />
+            <label htmlFor="isConfidentiel" style={{ fontWeight: 'bold', color: '#0f172a', cursor: 'pointer' }}>
+              🔒 Format Confidentiel
+            </label>
+          </div>
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>

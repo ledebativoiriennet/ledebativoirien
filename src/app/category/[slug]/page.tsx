@@ -78,6 +78,7 @@ export default async function CategoryPage({ params }: Props) {
                   <h2 className="article-title" style={{ fontSize: '1.1rem' }}>
                     {article.title}
                     {article.isPremium && <span className="premium-badge">PR</span>}
+                    {article.isConfidentiel && <span style={{ backgroundColor: '#7f1d1d', color: 'white', padding: '0.1rem 0.3rem', borderRadius: '3px', fontSize: '0.6rem', fontWeight: 'bold', marginLeft: '0.5rem', verticalAlign: 'middle' }}>🔒 CONF.</span>}
                   </h2>
                 </div>
               </div>

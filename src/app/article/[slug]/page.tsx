@@ -235,6 +235,7 @@ export default async function ArticlePage({ params }: Props) {
             <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }} title="Lectures depuis la publication">👁️ {totalViews.toLocaleString()} vues</span>
             <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }} title="Aujourd'hui / Semaine / Mois">📊 {todayViews.toLocaleString()} / {weekViews.toLocaleString()} / {monthViews.toLocaleString()}</span>
             {article.isPremium && <span className="premium-badge">PREMIUM</span>}
+            {article.isConfidentiel && <span style={{ backgroundColor: '#7f1d1d', color: 'white', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 'bold', textTransform: 'uppercase', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>🔒 CONFIDENTIEL</span>}
             <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }} title="Temps de lecture estimé">⏱️ {readTime} min</span>
           </div>
 
