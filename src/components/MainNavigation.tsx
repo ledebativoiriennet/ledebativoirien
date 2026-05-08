@@ -110,6 +110,12 @@ export default function MainNavigation({ categories }: MainNavigationProps) {
           overflow-x: auto;
           -webkit-overflow-scrolling: touch;
           align-items: center;
+          scrollbar-width: none; /* Firefox */
+          -ms-overflow-style: none; /* IE/Edge */
+        }
+
+        .nav::-webkit-scrollbar {
+          display: none; /* Chrome, Safari, Opera */
         }
 
         .nav-item {

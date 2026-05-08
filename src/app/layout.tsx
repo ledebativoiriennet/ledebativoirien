@@ -32,7 +32,7 @@ export default async function RootLayout({
 }>) {
   const session = await getServerSession(authOptions);
   
-  const targetSlugs = ["a-la-une", "actualite", "politique", "economie", "diplomatie", "internationale", "societe", "publie-reportage", "sports", "culture"];
+  const targetSlugs = ["a-la-une", "actualite", "politique", "economie", "diplomatie", "internationale", "societe", "sports", "culture"];
   
   // Robustness: Ensure these categories exist in the database
   try {
