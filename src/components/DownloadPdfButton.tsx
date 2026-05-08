@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface DownloadPdfButtonProps {
   articleTitle: string;
@@ -10,6 +11,7 @@ interface DownloadPdfButtonProps {
   authorName?: string;
   isPremium?: boolean;
   userHasAccess?: boolean;
+  isPremiumUser?: boolean;
 }
 
 export default function DownloadPdfButton({ 
@@ -19,13 +21,16 @@ export default function DownloadPdfButton({
   articleImage,
   authorName,
   isPremium,
-  userHasAccess
+  userHasAccess,
+  isPremiumUser
 }: DownloadPdfButtonProps) {
   const [isGenerating, setIsGenerating] = useState(false);
+  const router = useRouter();
 
   const handleDownload = async () => {
-    if (isPremium && !userHasAccess) {
-      alert("Vous devez être abonné Premium pour télécharger cet article.");
+    // Si l'utilisateur n'est pas premium, on le redirige vers la page d'abonnement
+    if (!isPremiumUser) {
+      router.push('/abonnement');
       return;
     }
 
@@ -75,7 +80,7 @@ export default function DownloadPdfButton({
       ` : '';
       
       // Clean content for PDF
-      const cleanContent = articleContent.replace(/<img[^>]*>/g, ''); // Remove images from content to avoid pagination layout issues, or keep them if preferred
+      // const cleanContent = articleContent.replace(/<img[^>]*>/g, ''); // Non utilisé ici
       
       const contentSection = `
         <div style="font-size: 16px; line-height: 1.8; color: #334155; text-align: justify;">
@@ -116,23 +121,34 @@ export default function DownloadPdfButton({
     <button 
       onClick={handleDownload}
       disabled={isGenerating}
+      title={!isPremiumUser ? "Réservé aux abonnés Premium" : "Télécharger cet article en PDF"}
       style={{
         display: 'inline-flex',
         alignItems: 'center',
         gap: '0.5rem',
         padding: '0.6rem 1.2rem',
-        backgroundColor: '#000000',
+        backgroundColor: isPremiumUser ? '#000000' : '#475569',
         color: 'white',
         fontWeight: 'bold',
         fontSize: '0.9rem',
         borderRadius: '6px',
         border: 'none',
         cursor: isGenerating ? 'not-allowed' : 'pointer',
-        transition: 'background-color 0.2s',
+        transition: 'all 0.2s',
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
       }}
-      onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#dc2626'}
-      onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#000000'}
+      onMouseOver={(e) => {
+        if (!isGenerating) {
+          e.currentTarget.style.backgroundColor = '#dc2626';
+          e.currentTarget.style.transform = 'translateY(-1px)';
+        }
+      }}
+      onMouseOut={(e) => {
+        if (!isGenerating) {
+          e.currentTarget.style.backgroundColor = isPremiumUser ? '#000000' : '#475569';
+          e.currentTarget.style.transform = 'translateY(0)';
+        }
+      }}
     >
       {isGenerating ? (
         <span>⏳ Création du PDF...</span>
@@ -143,7 +159,7 @@ export default function DownloadPdfButton({
             <polyline points="7 10 12 15 17 10"></polyline>
             <line x1="12" y1="15" x2="12" y2="3"></line>
           </svg>
-          {isPremium && !userHasAccess ? "Acheter / Télécharger (PDF)" : "Télécharger (PDF)"}
+          {isPremiumUser ? "Télécharger (PDF)" : "Premium : Télécharger (PDF)"}
         </>
       )}
     </button>

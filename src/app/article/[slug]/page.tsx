@@ -254,6 +254,7 @@ export default async function ArticlePage({ params }: Props) {
                 authorName={article.author?.name || undefined}
                 isPremium={article.isPremium}
                 userHasAccess={!showPaywall}
+                isPremiumUser={isPremiumSubscriber}
               />
             </div>
           </div>

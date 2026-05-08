@@ -17,87 +17,103 @@ export default async function NewspaperDetailPage({ params }: { params: Promise<
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: 'var(--background)', padding: '3rem 1rem' }}>
-      <div className="container" style={{ maxWidth: '800px', margin: '0 auto' }}>
-        <div style={{ marginBottom: '2rem' }}>
-          <Link href="/marketplace" style={{ color: 'var(--primary)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--background)', padding: '4rem 1rem' }}>
+      <div className="container" style={{ maxWidth: '1000px', margin: '0 auto' }}>
+        <div style={{ marginBottom: '3rem' }}>
+          <Link href="/marketplace" style={{ color: 'var(--muted)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, fontSize: '0.9rem' }} className="hover-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
             </svg>
-            <span>Retour à la boutique</span>
+            <span>Retour au Kiosque</span>
           </Link>
         </div>
 
-        <style dangerouslySetInnerHTML={{ __html: `
-          .product-layout-inline {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-          }
-          @media (min-width: 768px) {
-            .product-layout-inline {
-              flex-direction: row;
-            }
-            .product-layout-inline > div {
-              flex: 1;
-            }
-          }
-        `}} />
-
-        <div className="article-card product-layout-inline">
-          <div style={{ position: 'relative', minHeight: '400px', backgroundColor: 'var(--border)' }}>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', 
+          gap: '4rem',
+          alignItems: 'start'
+        }}>
+          {/* Colonne Image - Couverture */}
+          <div style={{ 
+            position: 'relative', 
+            borderRadius: '1.5rem', 
+            overflow: 'hidden', 
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            backgroundColor: '#1e293b',
+            aspectRatio: '2/3'
+          }}>
             {newspaper.coverImageUrl ? (
               <img
                 src={newspaper.coverImageUrl}
                 alt={newspaper.title}
-                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             ) : (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--muted)' }}>
-                <span style={{ fontSize: '1.125rem' }}>Aucune couverture disponible</span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'rgba(255,255,255,0.2)' }}>
+                <span style={{ fontSize: '1.25rem', fontWeight: 600 }}>Pas de couverture</span>
               </div>
             )}
-            <div style={{ position: 'absolute', top: '1rem', left: '1rem', backgroundColor: 'var(--card-bg)', padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--foreground)', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-              PDF Numérique
+            <div style={{ 
+              position: 'absolute', 
+              top: '1.5rem', 
+              right: '1.5rem', 
+              backgroundColor: 'rgba(230, 0, 0, 0.9)', 
+              backdropFilter: 'blur(4px)',
+              padding: '0.5rem 1rem', 
+              borderRadius: '0.75rem', 
+              fontSize: '0.8rem', 
+              fontWeight: 800, 
+              color: 'white', 
+              boxShadow: '0 4px 6px rgba(0,0,0,0.1)' 
+            }}>
+              ÉDITION PDF
             </div>
           </div>
           
-          <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--primary)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-              N° {newspaper.issueNumber || '-'} • Paru le {new Date(newspaper.publishedAt).toLocaleDateString('fr-FR')}
+          {/* Colonne Infos & Achat */}
+          <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            <div style={{ 
+              fontSize: '0.85rem', 
+              fontWeight: 800, 
+              color: 'var(--primary)', 
+              textTransform: 'uppercase', 
+              marginBottom: '1rem',
+              letterSpacing: '2px'
+            }}>
+              Numéro {newspaper.issueNumber || '-'} • {new Date(newspaper.publishedAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
             </div>
-            <h1 style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--foreground)', marginBottom: '1rem', lineHeight: 1.2 }}>
+            <h1 style={{ 
+              fontSize: 'clamp(2rem, 5vw, 3rem)', 
+              fontWeight: 900, 
+              color: 'var(--foreground)', 
+              marginBottom: '1.5rem', 
+              lineHeight: 1.1,
+              letterSpacing: '-1px'
+            }}>
               {newspaper.title}
             </h1>
             
-            <div className="article-content" style={{ color: 'var(--muted)', marginBottom: '2rem' }}>
+            <div style={{ color: 'var(--muted)', fontSize: '1.1rem', lineHeight: 1.6, marginBottom: '2.5rem' }}>
               {newspaper.description ? (
                 <p>{newspaper.description}</p>
               ) : (
-                <p>Retrouvez toute l'actualité décryptée par nos journalistes dans cette édition complète.</p>
+                <p>Accédez à l'intégralité de cette édition en haute définition. Analyses exclusives, dossiers complets et toutes les rubriques de votre journal habituel.</p>
               )}
             </div>
 
-            <div style={{ marginBottom: '2rem' }}>
-              <h3 style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '1rem' }}>Points forts de ce numéro :</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                {[
-                  'Édition intégrale en haute définition',
-                  'Lecture optimisée pour mobile et tablette',
-                  'Accès aux archives historiques',
-                  'Analyses et dossiers exclusifs'
-                ].map((item, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem' }}>
-                    <span style={{ color: '#22c55e' }}>✓</span> {item}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div style={{ backgroundColor: 'var(--background)', borderRadius: 'var(--radius)', padding: '1.5rem', border: '1px solid var(--border)', marginTop: 'auto' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
-                <span style={{ color: 'var(--muted)', fontWeight: 500 }}>Prix du PDF</span>
-                <span style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--foreground)' }}>{newspaper.price} FCFA</span>
+            <div style={{ 
+              backgroundColor: 'var(--card-bg)', 
+              borderRadius: '1.5rem', 
+              padding: '2rem', 
+              border: '1px solid var(--border)',
+              boxShadow: 'var(--shadow)',
+              marginBottom: '2.5rem'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                <span style={{ color: 'var(--muted)', fontWeight: 600, fontSize: '1rem' }}>Prix de l'édition</span>
+                <span style={{ fontSize: '2.5rem', fontWeight: 900, color: 'var(--foreground)' }}>{newspaper.price} <span style={{fontSize: '1rem', color: 'var(--muted)'}}>FCFA</span></span>
               </div>
               
               <MarketplaceCheckoutClient 
@@ -107,6 +123,38 @@ export default async function NewspaperDetailPage({ params }: { params: Promise<
                   price: newspaper.price
                 }} 
               />
+            </div>
+
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: '1fr 1fr', 
+              gap: '1.5rem',
+              padding: '0 1rem'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+                <div style={{ color: '#22c55e', fontSize: '1.25rem' }}>✓</div>
+                <div style={{ fontSize: '0.85rem', color: 'var(--muted)', lineHeight: 1.4 }}>
+                  <strong>HD Qualité</strong><br/>Texte et images nets
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+                <div style={{ color: '#22c55e', fontSize: '1.25rem' }}>✓</div>
+                <div style={{ fontSize: '0.85rem', color: 'var(--muted)', lineHeight: 1.4 }}>
+                  <strong>Multi-Support</strong><br/>Mobile, Tablette, PC
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+                <div style={{ color: '#22c55e', fontSize: '1.25rem' }}>✓</div>
+                <div style={{ fontSize: '0.85rem', color: 'var(--muted)', lineHeight: 1.4 }}>
+                  <strong>Lien à vie</strong><br/>Accès permanent
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+                <div style={{ color: '#22c55e', fontSize: '1.25rem' }}>✓</div>
+                <div style={{ fontSize: '0.85rem', color: 'var(--muted)', lineHeight: 1.4 }}>
+                  <strong>Paiement Sûr</strong><br/>CinetPay Sécurisé
+                </div>
+              </div>
             </div>
           </div>
         </div>
