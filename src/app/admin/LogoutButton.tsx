@@ -5,7 +5,10 @@ import { signOut } from "next-auth/react";
 export default function LogoutButton() {
   return (
     <button 
-      onClick={() => signOut({ callbackUrl: '/' })} 
+      onClick={async () => {
+        await signOut({ redirect: false });
+        window.location.href = '/';
+      }} 
       style={{ 
         width: '100%',
         display: 'block', 
