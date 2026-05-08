@@ -224,11 +224,14 @@ a:hover {
 .header {
   background-color: var(--header-bg);
   border-bottom: 1px solid var(--border);
+  z-index: 50;
+}
+
+.sticky-nav-wrapper {
   position: sticky;
   top: 0;
-  z-index: 50;
-  backdrop-filter: blur(8px);
-  background-color: color-mix(in srgb, var(--header-bg) 90%, transparent);
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 .top-bar {

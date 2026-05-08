@@ -179,67 +179,70 @@ export default async function RootLayout({
         <VisitorTracker />
         <Providers>
           <header className="header">
-          <div className="container main-header">
-            <a href="/" className="logo-container" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-              <img src="/logo.png" alt="Logo Le Débat Ivoirien" style={{ height: '60px', width: 'auto', objectFit: 'contain' }} />
-            </a>
+            <div className="container main-header">
+              <a href="/" className="logo-container" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+                <img src="/logo.png" alt="Logo Le Débat Ivoirien" style={{ height: '60px', width: 'auto', objectFit: 'contain' }} />
+              </a>
 
-            {/* Kiosque PDF prominent link after connection */}
-            {session && (
-              <Link href="/marketplace" style={{ 
-                backgroundColor: '#ffeb3b', 
-                color: '#111', 
-                padding: '0.5rem 1rem', 
-                borderRadius: '4px', 
-                fontWeight: 'bold', 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '0.5rem', 
-                textDecoration: 'none', 
-                fontSize: '0.85rem', 
-                border: '1px solid #fbc02d', 
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                marginLeft: '1rem'
-              }} className="kiosque-link-desktop">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                KIOSQUE PDF
-              </Link>
-            )}
-            <div className="header-actions">
-               <form action="/search" method="GET" style={{ display: 'flex', flex: 1, position: 'relative' }}>
-                 <input 
-                   name="q" 
-                   type="text" 
-                   placeholder="Rechercher..." 
-                   className="input search-input" 
-                   style={{ padding: '0.5rem', width: '100%', paddingRight: '2rem' }} 
-                 />
-                 <button type="submit" style={{ position: 'absolute', right: '0.5rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem' }}>
-                   🔍
-                 </button>
-               </form>
-               <ThemeToggle />
-               <UserMenu />
-            </div>
-          </div>
-          {/* Mega Menu */}
-          <div style={{ backgroundColor: '#111111', color: 'white' }}>
-            <div className="container" style={{ padding: 0 }}>
-              <MainNavigation categories={navCategories} />
-            </div>
-          </div>
-        </header>
-
-          {/* BREAKING NEWS */}
-          <div style={{ backgroundColor: 'var(--primary)', color: 'white', height: '40px', overflow: 'hidden' }}>
-            <div className="container" style={{ display: 'flex', alignItems: 'center', gap: '1rem', height: '100%' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0, zIndex: 1 }}>
-                <div style={{ width: '22px', height: '22px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: 'white', animation: 'pulse 2s infinite' }}></div>
-                </div>
-                <span style={{ fontWeight: 900, fontSize: '0.9rem', letterSpacing: '0.5px' }}>BREAKING NEWS</span>
+              {/* Kiosque PDF prominent link after connection */}
+              {session && (
+                <Link href="/marketplace" style={{ 
+                  backgroundColor: '#ffeb3b', 
+                  color: '#111', 
+                  padding: '0.5rem 1rem', 
+                  borderRadius: '4px', 
+                  fontWeight: 'bold', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '0.5rem', 
+                  textDecoration: 'none', 
+                  fontSize: '0.85rem', 
+                  border: '1px solid #fbc02d', 
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                  marginLeft: '1rem'
+                }} className="kiosque-link-desktop">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                  KIOSQUE PDF
+                </Link>
+              )}
+              <div className="header-actions">
+                <form action="/search" method="GET" style={{ display: 'flex', flex: 1, position: 'relative' }}>
+                  <input 
+                    name="q" 
+                    type="text" 
+                    placeholder="Rechercher..." 
+                    className="input search-input" 
+                    style={{ padding: '0.5rem', width: '100%', paddingRight: '2rem' }} 
+                  />
+                  <button type="submit" style={{ position: 'absolute', right: '0.5rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem' }}>
+                    🔍
+                  </button>
+                </form>
+                <ThemeToggle />
+                <UserMenu />
               </div>
-              <div dangerouslySetInnerHTML={{ __html: `<marquee scrollamount="5" style="font-weight: 700; font-size: 0.9rem; width: 100%;">${breakingText}</marquee>` }} style={{ flex: 1, display: 'flex', alignItems: 'center' }} />
+            </div>
+          </header>
+
+          <div className="sticky-nav-wrapper">
+            {/* Mega Menu */}
+            <div style={{ backgroundColor: '#111111', color: 'white' }}>
+              <div className="container" style={{ padding: 0 }}>
+                <MainNavigation categories={navCategories} />
+              </div>
+            </div>
+
+            {/* BREAKING NEWS */}
+            <div style={{ backgroundColor: 'var(--primary)', color: 'white', height: '40px', overflow: 'hidden' }}>
+              <div className="container" style={{ display: 'flex', alignItems: 'center', gap: '1rem', height: '100%' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0, zIndex: 1 }}>
+                  <div style={{ width: '22px', height: '22px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: 'white', animation: 'pulse 2s infinite' }}></div>
+                  </div>
+                  <span style={{ fontWeight: 900, fontSize: '0.9rem', letterSpacing: '0.5px' }}>BREAKING NEWS</span>
+                </div>
+                <div dangerouslySetInnerHTML={{ __html: `<marquee scrollamount="5" style="font-weight: 700; font-size: 0.9rem; width: 100%;">${breakingText}</marquee>` }} style={{ flex: 1, display: 'flex', alignItems: 'center' }} />
+              </div>
             </div>
           </div>
           
