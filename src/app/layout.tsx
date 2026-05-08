@@ -224,7 +224,7 @@ export default async function RootLayout({
             </div>
           </header>
 
-          <div className="sticky-nav-wrapper">
+          <div className="sticky-nav-wrapper" style={{ position: 'sticky', top: 0, zIndex: 1000, backgroundColor: 'var(--background)' }}>
             {/* Mega Menu */}
             <div style={{ backgroundColor: '#111111', color: 'white' }}>
               <div className="container" style={{ padding: 0 }}>
