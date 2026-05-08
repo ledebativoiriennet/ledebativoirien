@@ -7,6 +7,7 @@ import { writeFile } from "fs/promises";
 import { join } from "path";
 import { saveUpload } from "@/lib/upload";
 import { sendNewArticleNotification } from "@/lib/newsletter";
+import { sendPushNotification } from "@/lib/push";
 
 // Convert a title to a URL-friendly slug
 function generateSlug(title: string) {
@@ -97,6 +98,7 @@ export async function publishArticle(formData: FormData) {
     if (role !== "CONTRIBUTOR") {
       setTimeout(() => {
         sendNewArticleNotification(newArticle.id).catch(console.error);
+        sendPushNotification(newArticle.id).catch(console.error);
       }, 500);
     }
 
@@ -124,6 +126,7 @@ export async function approveArticle(articleId: string) {
     // Envoyer la notification de manière asynchrone pour ne pas bloquer Next.js
     setTimeout(() => {
       sendNewArticleNotification(articleId).catch(console.error);
+      sendPushNotification(articleId).catch(console.error);
     }, 500);
 
     return { success: true };

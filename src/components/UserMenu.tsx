@@ -19,6 +19,11 @@ export function UserMenu() {
             <span style={{ fontSize: '0.8rem' }}>⚙️ Back-Office</span>
           </Link>
         )}
+        {((session.user as any).companyId || role === 'COMPANY_ADMIN') && (
+          <Link href="/dashboard/company" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', color: '#1e3a8a', textDecoration: 'none', backgroundColor: '#dbeafe', padding: '0.4rem 0.8rem', borderRadius: '4px' }}>
+            <span style={{ fontSize: '0.8rem' }}>🏢 Dashboard B2B</span>
+          </Link>
+        )}
         <Link href="/mon-compte" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', color: 'var(--foreground)', textDecoration: 'none' }}>
           <div style={{ width: '30px', height: '30px', backgroundColor: 'var(--primary)', color: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem' }}>
             {session.user.name ? session.user.name.charAt(0).toUpperCase() : 'U'}

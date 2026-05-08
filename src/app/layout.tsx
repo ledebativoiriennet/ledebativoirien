@@ -392,6 +392,7 @@ export default async function RootLayout({
               <h4 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '1rem', color: 'var(--primary)' }}>Services</h4>
               <ul style={{ listStyle: 'none', padding: 0, fontSize: '0.9rem', color: '#cbd5e1', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <li><Link href="/abonnement">Abonnement Premium</Link></li>
+                <li><Link href="/offres-entreprises" style={{ fontWeight: 'bold', color: 'var(--primary)' }}>Offre Entreprises (B2B)</Link></li>
                 <li><Link href="/annonceurs">Espace Annonceurs</Link></li>
                 <li><Link href="/archives">Archives</Link></li>
                 <li><Link href="/#newsletter">Newsletter</Link></li>

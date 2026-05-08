@@ -74,8 +74,24 @@ export default async function NewspaperDetailPage({ params }: { params: Promise<
               {newspaper.description ? (
                 <p>{newspaper.description}</p>
               ) : (
-                <p>Achetez la version numérique complète de ce numéro pour le lire sur votre ordinateur, tablette ou smartphone.</p>
+                <p>Retrouvez toute l'actualité décryptée par nos journalistes dans cette édition complète.</p>
               )}
+            </div>
+
+            <div style={{ marginBottom: '2rem' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '1rem' }}>Points forts de ce numéro :</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {[
+                  'Édition intégrale en haute définition',
+                  'Lecture optimisée pour mobile et tablette',
+                  'Accès aux archives historiques',
+                  'Analyses et dossiers exclusifs'
+                ].map((item, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem' }}>
+                    <span style={{ color: '#22c55e' }}>✓</span> {item}
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div style={{ backgroundColor: 'var(--background)', borderRadius: 'var(--radius)', padding: '1.5rem', border: '1px solid var(--border)', marginTop: 'auto' }}>

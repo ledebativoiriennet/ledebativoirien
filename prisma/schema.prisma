@@ -23,6 +23,9 @@ model User {
   readingHistory ReadingHistory[]
   articleLikes   ArticleLike[]
   purchases      Purchase[]
+  pushSubscriptions PushSubscription[]
+  companyId      String?
+  company        Company?       @relation(fields: [companyId], references: [id])
 }
 
 model Subscription {
@@ -385,6 +388,8 @@ model Purchase {
   customerName       String?
   digitalNewspaperId String
   digitalNewspaper   DigitalNewspaper @relation(fields: [digitalNewspaperId], references: [id])
+  companyId          String?
+  company            Company?         @relation(fields: [companyId], references: [id])
   amount             Float
   status             String   @default("PENDING") // PENDING, COMPLETED, FAILED
   paymentMethod      String?  // CINETPAY
@@ -402,4 +407,27 @@ model ArticleView {
   viewedAt  DateTime @default(now())
 
   @@index([articleId, viewedAt])
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Company {
+  id          String   @id @default(cuid())
+  name        String
+  email       String   @unique
+  logoUrl     String?
+  plan        String   @default("B2B_STANDARD")
+  maxUsers    Int      @default(10)
+  users       User[]
+  purchases   Purchase[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

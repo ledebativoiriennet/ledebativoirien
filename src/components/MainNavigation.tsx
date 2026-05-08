@@ -51,6 +51,9 @@ export default function MainNavigation({ categories }: MainNavigationProps) {
         <Link href="/" className="nav-link" style={{ fontWeight: 'bold', color: 'var(--primary)' }} onMouseEnter={() => setActiveCategory(null)}>
           Accueil
         </Link>
+        <Link href="/confidentiels" className="nav-link" style={{ fontWeight: 'bold', borderBottom: '2px solid #7f1d1d' }} onMouseEnter={() => setActiveCategory(null)}>
+          🔒 Confidentiels
+        </Link>
         {categories.map(c => (
           <div key={c.id} className="nav-item" onMouseEnter={() => setActiveCategory(c.id)}>
             <Link href={`/category/${c.slug}`} className="nav-link" style={{ whiteSpace: 'nowrap' }}>
