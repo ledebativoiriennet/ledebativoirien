@@ -59,6 +59,8 @@ export async function publishArticle(formData: FormData) {
 
     const videoUrl = formData.get("videoUrl") as string || null;
     const videoFile = formData.get("videoFile") as File | null;
+    const imageCaption = formData.get("imageCaption") as string || null;
+    const videoCaption = formData.get("videoCaption") as string || null;
     let savedVideoPath = null;
 
     if (videoFile && videoFile.size > 0) {
@@ -72,8 +74,10 @@ export async function publishArticle(formData: FormData) {
         excerpt,
         content,
         imageUrl,
+        imageCaption,
         videoUrl,
         videoFile: savedVideoPath,
+        videoCaption,
         isPremium,
         isAudioAvailable,
         isConfidentiel,

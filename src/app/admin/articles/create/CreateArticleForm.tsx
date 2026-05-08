@@ -200,6 +200,17 @@ export default function CreateArticleForm({ categories }: { categories: Category
         </div>
 
         <div>
+          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Légende / Crédit photo</label>
+          <input
+            type="text"
+            name="imageCaption"
+            placeholder="Ex: Photo AFP / Reuters — Abidjan, mai 2026"
+            style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '0.95rem', fontFamily: 'inherit', color: '#64748b' }}
+          />
+          <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.25rem' }}>Cette légende apparaîtra sous l’image dans l’article.</p>
+        </div>
+
+        <div>
           <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Vidéo de l'article (Optionnel)</label>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}>
             <div>
@@ -221,6 +232,17 @@ export default function CreateArticleForm({ categories }: { categories: Category
               />
             </div>
           </div>
+        </div>
+
+        <div>
+          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Légende / Crédit vidéo</label>
+          <input
+            type="text"
+            name="videoCaption"
+            placeholder="Ex: Source : RFI — Reportage exclusif"
+            style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '0.95rem', fontFamily: 'inherit', color: '#64748b' }}
+          />
+          <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.25rem' }}>Cette légende apparaîtra sous la vidéo dans l’article.</p>
         </div>
         <div>
           <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Contenu HTML de l'article</label>
