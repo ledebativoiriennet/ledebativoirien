@@ -83,7 +83,7 @@ export default async function MarketplaceSuccessPage({
             <div className="space-y-4 mb-8">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-500 font-medium">Client</span>
-                <span className="text-gray-900 font-bold">{purchase.email}</span>
+                <span className="text-gray-900 font-bold">{purchase.customerEmail}</span>
               </div>
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-500 font-medium">Statut du paiement</span>
@@ -125,7 +125,7 @@ export default async function MarketplaceSuccessPage({
                   <span className="text-lg">Télécharger mon journal</span>
                 </a>
                 <p className="text-center text-xs text-gray-400">
-                  Un lien de secours a également été envoyé à <strong>{purchase.email}</strong>.
+                  Un lien de secours a également été envoyé à <strong>{purchase.customerEmail}</strong>.
                 </p>
               </div>
             )}
