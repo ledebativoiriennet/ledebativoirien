@@ -56,16 +56,38 @@ export default function MarketplaceCheckoutClient({ newspaper }: { newspaper: Ne
     }
   };
 
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    borderRadius: '1rem',
+    padding: '1rem 1.25rem',
+    color: 'white',
+    fontSize: '1rem',
+    outline: 'none',
+    transition: 'all 0.3s',
+  };
+
+  const labelStyle: React.CSSProperties = {
+    display: 'block',
+    fontSize: '0.85rem',
+    fontWeight: 700,
+    color: 'rgba(255, 255, 255, 0.6)',
+    marginBottom: '0.5rem',
+    textTransform: 'uppercase',
+    letterSpacing: '1px'
+  };
+
   return (
-    <form onSubmit={handleCheckout} className="space-y-4 mt-8">
+    <form onSubmit={handleCheckout} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {error && (
-        <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-medium">
+        <div style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', border: '1px solid #ef4444', color: '#ef4444', padding: '1rem', borderRadius: '1rem', fontSize: '0.875rem', fontWeight: 600 }}>
           {error}
         </div>
       )}
       
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="name" style={labelStyle}>
           Nom complet (Optionnel)
         </label>
         <input
@@ -73,14 +95,22 @@ export default function MarketplaceCheckoutClient({ newspaper }: { newspaper: Ne
           id="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-red-600 focus:border-transparent outline-none transition-all"
+          style={inputStyle}
           placeholder="Jean Dupont"
+          onFocus={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
+            e.currentTarget.style.borderColor = 'var(--primary)';
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+          }}
         />
       </div>
 
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-          Adresse e-mail <span className="text-red-600">*</span>
+        <label htmlFor="email" style={labelStyle}>
+          Adresse e-mail <span style={{ color: 'var(--primary)' }}>*</span>
         </label>
         <input
           type="email"
@@ -88,10 +118,18 @@ export default function MarketplaceCheckoutClient({ newspaper }: { newspaper: Ne
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-red-600 focus:border-transparent outline-none transition-all"
+          style={inputStyle}
           placeholder="jean.dupont@exemple.com"
+          onFocus={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
+            e.currentTarget.style.borderColor = 'var(--primary)';
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+          }}
         />
-        <p className="mt-2 text-xs text-gray-500">
+        <p style={{ marginTop: '0.75rem', fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.4)', fontStyle: 'italic' }}>
           Nous utiliserons cette adresse pour vous envoyer le lien de téléchargement après votre achat.
         </p>
       </div>
@@ -99,26 +137,48 @@ export default function MarketplaceCheckoutClient({ newspaper }: { newspaper: Ne
       <button
         type="submit"
         disabled={loading}
-        className="w-full mt-4 bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+        style={{
+          width: '100%',
+          backgroundColor: loading ? 'rgba(230, 0, 0, 0.5)' : 'var(--primary)',
+          color: 'white',
+          border: 'none',
+          borderRadius: '1rem',
+          padding: '1.25rem',
+          fontSize: '1.125rem',
+          fontWeight: 900,
+          cursor: loading ? 'not-allowed' : 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '1rem',
+          transition: 'all 0.3s',
+          boxShadow: '0 10px 20px -5px rgba(230, 0, 0, 0.3)'
+        }}
+        onMouseEnter={(e) => { if(!loading) e.currentTarget.style.transform = 'translateY(-2px)'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}
       >
         {loading ? (
-          <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          <div style={{ width: '24px', height: '24px', border: '3px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
         ) : (
           <>
             <span>Payer {newspaper.price} FCFA avec CinetPay</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
             </svg>
           </>
         )}
       </button>
       
-      <div className="text-center mt-4 text-xs text-gray-500 flex items-center justify-center space-x-2">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-500" viewBox="0 0 20 20" fill="currentColor">
-          <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+      <div style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
         </svg>
-        <span>Paiement sécurisé</span>
+        <span>Paiement sécurisé par CinetPay</span>
       </div>
+      
+      <style dangerouslySetInnerHTML={{ __html: `@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }` }} />
     </form>
   );
 }
