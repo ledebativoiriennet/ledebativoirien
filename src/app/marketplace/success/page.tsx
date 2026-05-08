@@ -25,18 +25,18 @@ export default async function MarketplaceSuccessPage({
 
   if (!purchase) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-        <div className="bg-white p-8 rounded-2xl shadow-sm text-center max-w-md w-full">
-          <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4">
+        <div className="bg-zinc-900 border border-zinc-800 p-12 rounded-3xl text-center max-w-md w-full shadow-2xl">
+          <div className="w-20 h-20 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
               <line x1="15" y1="9" x2="9" y2="15"></line>
               <line x1="9" y1="9" x2="15" y2="15"></line>
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Achat introuvable</h1>
-          <p className="text-gray-600 mb-6">Nous n'avons pas pu trouver les informations de votre achat.</p>
-          <Link href="/marketplace" className="bg-red-600 text-white px-6 py-3 rounded-xl font-medium inline-block">
+          <h1 className="text-2xl font-black text-white mb-2">Achat introuvable</h1>
+          <p className="text-zinc-500 mb-8">Nous n'avons pas pu trouver les informations de votre achat. Veuillez contacter le support si le problème persiste.</p>
+          <Link href="/marketplace" className="w-full bg-white text-black px-8 py-4 rounded-2xl font-black transition-all hover:bg-zinc-200 inline-block">
             Retour à la boutique
           </Link>
         </div>
@@ -47,102 +47,102 @@ export default async function MarketplaceSuccessPage({
   const isPending = purchase.status === 'PENDING';
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center pt-20 pb-20 px-4">
-      <div className="max-w-xl w-full">
-        {/* En-tête de confirmation épuré */}
-        <div className="text-center mb-10">
-          <div className="w-20 h-20 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-green-200">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+    <div className="min-h-screen bg-[#050505] flex flex-col items-center pt-24 pb-24 px-4 overflow-hidden relative">
+      {/* Éléments de décorations abstraits */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-96 bg-red-600/10 blur-[120px] rounded-full pointer-events-none"></div>
+      
+      <div className="max-w-xl w-full relative z-10">
+        <div className="text-center mb-12">
+          <div className="w-24 h-24 bg-white text-black rounded-full flex items-center justify-center mx-auto mb-8 shadow-[0_0_50px_rgba(255,255,255,0.2)] animate-in zoom-in duration-700">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
           </div>
-          <h1 className="text-4xl font-black text-gray-900 mb-2 tracking-tight">C'est confirmé !</h1>
-          <p className="text-gray-500 font-medium">Votre édition numérique est prête à être consultée.</p>
+          <h1 className="text-5xl font-black text-white mb-4 tracking-tighter">Excellent choix.</h1>
+          <p className="text-zinc-500 font-medium text-lg">Votre édition est prête pour une lecture haute fidélité.</p>
         </div>
 
-        {/* Reçu de style Premium */}
-        <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 mb-8">
-          <div className="bg-gray-900 p-8 text-white">
-            <div className="flex justify-between items-start mb-6">
-              <div>
-                <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1">Détails de la transaction</p>
-                <p className="text-sm font-mono text-gray-300">{purchase.transactionId}</p>
+        {/* Reçu Ultra-Premium */}
+        <div className="bg-zinc-900 border border-zinc-800 rounded-[2.5rem] shadow-2xl overflow-hidden mb-10 transition-all hover:border-zinc-700">
+          {/* Header du reçu */}
+          <div className="p-10 border-b border-zinc-800 bg-gradient-to-br from-zinc-900 to-zinc-950">
+            <div className="flex justify-between items-start mb-10">
+              <div className="space-y-1">
+                <p className="text-zinc-600 text-[10px] font-black uppercase tracking-[0.2em]">Transaction ID</p>
+                <p className="text-xs font-mono text-zinc-400">{purchase.transactionId}</p>
+              </div>
+              <div className="text-right space-y-1">
+                <p className="text-zinc-600 text-[10px] font-black uppercase tracking-[0.2em]">Date d'achat</p>
+                <p className="text-xs text-zinc-400 font-bold">{new Date(purchase.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <span className="inline-block px-3 py-1 bg-red-600/10 text-red-500 text-[10px] font-black uppercase tracking-widest rounded-full mb-2">Digital Edition</span>
+              <h2 className="text-3xl font-black text-white leading-none tracking-tight">{purchase.digitalNewspaper.title}</h2>
+            </div>
+          </div>
+
+          {/* Corps du reçu */}
+          <div className="p-10 space-y-8">
+            <div className="grid grid-cols-2 gap-8">
+              <div className="space-y-1">
+                <p className="text-zinc-600 text-[10px] font-black uppercase tracking-[0.2em]">Destinataire</p>
+                <p className="text-white font-bold text-sm truncate">{purchase.customerEmail}</p>
+              </div>
+              <div className="space-y-1 text-right">
+                <p className="text-zinc-600 text-[10px] font-black uppercase tracking-[0.2em]">Format</p>
+                <p className="text-white font-bold text-sm">PDF Haute Définition</p>
+              </div>
+            </div>
+
+            <div className="pt-8 border-t border-zinc-800 flex justify-between items-end">
+              <div className="space-y-1">
+                <p className="text-zinc-600 text-[10px] font-black uppercase tracking-[0.2em]">Montant Total</p>
+                <p className="text-zinc-400 text-xs font-medium italic">Paiement sécurisé via CinetPay</p>
               </div>
               <div className="text-right">
-                <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1">Date</p>
-                <p className="text-sm text-gray-300">{new Date(purchase.createdAt).toLocaleDateString('fr-FR')}</p>
-              </div>
-            </div>
-            <div className="border-t border-gray-800 pt-6">
-              <h2 className="text-xl font-bold mb-2">{purchase.digitalNewspaper.title}</h2>
-              <p className="text-gray-400 text-sm">Édition numérique PDF Haute Définition</p>
-            </div>
-          </div>
-
-          <div className="p-8">
-            <div className="space-y-4 mb-8">
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-500 font-medium">Client</span>
-                <span className="text-gray-900 font-bold">{purchase.customerEmail}</span>
-              </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-500 font-medium">Statut du paiement</span>
-                <span className={`px-3 py-1 rounded-full text-xs font-black uppercase ${isPending ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}`}>
-                  {isPending ? 'En attente' : 'Validé'}
-                </span>
-              </div>
-              <div className="pt-4 border-t border-gray-100 flex justify-between items-center">
-                <span className="text-gray-900 font-extrabold text-lg">Total payé</span>
-                <span className="text-gray-900 font-black text-2xl">{purchase.amount} FCFA</span>
+                <p className="text-4xl font-black text-white tracking-tighter">{purchase.amount} <span className="text-sm text-zinc-600">FCFA</span></p>
               </div>
             </div>
 
-            {isPending ? (
-              <div className="bg-yellow-50 border border-yellow-100 p-6 rounded-2xl text-center">
-                <div className="flex items-center justify-center space-x-2 text-yellow-800 font-bold mb-2">
-                  <div className="w-4 h-4 border-2 border-yellow-800 border-t-transparent rounded-full animate-spin"></div>
-                  <span>Validation en cours...</span>
+            {/* Bouton de téléchargement Call-to-Action */}
+            <div className="pt-6">
+              {isPending ? (
+                <div className="bg-zinc-800/50 p-8 rounded-3xl text-center border border-dashed border-zinc-700">
+                  <div className="inline-block w-8 h-8 border-4 border-white/20 border-t-white rounded-full animate-spin mb-4"></div>
+                  <p className="text-white font-bold mb-1">Finalisation en cours...</p>
+                  <p className="text-zinc-500 text-xs">Nous préparons votre fichier. Cela ne prend que quelques secondes.</p>
                 </div>
-                <p className="text-yellow-700 text-sm">Votre paiement est en cours de traitement. Le lien de téléchargement apparaîtra ici automatiquement d'ici quelques secondes.</p>
-                <button 
-                  onClick={() => window.location.reload()}
-                  className="mt-4 text-yellow-800 text-sm font-black underline decoration-2 underline-offset-4"
-                >
-                  Actualiser la page
-                </button>
-              </div>
-            ) : (
-              <div className="space-y-4">
+              ) : (
                 <a 
                   href={`/api/marketplace/download/${purchase.downloadToken}`}
-                  className="w-full bg-red-600 hover:bg-red-700 text-white font-black py-5 px-6 rounded-2xl transition-all duration-300 flex items-center justify-center space-x-3 shadow-lg shadow-red-200 transform hover:-translate-y-1"
+                  className="group relative w-full bg-white text-black font-black py-6 px-8 rounded-3xl transition-all duration-500 flex items-center justify-between overflow-hidden hover:scale-[1.02] active:scale-[0.98] shadow-[0_20px_40px_rgba(255,255,255,0.1)]"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="7 10 12 15 17 10"></polyline>
-                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                  </svg>
-                  <span className="text-lg">Télécharger mon journal</span>
+                  <div className="absolute inset-0 bg-zinc-200 translate-y-full transition-transform duration-500 group-hover:translate-y-0"></div>
+                  <span className="relative z-10 text-xl tracking-tight">Télécharger le PDF</span>
+                  <div className="relative z-10 w-10 h-10 bg-black text-white rounded-full flex items-center justify-center transition-transform duration-500 group-hover:rotate-[360deg]">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="7 10 12 15 17 10"></polyline>
+                      <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                  </div>
                 </a>
-                <p className="text-center text-xs text-gray-400">
-                  Un lien de secours a également été envoyé à <strong>{purchase.customerEmail}</strong>.
-                </p>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="text-center">
+        <div className="flex flex-col items-center space-y-6">
           <Link 
             href="/marketplace" 
-            className="text-gray-500 hover:text-gray-900 font-bold text-sm flex items-center justify-center space-x-2 transition-colors"
+            className="group text-zinc-500 hover:text-white font-black text-xs uppercase tracking-[0.3em] flex items-center space-x-4 transition-all"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="19" y1="12" x2="5" y2="12"></line>
-              <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-            <span>Retour à la boutique</span>
+            <span className="w-8 h-[1px] bg-zinc-800 group-hover:w-12 group-hover:bg-white transition-all"></span>
+            <span>Continuer mes achats</span>
           </Link>
+          <p className="text-[10px] text-zinc-700 font-bold uppercase tracking-widest">Le Débat Ivoirien • Kiosque Numérique</p>
         </div>
       </div>
     </div>
