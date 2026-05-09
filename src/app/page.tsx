@@ -212,17 +212,6 @@ export default async function Home() {
 
         <AdBanner slot="HOME_SIDEBAR" />
 
-        {/* Marketplace PDF Widget */}
-        <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginTop: "1.5rem", padding: "1.5rem", textAlign: "center", position: "relative", backgroundImage: "linear-gradient(to right bottom, #ec1a24, #991b1b)", color: "white", boxShadow: "0 4px 6px rgba(236, 26, 36, 0.2)" }}>
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: "1rem" }}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-          </div>
-          <div style={{ fontSize: "1.3rem", fontWeight: 900, marginBottom: "0.5rem", textTransform: "uppercase" }}>Le Journal en PDF</div>
-          <p style={{ fontSize: "0.85rem", marginBottom: "1.5rem", opacity: 0.9 }}>Téléchargez et lisez l'édition numérique complète du journal Le Débat Ivoirien.</p>
-          <Link href="/marketplace" style={{ display: "inline-block", backgroundColor: "white", color: "#ec1a24", padding: "0.6rem 1.5rem", borderRadius: "9999px", fontWeight: "bold", fontSize: "0.9rem", textDecoration: "none", transition: "transform 0.2s" }} className="hover-scale">
-            Accéder au kiosque
-          </Link>
-        </div>
 
 
         {/* Ad Placeholder Vertical */}
@@ -408,6 +397,61 @@ export default async function Home() {
               <div style={{ fontWeight: 900, fontSize: '0.9rem', textTransform: 'uppercase' }}>Dashboard Éco</div>
               <div style={{ fontSize: '0.7rem', opacity: 0.8 }}>Voir toutes les cotations BRVM</div>
            </Link>
+        </div>
+
+        {/* PROMINENT KIOSQUE PDF BLOCK */}
+        <div style={{ 
+          marginBottom: "3rem", 
+          padding: "2rem", 
+          borderRadius: "24px", 
+          backgroundImage: "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)", 
+          color: "white",
+          display: "flex",
+          alignItems: "center",
+          gap: "2rem",
+          position: "relative",
+          overflow: "hidden",
+          boxShadow: "0 20px 25px -5px rgba(0,0,0,0.2)"
+        }}>
+          <div style={{ 
+            position: "absolute", 
+            top: "-20px", 
+            right: "-20px", 
+            fontSize: "12rem", 
+            opacity: 0.05, 
+            transform: "rotate(15deg)",
+            pointerEvents: "none"
+          }}>📰</div>
+          <div style={{ flex: 1, position: "relative", zIndex: 2 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.75rem" }}>
+              <span style={{ backgroundColor: "#ec1a24", color: "white", padding: "0.3rem 0.8rem", borderRadius: "4px", fontSize: "0.7rem", fontWeight: 900, textTransform: "uppercase" }}>Premium</span>
+              <span style={{ color: "#94a3b8", fontSize: "0.8rem", fontWeight: "bold" }}>ÉDITION NUMÉRIQUE</span>
+            </div>
+            <h2 style={{ fontSize: "2rem", fontWeight: 900, lineHeight: 1.1, marginBottom: "1rem" }}>Le Journal en PDF</h2>
+            <p style={{ fontSize: "1rem", color: "#94a3b8", marginBottom: "1.5rem", maxWidth: "400px" }}>Retrouvez toute l'actualité de votre quotidien préféré en version numérique haute définition.</p>
+            <Link href="/marketplace" style={{ 
+              display: "inline-flex", 
+              alignItems: "center", 
+              gap: "0.5rem",
+              backgroundColor: "white", 
+              color: "#0f172a", 
+              padding: "0.75rem 1.75rem", 
+              borderRadius: "12px", 
+              fontWeight: "900", 
+              fontSize: "0.95rem", 
+              textDecoration: "none",
+              boxShadow: "0 4px 6px rgba(255,255,255,0.1)"
+            }} className="hover-scale">
+              Accéder au kiosque 
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </Link>
+          </div>
+          <div style={{ width: "180px", height: "240px", backgroundColor: "#334155", borderRadius: "12px", border: "4px solid #475569", display: "flex", alignItems: "center", justifyContent: "center", transform: "rotate(5deg)", boxShadow: "0 10px 15px rgba(0,0,0,0.3)" }}>
+             <div style={{ textAlign: "center" }}>
+               <div style={{ fontSize: "1.5rem", fontWeight: 900, color: "white", opacity: 0.5 }}>LDI</div>
+               <div style={{ fontSize: "0.6rem", color: "white", opacity: 0.3 }}>PDF READER</div>
+             </div>
+          </div>
         </div>
 
 
