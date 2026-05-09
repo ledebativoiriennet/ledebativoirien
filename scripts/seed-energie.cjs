@@ -5,6 +5,9 @@ async function main() {
   const today = new Date().toLocaleDateString('fr-FR');
   const maxOrder = await prisma.marketIndicator.findFirst({ orderBy: { order: 'desc' }, select: { order: true } });
   const nextOrder = (maxOrder?.order ?? 0) + 1;
+  
+  // Clean up old BRVM indicators to ensure new ones with correct data show up
+  await prisma.marketIndicator.deleteMany({ where: { group: 'BRVM' } });
 
   const toSeed = [
     { id: 'cotton',       label: 'Coton',          group: 'ANACARDE', order: nextOrder },
