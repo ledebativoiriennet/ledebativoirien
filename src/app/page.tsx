@@ -209,6 +209,10 @@ export default async function Home() {
           </div>
         </div>
 
+        {/* Flux Personnalisé pour l'utilisateur (Server Component) */}
+        <div style={{ marginTop: "1.5rem" }}>
+          <PersonalizedFeed />
+        </div>
 
         <AdBanner slot="HOME_SIDEBAR" />
 
@@ -529,8 +533,6 @@ export default async function Home() {
         {/* Publicité Milieu de page */}
         <AdBanner slot="HOME_MIDDLE" />
 
-        {/* Flux Personnalisé pour l'utilisateur (Server Component) */}
-        <PersonalizedFeed />
 
         {/* Thematic Blocks */}
         <div className="grid-responsive-2col" style={{ gap: "1.5rem" }}>
