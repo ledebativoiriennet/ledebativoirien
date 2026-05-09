@@ -51,6 +51,16 @@ async function main() {
         imageUrl = post._embedded['wp:featuredmedia'][0]?.source_url || null;
       }
 
+      if (!imageUrl && post.featured_media) {
+        try {
+          const mediaRes = await fetch(`${WP_API_URL}/media/${post.featured_media}`);
+          if (mediaRes.ok) {
+            const mediaData = (await mediaRes.json()) as any;
+            imageUrl = mediaData.source_url || null;
+          }
+        } catch (e) {}
+      }
+
       if (!imageUrl) {
         const imgMatch = content.match(/<img[^>]+src="([^">]+)"/);
         if (imgMatch) imageUrl = imgMatch[1];

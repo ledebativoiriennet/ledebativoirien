@@ -42,10 +42,26 @@ export async function POST(request: Request) {
       const publishedAt = new Date(post.date);
       
       let imageUrl = null;
+      
+      // 1. Tentative via les médias embarqués (Featured Image officielle)
       if (post._embedded && post._embedded['wp:featuredmedia']) {
         imageUrl = post._embedded['wp:featuredmedia'][0]?.source_url || null;
       }
 
+      // 2. Tentative via l'ID de média si non embarqué
+      if (!imageUrl && post.featured_media) {
+        try {
+          const mediaRes = await fetch(`${WP_API_URL}/media/${post.featured_media}`);
+          if (mediaRes.ok) {
+            const mediaData = await mediaRes.json();
+            imageUrl = mediaData.source_url || null;
+          }
+        } catch (e) {
+          console.log(`Erreur média pour l'article ${wpId}`);
+        }
+      }
+
+      // 3. Tentative de secours : Extraction de la 1ère image du contenu
       if (!imageUrl) {
         const imgMatch = content.match(/<img[^>]+src="([^">]+)"/);
         if (imgMatch) imageUrl = imgMatch[1];
