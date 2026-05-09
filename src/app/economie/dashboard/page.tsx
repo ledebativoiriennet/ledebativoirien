@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import MarketSparkline from "@/components/MarketSparkline";
 import BrvmTable from "@/components/BrvmTable";
+import GlobalMarketSection from "@/components/GlobalMarketSection";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -74,6 +75,9 @@ export default async function EconomieDashboardPage() {
               )}
             </div>
           </section>
+
+          {/* GLOBAL MARKETS LIVE */}
+          <GlobalMarketSection />
 
           {/* TOP MOVERS TABLE */}
           <section style={{ marginBottom: '4rem' }}>
