@@ -3,6 +3,7 @@ import Link from "next/link";
 import MarketSparkline from "@/components/MarketSparkline";
 import BrvmTable from "@/components/BrvmTable";
 import GlobalMarketSection from "@/components/GlobalMarketSection";
+import CompanyMarketExplorer from "@/components/CompanyMarketExplorer";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -81,6 +82,9 @@ export default async function EconomieDashboardPage() {
 
           {/* GLOBAL MARKETS LIVE */}
           <GlobalMarketSection type="global" />
+
+          {/* TOP 100 COMPANIES EXPLORER */}
+          <CompanyMarketExplorer />
 
           {/* TOP MOVERS TABLE */}
           <section style={{ marginBottom: '4rem' }}>
