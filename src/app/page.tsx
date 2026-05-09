@@ -471,6 +471,8 @@ export default async function Home() {
               </div>
             </div>
           </div>
+        )}
+
         {/* Publicité Milieu de page */}
         <AdBanner slot="HOME_MIDDLE" />
 
