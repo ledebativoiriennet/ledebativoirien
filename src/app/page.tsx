@@ -551,35 +551,6 @@ export default async function Home() {
             </div>
           )}
 
-          {/* Relocated Afrique de l'Ouest Block (Prominent Hub Position) */}
-          {cedeauItems && cedeauItems.length > 0 && (
-            <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", gridColumn: "1 / -1", marginTop: "1rem" }}>
-              <h2 className="portal-section-title" style={{ display: "flex", justifyContent: "space-between", borderBottom: '2px solid #059669', backgroundColor: '#ecfdf5' }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#065f46' }}>🌍 Afrique de l'Ouest</span>
-                <Link href="/category/afrique-occidentale" style={{ fontSize: "0.8rem", color: "#059669", textDecoration: "none", fontWeight: "bold" }}>Voir tout</Link>
-              </h2>
-              <div style={{ padding: "1rem" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
-                  {cedeauItems.map((article) => {
-                    const imgUrl = getArticleImage(article);
-                    return (
-                      <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                        <div style={{ height: "120px", backgroundColor: "#f0fdf4", overflow: "hidden", borderRadius: "8px", border: "1px solid #d1fae5" }}>
-                          {imgUrl ? <img src={imgUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : null}
-                        </div>
-                        <div>
-                          <div style={{ fontSize: "0.65rem", color: "#059669", fontWeight: 800, textTransform: "uppercase", marginBottom: "0.2rem" }}>
-                            Afrique de l'Ouest
-                          </div>
-                          <h3 style={{ fontSize: "0.85rem", fontWeight: 700, lineHeight: 1.3 }}>{article.title}</h3>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Football Articles Block */}
           {footballArticles && footballArticles.length > 0 && (
@@ -847,6 +818,37 @@ export default async function Home() {
       </aside>
 
     </div>
+
+
+    {/* FULL-WIDTH AFRIQUE DE L'OUEST */}
+    {cedeauItems && cedeauItems.length > 0 && (
+      <div className="container" style={{ marginTop: '3rem' }}>
+        <h2 className="portal-section-title" style={{ display: "flex", justifyContent: "space-between", borderBottom: '2px solid #059669', backgroundColor: '#ecfdf5' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#065f46' }}>🌍 Afrique de l'Ouest</span>
+          <Link href="/category/afrique-occidentale" style={{ fontSize: "0.8rem", color: "#059669", textDecoration: "none", fontWeight: "bold" }}>Voir tout</Link>
+        </h2>
+        <div style={{ padding: "1.5rem", backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderTop: "none", borderRadius: "0 0 var(--radius) var(--radius)" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1.5rem" }}>
+            {cedeauItems.map((article) => {
+              const imgUrl = getArticleImage(article);
+              return (
+                <Link href={`/article/${article.slug}`} key={`cedeau-fw-${article.id}`} style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                  <div style={{ height: "150px", backgroundColor: "#f0fdf4", overflow: "hidden", borderRadius: "8px", border: "1px solid #d1fae5" }}>
+                    {imgUrl ? <img src={imgUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : null}
+                  </div>
+                  <div>
+                    <div style={{ fontSize: "0.7rem", color: "#059669", fontWeight: 800, textTransform: "uppercase", marginBottom: "0.3rem" }}>
+                      Afrique de l'Ouest
+                    </div>
+                    <h3 style={{ fontSize: "1rem", fontWeight: 800, lineHeight: 1.3 }}>{article.title}</h3>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    )}
 
     {/* FULL-WIDTH PLUS DE NEWS */}
     <div className="container" style={{ marginTop: '3rem' }}>
