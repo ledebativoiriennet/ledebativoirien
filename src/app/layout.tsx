@@ -241,114 +241,114 @@ export default async function RootLayout({
           </div>
           
           {/* Indicators Strip - Abidjan.net Style */}
-          <div style={{ backgroundColor: 'white', borderBottom: '1px solid var(--border)', padding: '1rem 0' }}>
-            <Link href="/economie/dashboard" style={{ textDecoration: 'none', display: 'block' }} title="Voir le Dashboard Économique complet">
-              <div className="container" style={{ display: 'flex', gap: '2rem', flexWrap: 'nowrap', overflowX: 'auto', alignItems: 'center', scrollbarWidth: 'none', msOverflowStyle: 'none', padding: '0.5rem 1rem' }}>
-                <style dangerouslySetInnerHTML={{ __html: `.container::-webkit-scrollbar { display: none; }` }} />
-                {/* Block 1: Café-Cacao */}
-              {cacaoGrp.length > 0 && (
-                <div style={{ display: 'flex', flexDirection: 'column', minWidth: '160px', flexShrink: 0, borderRight: '1px solid #e2e8f0', paddingRight: '1rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.3rem', marginBottom: '0.3rem' }}>
-                      <div style={{ fontWeight: 900, fontSize: '0.6rem', lineHeight: 1, color: '#111827', textTransform: 'uppercase' }}>
-                        <span style={{color: '#d97706'}}>🌍</span> Bourse Mond.<br/>
-                        <span style={{color: '#15803d'}}>CAFÉ-CACAO</span>
+          <div style={{ backgroundColor: 'white', borderBottom: '1px solid var(--border)', padding: '0.5rem 0' }}>
+            <div className="container">
+              <Link href="/economie/dashboard" style={{ textDecoration: 'none', display: 'block' }} title="Voir le Dashboard Économique complet">
+                <div className="financial-ticker-scroll">
+                  {/* Block 1: Café-Cacao */}
+                {cacaoGrp.length > 0 && (
+                  <div className="financial-ticker-item">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.3rem', marginBottom: '0.3rem' }}>
+                        <div style={{ fontWeight: 900, fontSize: '0.6rem', lineHeight: 1, color: '#111827', textTransform: 'uppercase' }}>
+                          <span style={{color: '#d97706'}}>🌍</span> Bourse Mond.<br/>
+                          <span style={{color: '#15803d'}}>CAFÉ-CACAO</span>
+                        </div>
+                        <div style={{ fontSize: '0.5rem', color: '#9ca3af', textTransform: 'uppercase' }}>{cacaoGrp[0].dateLabel}</div>
                       </div>
-                      <div style={{ fontSize: '0.5rem', color: '#9ca3af', textTransform: 'uppercase' }}>{cacaoGrp[0].dateLabel}</div>
+                      {cacaoGrp.map(ind => (
+                        <div key={ind.id} style={{ fontSize: '0.75rem', fontWeight: 700, color: '#111827', display: 'flex', justifyContent: 'space-between', marginTop: '0.2rem' }}>
+                          <span style={{ color: '#64748b' }}>{ind.label}</span> 
+                          <span style={{ color: getTrendColor(ind.trend), fontWeight: 400 }}>{getTrendIcon(ind.trend)} {ind.value}</span>
+                        </div>
+                      ))}
                     </div>
-                    {cacaoGrp.map(ind => (
+                )}
+                 {/* Block 1.5: BRVM */}
+                 {brvmGrp.length > 0 && (
+                   <div className="financial-ticker-item">
+                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.3rem', marginBottom: '0.3rem' }}>
+                       <span style={{ fontSize: '1rem' }}>📈</span>
+                       <span style={{ fontWeight: 900, fontSize: '0.7rem', color: '#1e3a8a', textTransform: 'uppercase' }}>Indices BRVM</span>
+                       <div style={{ fontSize: '0.5rem', color: '#9ca3af', textTransform: 'uppercase' }}>{brvmGrp[0].dateLabel}</div>
+                     </div>
+                     {brvmGrp.map(ind => (
+                       <div key={ind.id} style={{ fontSize: '0.75rem', fontWeight: 700, color: '#111827', display: 'flex', justifyContent: 'space-between', marginTop: '0.2rem' }}>
+                         <span style={{ color: '#64748b' }}>{ind.label}</span>
+                         <span style={{ color: getTrendColor(ind.trend), fontWeight: 700 }}>{getTrendIcon(ind.trend)} {ind.value}</span>
+                       </div>
+                     ))}
+                   </div>
+                 )}
+  
+                {/* Block 2: Anacarde */}
+                {anacardeGrp.length > 0 && (
+                  <div className="financial-ticker-item">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.3rem', marginBottom: '0.3rem' }}>
+                      <span style={{ fontSize: '1rem' }}>🥜</span>
+                      <span style={{ fontWeight: 800, fontSize: '0.6rem', color: '#166534', textTransform: 'uppercase' }}>Anacarde</span>
+                      <div style={{ fontSize: '0.5rem', color: '#9ca3af', textTransform: 'uppercase' }}>{anacardeGrp[0].dateLabel}</div>
+                    </div>
+                    {anacardeGrp.map(ind => (
                       <div key={ind.id} style={{ fontSize: '0.75rem', fontWeight: 700, color: '#111827', display: 'flex', justifyContent: 'space-between', marginTop: '0.2rem' }}>
-                        <span style={{ color: '#64748b' }}>{ind.label}</span> 
+                        <span style={{ color: '#64748b' }}>{ind.label}</span>
                         <span style={{ color: getTrendColor(ind.trend), fontWeight: 400 }}>{getTrendIcon(ind.trend)} {ind.value}</span>
                       </div>
                     ))}
                   </div>
-              )}
-               {/* Block 1.5: BRVM */}
-               {brvmGrp.length > 0 && (
-                 <div style={{ display: 'flex', flexDirection: 'column', minWidth: '180px', flexShrink: 0, borderRight: '1px solid #e2e8f0', paddingRight: '1rem' }}>
-                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.3rem', marginBottom: '0.3rem' }}>
-                     <span style={{ fontSize: '1rem' }}>📈</span>
-                     <span style={{ fontWeight: 900, fontSize: '0.7rem', color: '#1e3a8a', textTransform: 'uppercase' }}>Indices BRVM</span>
-                     <div style={{ fontSize: '0.5rem', color: '#9ca3af', textTransform: 'uppercase' }}>{brvmGrp[0].dateLabel}</div>
-                   </div>
-                   {brvmGrp.map(ind => (
-                     <div key={ind.id} style={{ fontSize: '0.75rem', fontWeight: 700, color: '#111827', display: 'flex', justifyContent: 'space-between', marginTop: '0.2rem' }}>
-                       <span style={{ color: '#64748b' }}>{ind.label}</span>
-                       <span style={{ color: getTrendColor(ind.trend), fontWeight: 700 }}>{getTrendIcon(ind.trend)} {ind.value}</span>
-                     </div>
-                   ))}
-                 </div>
-               )}
-
-              {/* Block 2: Anacarde */}
-              {anacardeGrp.length > 0 && (
-                <div style={{ display: 'flex', flexDirection: 'column', minWidth: '180px', flexShrink: 0, borderRight: '1px solid #e2e8f0', paddingRight: '1rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.3rem', marginBottom: '0.3rem' }}>
-                    <span style={{ fontSize: '1rem' }}>🥜</span>
-                    <span style={{ fontWeight: 800, fontSize: '0.6rem', color: '#166534', textTransform: 'uppercase' }}>Anacarde</span>
-                    <div style={{ fontSize: '0.5rem', color: '#9ca3af', textTransform: 'uppercase' }}>{anacardeGrp[0].dateLabel}</div>
-                  </div>
-                  {anacardeGrp.map(ind => (
-                    <div key={ind.id} style={{ fontSize: '0.75rem', fontWeight: 700, color: '#111827', display: 'flex', justifyContent: 'space-between', marginTop: '0.2rem' }}>
-                      <span style={{ color: '#64748b' }}>{ind.label}</span>
-                      <span style={{ color: getTrendColor(ind.trend), fontWeight: 400 }}>{getTrendIcon(ind.trend)} {ind.value}</span>
+                )}
+  
+                {/* Block 3: Métaux Précieux (Or, Zinc) */}
+                {metaux1Grp.length > 0 && (
+                  <div className="financial-ticker-item">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.3rem', marginBottom: '0.3rem' }}>
+                      <span style={{ fontWeight: 900, fontSize: '0.7rem', color: '#b45309', textTransform: 'uppercase' }}>MINES</span>
+                      <div style={{ fontSize: '0.5rem', color: '#9ca3af', textTransform: 'uppercase' }}>{metaux1Grp[0].dateLabel}</div>
                     </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Block 3: Métaux Précieux (Or, Zinc) */}
-              {metaux1Grp.length > 0 && (
-                <div style={{ display: 'flex', flexDirection: 'column', minWidth: '160px', flexShrink: 0, borderRight: '1px solid #e2e8f0', paddingRight: '1rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.3rem', marginBottom: '0.3rem' }}>
-                    <span style={{ fontWeight: 900, fontSize: '0.7rem', color: '#b45309', textTransform: 'uppercase' }}>MINES</span>
-                    <div style={{ fontSize: '0.5rem', color: '#9ca3af', textTransform: 'uppercase' }}>{metaux1Grp[0].dateLabel}</div>
+                    {metaux1Grp.map(ind => (
+                      <div key={ind.id} style={{ fontSize: '0.75rem', fontWeight: 700, color: '#111827', display: 'flex', justifyContent: 'space-between', marginTop: '0.2rem' }}>
+                        <span style={{ color: '#64748b' }}>{ind.label}</span>
+                        <span style={{ color: getTrendColor(ind.trend), fontWeight: 400 }}>{getTrendIcon(ind.trend)} {ind.value}</span>
+                      </div>
+                    ))}
                   </div>
-                  {metaux1Grp.map(ind => (
-                    <div key={ind.id} style={{ fontSize: '0.75rem', fontWeight: 700, color: '#111827', display: 'flex', justifyContent: 'space-between', marginTop: '0.2rem' }}>
-                      <span style={{ color: '#64748b' }}>{ind.label}</span>
-                      <span style={{ color: getTrendColor(ind.trend), fontWeight: 400 }}>{getTrendIcon(ind.trend)} {ind.value}</span>
+                )}
+  
+                {/* Block 5: Monnaies */}
+                {monnaiesGrp.length > 0 && (
+                  <div className="financial-ticker-item">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.3rem', marginBottom: '0.3rem' }}>
+                      <span style={{ fontWeight: 900, fontSize: '0.7rem', color: '#1e3a8a', textTransform: 'uppercase' }}>DEVISES</span>
+                      <div style={{ fontSize: '0.5rem', color: '#9ca3af', textTransform: 'uppercase' }}>{monnaiesGrp[0].dateLabel}</div>
                     </div>
-                  ))}
-                </div>
-              )}
-
-
-              {/* Block 5: Monnaies */}
-              {monnaiesGrp.length > 0 && (
-                <div style={{ display: 'flex', flexDirection: 'column', minWidth: '150px', flexShrink: 0, borderRight: '1px solid #e2e8f0', paddingRight: '1rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.3rem', marginBottom: '0.3rem' }}>
-                    <span style={{ fontWeight: 900, fontSize: '0.7rem', color: '#1e3a8a', textTransform: 'uppercase' }}>DEVISES</span>
-                    <div style={{ fontSize: '0.5rem', color: '#9ca3af', textTransform: 'uppercase' }}>{monnaiesGrp[0].dateLabel}</div>
+                    {monnaiesGrp.map(ind => (
+                      <div key={ind.id} style={{ fontSize: '0.75rem', fontWeight: 700, color: '#111827', display: 'flex', justifyContent: 'space-between', marginTop: '0.2rem' }}>
+                        <span style={{ color: '#64748b' }}>{ind.label}</span>
+                        <span style={{ color: getTrendColor(ind.trend), fontWeight: 400 }}>{getTrendIcon(ind.trend)} {ind.value}</span>
+                      </div>
+                    ))}
                   </div>
-                  {monnaiesGrp.map(ind => (
-                    <div key={ind.id} style={{ fontSize: '0.75rem', fontWeight: 700, color: '#111827', display: 'flex', justifyContent: 'space-between', marginTop: '0.2rem' }}>
-                      <span style={{ color: '#64748b' }}>{ind.label}</span>
-                      <span style={{ color: getTrendColor(ind.trend), fontWeight: 400 }}>{getTrendIcon(ind.trend)} {ind.value}</span>
+                )}
+  
+                {/* Block 6: Énergie & Coton */}
+                {energieGrp.length > 0 && (
+                  <div className="financial-ticker-item">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.3rem', marginBottom: '0.3rem' }}>
+                      <span style={{ fontWeight: 900, fontSize: '0.7rem', color: '#0ea5e9', textTransform: 'uppercase' }}>ÉNERGIE</span>
+                      <div style={{ fontSize: '0.5rem', color: '#9ca3af', textTransform: 'uppercase' }}>{energieGrp[0].dateLabel}</div>
                     </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Block 6: Énergie & Coton */}
-              {energieGrp.length > 0 && (
-                <div style={{ display: 'flex', flexDirection: 'column', minWidth: '160px', flexShrink: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.3rem', marginBottom: '0.3rem' }}>
-                    <span style={{ fontWeight: 900, fontSize: '0.7rem', color: '#0ea5e9', textTransform: 'uppercase' }}>ÉNERGIE</span>
-                    <div style={{ fontSize: '0.5rem', color: '#9ca3af', textTransform: 'uppercase' }}>{energieGrp[0].dateLabel}</div>
+                    {energieGrp.map(ind => (
+                      <div key={ind.id} style={{ fontSize: '0.75rem', fontWeight: 700, color: '#111827', display: 'flex', justifyContent: 'space-between', marginTop: '0.2rem' }}>
+                        <span style={{ color: '#64748b' }}>{ind.label}</span>
+                        <span style={{ color: getTrendColor(ind.trend), fontWeight: 400 }}>{getTrendIcon(ind.trend)} {ind.value}</span>
+                      </div>
+                    ))}
                   </div>
-                  {energieGrp.map(ind => (
-                    <div key={ind.id} style={{ fontSize: '0.75rem', fontWeight: 700, color: '#111827', display: 'flex', justifyContent: 'space-between', marginTop: '0.2rem' }}>
-                      <span style={{ color: '#64748b' }}>{ind.label}</span>
-                      <span style={{ color: getTrendColor(ind.trend), fontWeight: 400 }}>{getTrendIcon(ind.trend)} {ind.value}</span>
-                    </div>
-                  ))}
+                )}
+  
                 </div>
-              )}
-
+              </Link>
             </div>
-          </Link>
-        </div>
+          </div>
         
         <main className="container" style={{ minHeight: '60vh' }}>
           <GoogleAdSlot adSlot="3353692131" width="728px" height="90px" />

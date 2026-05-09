@@ -870,3 +870,51 @@ a:hover {
     border-bottom: none;
   }
 }
+
+/* Financial Ticker Responsiveness */
+.financial-ticker-scroll {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  align-items: center;
+  padding: 0.5rem 0;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.financial-ticker-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+
+.financial-ticker-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.financial-ticker-scroll::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 10px;
+}
+
+.financial-ticker-item {
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  padding-right: 1rem;
+}
+
+.financial-ticker-item:last-child {
+  border-right: none;
+}
+
+@media (max-width: 768px) {
+  .financial-ticker-scroll {
+    gap: 1rem;
+  }
+  .financial-ticker-item {
+    min-width: 140px;
+  }
+}
