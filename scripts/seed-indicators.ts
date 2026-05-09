@@ -21,6 +21,10 @@ async function main() {
     // Bloc Monnaies
     { group: 'MONNAIES', label: 'Euro €', value: '655.95 FCFA', trend: 'FLAT', extraText: null, dateLabel: '30 AVRIL 2026', order: 6 },
     { group: 'MONNAIES', label: 'Dollar $', value: '605.12 FCFA', trend: 'UP', extraText: null, dateLabel: '30 AVRIL 2026', order: 7 },
+    
+    // Bloc BRVM
+    { group: 'BRVM', label: 'BRVM Composite', value: '214.56', trend: 'UP', extraText: '+0.45%', dateLabel: '30 AVRIL 2026', order: 8 },
+    { group: 'BRVM', label: 'BRVM 30', value: '107.82', trend: 'DOWN', extraText: '-0.12%', dateLabel: '30 AVRIL 2026', order: 9 },
   ];
 
   for (const data of indicators) {
