@@ -61,7 +61,13 @@ export default async function AdminDashboard() {
   const startOfMonth = new Date();
   startOfMonth.setDate(startOfMonth.getDate() - 30);
 
-  const [topDay, topWeek, topMonth, visitorsAll, visitorsToday, visitorsWeek, visitorsMonth, countryStatsRaw, browserStatsRaw, deviceStatsRaw, brandStatsRaw] = await Promise.all([
+  const [
+    topDay, topWeek, topMonth, 
+    visitorsAll, visitorsToday, visitorsWeek, visitorsMonth, 
+    countryStatsRaw, browserStatsRaw, deviceStatsRaw, brandStatsRaw,
+    marketplacePurchases,
+    pendingManualCount
+  ] = await Promise.all([
     getTopArticles(startOfDay),
     getTopArticles(sevenDaysAgo),
     getTopArticles(startOfMonth),
@@ -73,6 +79,8 @@ export default async function AdminDashboard() {
     prisma.visitor.groupBy({ by: ['browser'], _count: { _all: true }, orderBy: { _count: { browser: 'desc' } }, take: 10 }),
     prisma.visitor.groupBy({ by: ['device'], _count: { _all: true }, orderBy: { _count: { device: 'desc' } }, take: 10 }),
     prisma.visitor.groupBy({ by: ['brand'], _count: { _all: true }, orderBy: { _count: { brand: 'desc' } }, take: 10 }),
+    prisma.purchase.findMany({ where: { status: 'COMPLETED' } }), // Only completed for revenue
+    prisma.purchase.count({ where: { status: 'PENDING', paymentMethod: 'MANUAL_TRANSFER' } }) // Pending manual
   ]);
 
   const mapStats = (stats: any[], key: string) => stats.map(s => ({ name: s[key] || 'Inconnu', value: s._count._all }));
@@ -86,6 +94,14 @@ export default async function AdminDashboard() {
   let activePremium = 0;
   let revenueLast7Days = 0;
   
+  // Add Marketplace Revenue
+  marketplacePurchases.forEach((p: any) => {
+    totalRevenue += p.amount;
+    if (new Date(p.createdAt) >= sevenDaysAgo) {
+      revenueLast7Days += p.amount;
+    }
+  });
+
   const revenueByPlan = {
     quotidien: 0,
     hebdomadaire: 0,
@@ -136,10 +152,30 @@ export default async function AdminDashboard() {
 
   return (
     <div>
+      {pendingManualCount > 0 && (
+        <div style={{ backgroundColor: '#fff7ed', border: '1px solid #fed7aa', borderRadius: '8px', padding: '1rem', marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <span style={{ fontSize: '1.5rem' }}>🔔</span>
+            <div>
+              <p style={{ margin: 0, fontWeight: 'bold', color: '#9a3412' }}>{pendingManualCount} paiement(s) manuel(s) en attente</p>
+              <p style={{ margin: 0, fontSize: '0.8rem', color: '#c2410c' }}>Veuillez vérifier les références SMS et valider les ventes.</p>
+            </div>
+          </div>
+          <a href="/admin/marketplace/ventes" style={{ backgroundColor: '#ea580c', color: 'white', padding: '0.5rem 1rem', borderRadius: '6px', fontWeight: 'bold', textDecoration: 'none', fontSize: '0.9rem' }}>
+            Valider les ventes
+          </a>
+        </div>
+      )}
+
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h1 style={{ fontSize: '2rem', fontWeight: 900, color: '#0f172a' }}>Tableau de bord <span style={{ color: '#64748b', fontSize: '1rem', fontWeight: 'normal' }}>(Style AdSense)</span></h1>
-        <div style={{ backgroundColor: '#e0e7ff', color: '#3730a3', padding: '0.5rem 1rem', borderRadius: '20px', fontWeight: 'bold', fontSize: '0.9rem' }}>
-          Derniers 7 jours
+        <div style={{ display: 'flex', gap: '1rem' }}>
+           <a href="/admin/marketplace/ventes" style={{ backgroundColor: '#3b82f6', color: 'white', padding: '0.5rem 1rem', borderRadius: '20px', fontWeight: 'bold', fontSize: '0.9rem', textDecoration: 'none' }}>
+            🛒 Ventes Kiosque
+          </a>
+          <div style={{ backgroundColor: '#e0e7ff', color: '#3730a3', padding: '0.5rem 1rem', borderRadius: '20px', fontWeight: 'bold', fontSize: '0.9rem' }}>
+            Derniers 7 jours
+          </div>
         </div>
       </div>
 
