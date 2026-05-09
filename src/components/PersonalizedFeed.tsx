@@ -14,7 +14,7 @@ export default async function PersonalizedFeed() {
   const userId = (session.user as any).id;
   if (!userId) return null;
 
-  // 1. Récupérer l'historique de lecture de l'utilisateur
+  // 1. Récupérer l'historique de lecture
   const history = await prisma.readingHistory.findMany({
     where: { userId },
     include: {
@@ -23,14 +23,12 @@ export default async function PersonalizedFeed() {
       }
     },
     orderBy: { readAt: 'desc' },
-    take: 20
+    take: 15
   });
 
-  if (history.length === 0) {
-    return null; // Ne rien afficher s'il n'a encore rien lu
-  }
+  if (history.length === 0) return null;
 
-  // 2. Extraire les catégories les plus lues
+  // 2. Extraire les catégories préférées
   const categoryCount: Record<string, number> = {};
   const readArticleIds = new Set<string>();
 
@@ -41,15 +39,12 @@ export default async function PersonalizedFeed() {
     });
   });
 
-  // Trier les catégories par fréquence
   const topCategoryIds = Object.entries(categoryCount)
     .sort((a, b) => b[1] - a[1])
-    .slice(0, 3)
+    .slice(0, 2)
     .map(entry => entry[0]);
 
-  if (topCategoryIds.length === 0) return null;
-
-  // 3. Récupérer les recommandations d'articles (pas encore lus)
+  // 3. Récupérer les recommandations
   const recommendations = await prisma.article.findMany({
     where: {
       publishedAt: { not: null },
@@ -57,41 +52,40 @@ export default async function PersonalizedFeed() {
       id: { notIn: Array.from(readArticleIds) }
     },
     orderBy: { publishedAt: 'desc' },
-    take: 4,
+    take: 3,
     include: { categories: true }
   });
 
-  if (recommendations.length === 0) {
-    return null; // Pas assez de contenu pertinent à recommander
-  }
+  if (recommendations.length === 0) return null;
 
   return (
-    <div style={{ backgroundColor: "var(--card-bg)", border: "2px solid var(--primary)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "2rem", boxShadow: "0 4px 15px rgba(236, 26, 36, 0.1)" }}>
-      <h2 className="portal-section-title" style={{ backgroundColor: "var(--primary)", borderColor: "#b91c1c", color: "white", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-        ✨ Recommandé pour vous
+    <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "1.5rem" }}>
+      <h2 className="portal-section-title" style={{ backgroundColor: "var(--primary)", borderColor: "#b91c1c", color: "white", fontSize: '0.9rem' }}>
+        ✨ RECOMMANDÉ POUR VOUS
       </h2>
-      <div style={{ padding: "1rem" }}>
-        <p style={{ fontSize: "0.85rem", color: "var(--muted)", marginBottom: "1rem" }}>
-          Sélectionné spécialement pour vous en fonction de vos lectures récentes.
-        </p>
-        <div className="grid-responsive-2col">
+      <div style={{ padding: "0" }}>
+        <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
           {recommendations.map((article) => {
             const imgUrl = getArticleImage(article);
             return (
-              <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", gap: "0.75rem", backgroundColor: "#f8fafc", padding: "0.5rem", borderRadius: "var(--radius)", border: "1px solid var(--border)", transition: "transform 0.2s" }} className="hover-scale">
-                <div style={{ width: "80px", height: "80px", backgroundColor: "var(--muted)", flexShrink: 0, overflow: "hidden", borderRadius: "4px" }}>
-                  {imgUrl && <img src={imgUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />}
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: "0.65rem", color: "var(--primary)", fontWeight: "bold", textTransform: "uppercase", marginBottom: "0.2rem" }}>
-                    {article.categories[0]?.name || "Général"}
+              <li key={article.id} style={{ borderBottom: "1px solid var(--border)", padding: "0.75rem 1rem" }}>
+                <Link href={`/article/${article.slug}`} style={{ display: "flex", gap: "0.75rem", textDecoration: 'none' }}>
+                  <div style={{ width: "60px", height: "60px", backgroundColor: "#f1f5f9", flexShrink: 0, borderRadius: "4px", overflow: "hidden" }}>
+                    {imgUrl && <img src={imgUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
                   </div>
-                  <h3 style={{ fontSize: "0.85rem", fontWeight: 700, lineHeight: 1.3 }}>{article.title}</h3>
-                </div>
-              </Link>
-            )
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: "0.65rem", color: "var(--primary)", fontWeight: "bold", textTransform: "uppercase", marginBottom: "0.2rem" }}>
+                      {article.categories[0]?.name || "À LIRE"}
+                    </div>
+                    <h3 style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--foreground)", lineHeight: 1.2 }}>
+                      {article.title}
+                    </h3>
+                  </div>
+                </Link>
+              </li>
+            );
           })}
-        </div>
+        </ul>
       </div>
     </div>
   );
