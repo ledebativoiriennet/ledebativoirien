@@ -44,7 +44,9 @@ export default async function Home() {
     trendingTags,
     societeArticles,
     chroniqueArticles,
-    confidentielArticles
+    confidentielArticles,
+    dossiersArticles,
+    cultureArticlesFetched
   ] = await Promise.all([
     prisma.article.findMany({
       where: { publishedAt: { not: null } },
@@ -104,7 +106,9 @@ export default async function Home() {
     }),
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'societe' } } }, take: 10, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'chronique' } } }, take: 10, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
-    prisma.article.findMany({ where: { isConfidentiel: true, publishedAt: { not: null } }, take: 8, orderBy: { publishedAt: 'desc' }, include: { categories: true } })
+    prisma.article.findMany({ where: { isConfidentiel: true, publishedAt: { not: null } }, take: 8, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'dossiers' } } }, take: 5, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['art-culture', 'culture'] } } } }, take: 5, orderBy: { publishedAt: 'desc' }, include: { categories: true } })
   ]);
 
   if (!recentArticles || recentArticles.length === 0) {
@@ -149,10 +153,7 @@ export default async function Home() {
   const societeItems = getUnique(societeArticles, 5);
   const chroniqueItems = getUnique(chroniqueArticles, 5);
 
-  const brvmGrp = brvmIndicators.length > 0 ? brvmIndicators : [
-    { id: 'f1', label: 'BRVM Composite', value: '214.56', trend: 'UP', extraText: '+0.45%', dateLabel: new Date().toLocaleDateString('fr-FR') },
-    { id: 'f2', label: 'BRVM 30', value: '107.82', trend: 'DOWN', extraText: '-0.12%', dateLabel: new Date().toLocaleDateString('fr-FR') }
-  ];
+  const brvmGrp = brvmIndicators;
 
   const plusDeNews = getUnique(recentArticles, 8); // For the bottom section
 
@@ -222,11 +223,11 @@ export default async function Home() {
         </div>
 
         {/* Tendances Culturelles */}
-        {cultureArticles && cultureArticles.length > 0 && (
+        {(cultureArticlesFetched && cultureArticlesFetched.length > 0) && (
           <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginTop: "1.5rem" }}>
             <h2 className="portal-section-title" style={{ backgroundColor: "#9333ea", borderColor: "#7e22ce" }}>Tendances Culturelles</h2>
             <div className="compact-list" style={{ padding: "1rem" }}>
-              {cultureArticles.map((article) => {
+              {cultureArticlesFetched.map((article: any) => {
                 const imgUrl = getArticleImage(article);
                 return (
                   <Link href={`/article/${article.slug}`} key={article.id} className="compact-item" style={{ marginBottom: '1rem', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
@@ -261,14 +262,16 @@ export default async function Home() {
         <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginTop: "1.5rem" }}>
           <h2 className="portal-section-title dark" style={{ backgroundColor: "#1e293b", borderColor: "#334155" }}>Dossiers & Enquêtes</h2>
           <div className="compact-list" style={{ padding: "1rem" }}>
-            {recentArticles.slice(16, 19).map((article) => (
+            {dossiersArticles && dossiersArticles.length > 0 ? dossiersArticles.map((article: any) => (
               <Link href={`/article/${article.slug}`} key={article.id} className="compact-item" style={{ marginBottom: '1rem', display: 'block' }}>
                 <h3 style={{ fontSize: "0.85rem", fontWeight: 700, lineHeight: 1.3, marginBottom: "0.2rem" }}>{article.title}</h3>
                 <p style={{ fontSize: "0.7rem", color: "var(--muted)", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                   {article.excerpt || "Découvrez notre enquête exclusive sur ce sujet de société qui fait débat..."}
                 </p>
               </Link>
-            ))}
+            )) : (
+              <div style={{ fontSize: '0.8rem', color: 'var(--muted)', textAlign: 'center' }}>Aucun dossier disponible.</div>
+            )}
           </div>
         </div>
 
