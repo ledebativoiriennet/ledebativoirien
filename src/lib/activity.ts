@@ -26,8 +26,8 @@ export async function logActivity({
                       "127.0.0.1";
 
     // Tentative de récupération de la localisation via les headers standard (Cloudflare/Vercel/etc)
-    const country = headerList.get("cf-ipcountry") || headerList.get("x-vercel-ip-country") || null;
-    const city = headerList.get("x-vercel-ip-city") || null;
+    const country = headerList.get("cf-ipcountry") || headerList.get("x-vercel-ip-country") || undefined;
+    const city = headerList.get("x-vercel-ip-city") || undefined;
 
     // Parsing sommaire du User Agent (sans lib externe pour le moment)
     let browser = "Other";
@@ -56,8 +56,8 @@ export async function logActivity({
       const session = await getServerSession(authOptions);
       if (session?.user) {
         finalUserId = (session.user as any).id;
-        finalUserName = session.user.name || null;
-        finalUserEmail = session.user.email || null;
+        finalUserName = session.user.name || undefined;
+        finalUserEmail = session.user.email || undefined;
       }
     }
 
