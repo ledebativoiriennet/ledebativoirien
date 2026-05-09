@@ -15,12 +15,20 @@ export default async function AdminMarketplacePage() {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-white">Gestion des Journaux PDF</h1>
-        <Link 
-          href="/admin/marketplace/nouveau" 
-          className="bg-[#ec1a24] hover:bg-red-700 text-white px-4 py-2 rounded font-medium transition-colors"
-        >
-          Ajouter un PDF
-        </Link>
+        <div className="flex gap-4">
+          <Link 
+            href="/admin/marketplace/ventes" 
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-medium transition-colors"
+          >
+            Gérer les ventes
+          </Link>
+          <Link 
+            href="/admin/marketplace/nouveau" 
+            className="bg-[#ec1a24] hover:bg-red-700 text-white px-4 py-2 rounded font-medium transition-colors"
+          >
+            Ajouter un PDF
+          </Link>
+        </div>
       </div>
 
       <div className="bg-[#1a1a1a] border border-[#333] rounded-lg overflow-hidden">
