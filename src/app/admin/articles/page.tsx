@@ -106,24 +106,61 @@ export default async function AdminArticles({ searchParams }: { searchParams: Pr
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '0.5rem', marginTop: '2rem' }}>
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', marginTop: '2rem' }}>
+          {/* Bouton Précédent */}
+          {currentPage > 1 ? (
             <Link 
-              key={p} 
-              href={`/admin/articles?page=${p}`}
-              style={{
-                padding: '0.5rem 1rem',
-                borderRadius: '4px',
-                textDecoration: 'none',
-                fontWeight: 'bold',
-                backgroundColor: p === currentPage ? 'var(--primary)' : 'white',
-                color: p === currentPage ? 'white' : '#475569',
-                border: '1px solid #cbd5e1'
-              }}
+              href={`/admin/articles?page=${currentPage - 1}`}
+              style={{ padding: '0.5rem 1rem', borderRadius: '4px', textDecoration: 'none', fontWeight: 'bold', backgroundColor: 'white', color: '#475569', border: '1px solid #cbd5e1' }}
             >
-              {p}
+              « Précédent
             </Link>
-          ))}
+          ) : (
+            <span style={{ padding: '0.5rem 1rem', borderRadius: '4px', color: '#cbd5e1', border: '1px solid #f1f5f9', cursor: 'not-allowed' }}>« Précédent</span>
+          )}
+
+          {/* Numéros de pages (Fenêtre glissante) */}
+          {Array.from({ length: totalPages }, (_, i) => i + 1)
+            .filter(p => {
+              // On affiche la 1ère, la dernière, et les pages autour de l'actuelle
+              return p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2;
+            })
+            .map((p, index, array) => {
+              const showEllipsis = index > 0 && p !== array[index - 1] + 1;
+              return (
+                <div key={p} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  {showEllipsis && <span style={{ color: '#94a3b8' }}>...</span>}
+                  <Link 
+                    href={`/admin/articles?page=${p}`}
+                    style={{
+                      padding: '0.5rem 0.8rem',
+                      minWidth: '2.5rem',
+                      textAlign: 'center',
+                      borderRadius: '4px',
+                      textDecoration: 'none',
+                      fontWeight: 'bold',
+                      backgroundColor: p === currentPage ? 'var(--primary)' : 'white',
+                      color: p === currentPage ? 'white' : '#475569',
+                      border: '1px solid #cbd5e1'
+                    }}
+                  >
+                    {p}
+                  </Link>
+                </div>
+              );
+            })}
+
+          {/* Bouton Suivant */}
+          {currentPage < totalPages ? (
+            <Link 
+              href={`/admin/articles?page=${currentPage + 1}`}
+              style={{ padding: '0.5rem 1rem', borderRadius: '4px', textDecoration: 'none', fontWeight: 'bold', backgroundColor: 'white', color: '#475569', border: '1px solid #cbd5e1' }}
+            >
+              Suivant »
+            </Link>
+          ) : (
+            <span style={{ padding: '0.5rem 1rem', borderRadius: '4px', color: '#cbd5e1', border: '1px solid #f1f5f9', cursor: 'not-allowed' }}>Suivant »</span>
+          )}
         </div>
       )}
     </div>
