@@ -4,6 +4,7 @@ import MarketSparkline from "@/components/MarketSparkline";
 import BrvmTable from "@/components/BrvmTable";
 import GlobalMarketSection from "@/components/GlobalMarketSection";
 import CompanyMarketExplorer from "@/components/CompanyMarketExplorer";
+import BrvmQuarterlyResults from "@/components/BrvmQuarterlyResults";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -152,6 +153,9 @@ export default async function EconomieDashboardPage() {
         {/* SIDEBAR */}
         <aside>
           <div style={{ position: 'sticky', top: '2rem' }}>
+            {/* BRVM QUARTERLY RESULTS */}
+            <BrvmQuarterlyResults />
+
             {/* LATEST ECO NEWS */}
             <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '1.5rem' }}>Dernières Analyses</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
