@@ -14,7 +14,7 @@ function getString(val: any): string | null {
 }
 
 async function main() {
-  const filePath = 'C:\\Users\\hecki\\Downloads\\ledebativoirien.WordPress.2026-05-07.xml';
+  const filePath = 'C:\\Users\\hecki\\Downloads\\ledebativoirien.WordPress.2026-05-09.xml';
   console.log(`Reading XML from ${filePath}...`);
   const xmlData = fs.readFileSync(filePath, 'utf8');
 
