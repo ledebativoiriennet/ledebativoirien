@@ -86,7 +86,6 @@ export default function AdminSyncPage() {
           {result}
         </div>
       )}
-      </div>
 
       <div className="mt-8 text-sm text-[#555]">
         <p>Note : Cette opération peut prendre quelques secondes selon le nombre d'images à récupérer.</p>
