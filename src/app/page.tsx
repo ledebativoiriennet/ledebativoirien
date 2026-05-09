@@ -209,27 +209,6 @@ export default async function Home() {
           </div>
         </div>
 
-        {/* Tendances Culturelles */}
-        {(cultureArticlesFetched && cultureArticlesFetched.length > 0) && (
-          <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginTop: "1.5rem" }}>
-            <h2 className="portal-section-title" style={{ backgroundColor: "#9333ea", borderColor: "#7e22ce" }}>Tendances Culturelles</h2>
-            <div className="compact-list" style={{ padding: "1rem" }}>
-              {cultureArticlesFetched.map((article: any) => {
-                const imgUrl = getArticleImage(article);
-                return (
-                  <Link href={`/article/${article.slug}`} key={article.id} className="compact-item" style={{ marginBottom: '1rem', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                    <div style={{ width: '60px', height: '60px', backgroundColor: '#e2e8f0', flexShrink: 0, borderRadius: '4px', overflow: 'hidden' }}>
-                      {imgUrl ? <img src={imgUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : <div style={{width:'100%',height:'100%',background:'var(--foreground)'}} />}
-                    </div>
-                    <div>
-                      <h3 style={{ fontSize: "0.8rem", fontWeight: 700, lineHeight: 1.3 }}>{article.title}</h3>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        )}
 
         <AdBanner slot="HOME_SIDEBAR" />
 
@@ -245,22 +224,6 @@ export default async function Home() {
           </Link>
         </div>
 
-        {/* Dossiers & Enquêtes */}
-        <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginTop: "1.5rem" }}>
-          <h2 className="portal-section-title dark" style={{ backgroundColor: "#1e293b", borderColor: "#334155" }}>Dossiers & Enquêtes</h2>
-          <div className="compact-list" style={{ padding: "1rem" }}>
-            {dossiersArticles && dossiersArticles.length > 0 ? dossiersArticles.map((article: any) => (
-              <Link href={`/article/${article.slug}`} key={article.id} className="compact-item" style={{ marginBottom: '1rem', display: 'block' }}>
-                <h3 style={{ fontSize: "0.85rem", fontWeight: 700, lineHeight: 1.3, marginBottom: "0.2rem" }}>{article.title}</h3>
-                <p style={{ fontSize: "0.7rem", color: "var(--muted)", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                  {article.excerpt || "Découvrez notre enquête exclusive sur ce sujet de société qui fait débat..."}
-                </p>
-              </Link>
-            )) : (
-              <div style={{ fontSize: '0.8rem', color: 'var(--muted)', textAlign: 'center' }}>Aucun dossier disponible.</div>
-            )}
-          </div>
-        </div>
 
         {/* Ad Placeholder Vertical */}
         <div style={{ marginTop: "1.5rem" }}>
@@ -447,27 +410,47 @@ export default async function Home() {
            </Link>
         </div>
         
-        {/* Confidentiels Section */}
-        {confidentielArticles && confidentielArticles.length > 0 && (
-          <div style={{ marginBottom: "3rem", backgroundColor: "#fff5f5", border: "1px solid #feb2b2", borderRadius: "16px", overflow: "hidden" }}>
-            <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #feb2b2", display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "#7f1d1d", color: "white" }}>
-              <h2 style={{ fontSize: "1.1rem", fontWeight: 900, textTransform: "uppercase", margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                🔒 Les Confidentiels
-              </h2>
-              <Link href="/confidentiels" style={{ fontSize: "0.8rem", color: "white", textDecoration: "none", fontWeight: "bold" }}>Voir tout →</Link>
-            </div>
-            <div style={{ padding: "1rem" }}>
-              <div style={{ display: "flex", gap: "1.5rem", overflowX: "auto", paddingBottom: "0.5rem", WebkitOverflowScrolling: "touch" }}>
-                {confidentielArticles.map((article: any) => (
-                  <Link key={article.id} href={`/article/${article.slug}`} style={{ flexShrink: 0, width: "240px", textDecoration: "none" }}>
-                    <div style={{ fontSize: "0.65rem", color: "#b91c1c", fontWeight: 800, textTransform: "uppercase", marginBottom: "0.3rem" }}>
-                      {new Date(article.publishedAt).toLocaleDateString('fr-FR')}
-                    </div>
-                    <h3 style={{ fontSize: "0.9rem", fontWeight: 800, color: "var(--foreground)", lineHeight: 1.3, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", margin: 0 }}>
-                      {article.title}
-                    </h3>
+        )}
+
+        {/* Dossiers & Enquêtes - CENTERED */}
+        {dossiersArticles && dossiersArticles.length > 0 && (
+          <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "2.5rem" }}>
+            <h2 className="portal-section-title dark" style={{ backgroundColor: "#1e293b", borderColor: "#334155", display: "flex", justifyContent: "space-between" }}>
+              <span>🔍 Dossiers & Enquêtes</span>
+              <Link href="/category/dossiers" style={{ fontSize: "0.8rem", color: "white", textDecoration: "none", fontWeight: "normal" }}>Voir tout</Link>
+            </h2>
+            <div style={{ padding: "1.5rem" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.5rem" }}>
+                {dossiersArticles.map((article: any) => (
+                  <Link href={`/article/${article.slug}`} key={article.id} style={{ display: 'block', borderBottom: '1px solid var(--border)', paddingBottom: '1rem' }}>
+                    <h3 style={{ fontSize: "1.1rem", fontWeight: 800, lineHeight: 1.2, marginBottom: "0.5rem" }}>{article.title}</h3>
+                    <p style={{ fontSize: "0.85rem", color: "var(--muted)", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                      {article.excerpt}
+                    </p>
                   </Link>
                 ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Tendances Culturelles - CENTERED VISUAL GRID */}
+        {(cultureArticlesFetched && cultureArticlesFetched.length > 0) && (
+          <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "2.5rem" }}>
+            <h2 className="portal-section-title" style={{ backgroundColor: "#9333ea", borderColor: "#7e22ce" }}>✨ Art & Culture</h2>
+            <div style={{ padding: "1.5rem" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1.5rem" }}>
+                {cultureArticlesFetched.map((article: any) => {
+                  const imgUrl = getArticleImage(article);
+                  return (
+                    <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                      <div style={{ height: "150px", backgroundColor: "#f3e8ff", borderRadius: "12px", overflow: "hidden", border: "1px solid #e9d5ff" }}>
+                        {imgUrl ? <img src={imgUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : null}
+                      </div>
+                      <h3 style={{ fontSize: "0.9rem", fontWeight: 800, lineHeight: 1.3 }}>{article.title}</h3>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -486,7 +469,7 @@ export default async function Home() {
           {politiqueItems && politiqueItems.length > 0 && (
             <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", gridColumn: "1 / -1" }}>
               <h2 className="portal-section-title dark" style={{ display: "flex", justifyContent: "space-between" }}>
-                <span>Politique</span>
+                <span>⚖️ Politique</span>
                 <span style={{ fontSize: '0.8rem', fontWeight: 'normal', color: 'var(--primary)' }}><Link href="/category/politique">Voir tout</Link></span>
               </h2>
               <div style={{ padding: "1rem" }}>
@@ -501,6 +484,36 @@ export default async function Home() {
                         <div>
                           <div style={{ fontSize: "0.65rem", color: "var(--primary)", fontWeight: "bold", textTransform: "uppercase", marginBottom: "0.2rem" }}>
                             Politique
+                          </div>
+                          <h3 style={{ fontSize: "0.85rem", fontWeight: 700, lineHeight: 1.3 }}>{article.title}</h3>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Économie Block - NOW CENTERED */}
+          {economieItems && economieItems.length > 0 && (
+            <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", gridColumn: "1 / -1", marginTop: "1rem" }}>
+              <h2 className="portal-section-title" style={{ display: "flex", justifyContent: "space-between", borderBottom: '2px solid #0369a1', backgroundColor: '#f0f9ff' }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#075985' }}>📈 Économie & Finances</span>
+                <Link href="/category/economie" style={{ fontSize: "0.8rem", color: "#0369a1", textDecoration: "none", fontWeight: "bold" }}>Voir tout</Link>
+              </h2>
+              <div style={{ padding: "1rem" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
+                  {economieItems.map((article) => {
+                    const imgUrl = getArticleImage(article);
+                    return (
+                      <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                        <div style={{ height: "120px", backgroundColor: "#f0f9ff", overflow: "hidden", borderRadius: "8px", border: "1px solid #bae6fd" }}>
+                          {imgUrl ? <img src={imgUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : null}
+                        </div>
+                        <div>
+                          <div style={{ fontSize: "0.65rem", color: "#0369a1", fontWeight: 800, textTransform: "uppercase", marginBottom: "0.2rem" }}>
+                            Économie
                           </div>
                           <h3 style={{ fontSize: "0.85rem", fontWeight: 700, lineHeight: 1.3 }}>{article.title}</h3>
                         </div>
@@ -579,35 +592,6 @@ export default async function Home() {
       {/* RIGHT COLUMN: Pubs & Les Plus Lus */}
       <aside className="portal-col-right">
 
-        {/* Économie - DÉPLACÉ ICI (colonne droite) */}
-        {economieItems && economieItems.length > 0 && (
-          <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "1.5rem" }}>
-            <h2 className="portal-section-title" style={{ backgroundColor: "#0369a1", borderColor: "#075985", display: "flex", justifyContent: "space-between" }}>
-              <span>Économie</span>
-              <Link href="/category/economie" style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.8)", textDecoration: "none", fontWeight: "normal" }}>Voir tout</Link>
-            </h2>
-            <div style={{ padding: "0" }}>
-              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                {economieItems.map((article) => {
-                  const imgUrl = getArticleImage(article);
-                  return (
-                    <li key={article.id} style={{ borderBottom: "1px solid var(--border)", padding: "0.75rem 1rem" }}>
-                      <Link href={`/article/${article.slug}`} style={{ display: "flex", gap: "0.75rem" }}>
-                        <div style={{ width: "60px", height: "60px", backgroundColor: "var(--muted)", flexShrink: 0, borderRadius: "4px", overflow: "hidden" }}>
-                          {imgUrl && <img src={imgUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
-                        </div>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: "0.65rem", color: "#0369a1", fontWeight: "bold", textTransform: "uppercase", marginBottom: "0.2rem" }}>Économie</div>
-                          <h3 style={{ fontSize: "0.8rem", fontWeight: 700, lineHeight: 1.3 }}>{article.title}</h3>
-                        </div>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          </div>
-        )}
 
         {/* Météo Widget */}
         {weatherReport && (
