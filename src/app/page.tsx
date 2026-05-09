@@ -409,8 +409,7 @@ export default async function Home() {
               <div style={{ fontSize: '0.7rem', opacity: 0.8 }}>Voir toutes les cotations BRVM</div>
            </Link>
         </div>
-        
-        )}
+
 
         {/* Dossiers & Enquêtes - CENTERED */}
         {dossiersArticles && dossiersArticles.length > 0 && (
