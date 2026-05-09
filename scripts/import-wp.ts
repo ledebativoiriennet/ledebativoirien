@@ -39,90 +39,72 @@ async function main() {
     return;
   }
 
-  // 1. Authors
+  const items = channel.item || [];
+  const itemArray = Array.isArray(items) ? items : [items];
+
+  // 1. Map all attachments to get URLs
+  console.log('Mapping attachments...');
+  const attachmentMap: Record<string, string> = {};
+  itemArray.forEach((item: any) => {
+    if (getString(item['wp:post_type']) === 'attachment') {
+      const id = getString(item['wp:post_id']);
+      const url = getString(item['wp:attachment_url']);
+      if (id && url) attachmentMap[id] = url;
+    }
+  });
+
+  // 2. Authors
   const authors = channel['wp:author'] || [];
   const authorArray = Array.isArray(authors) ? authors : [authors];
-  console.log(`Found ${authorArray.length} authors.`);
-  
   for (const author of authorArray) {
     if (!author) continue;
     const wpId = parseInt(author['wp:author_id']);
     const login = getString(author['wp:author_login']) || 'unknown';
-    const email = getString(author['wp:author_email']);
     const name = getString(author['wp:author_display_name']) || login;
-
     await prisma.author.upsert({
       where: { slug: login },
-      update: { name, email, wpId },
-      create: { slug: login, name, email, wpId },
+      update: { name, wpId },
+      create: { slug: login, name, wpId },
     });
   }
 
-  // 2. Categories
+  // 3. Categories
   const categories = channel['wp:category'] || [];
   const categoryArray = Array.isArray(categories) ? categories : [categories];
-  console.log(`Found ${categoryArray.length} categories.`);
-  
   for (const cat of categoryArray) {
     if (!cat) continue;
-    const wpId = parseInt(cat['wp:term_id']);
-    const slug = getString(cat['wp:category_nicename']) || `cat-${wpId}`;
+    const slug = getString(cat['wp:category_nicename']) || `cat-${cat['wp:term_id']}`;
     const name = getString(cat['wp:cat_name']) || slug;
-    const parentSlug = getString(cat['wp:category_parent']);
-
-    let parentId = null;
-    if (parentSlug) {
-      const parent = await prisma.category.findUnique({ where: { slug: parentSlug } });
-      if (parent) parentId = parent.id;
-    }
-
-    try {
-      await prisma.category.upsert({
-        where: { slug },
-        update: { name, wpId, parentId },
-        create: { slug, name, wpId, parentId },
-      });
-    } catch (e) {
-      console.error(`Error with category ${slug}`);
-    }
-  }
-
-// Alias map: normalize WP slugs to DB slugs
-const SLUG_ALIASES: Record<string, string> = {
-  'art-culture': 'culture',
-  'arts':        'culture',
-  'politique':   'politique',
-  'politiques':  'politique',
-  'economie-finances': 'economie',
-  'finances':    'economie',
-  'faits_divers': 'faits-divers',
-  'international': 'internationale',
-};
-
-function normalizeSlug(slug: string): string {
-  return SLUG_ALIASES[slug] || slug;
-}
-
-async function ensureCategory(slug: string, name: string) {
-  const normalized = normalizeSlug(slug);
-  let cat = await prisma.category.findUnique({ where: { slug: normalized } });
-  if (!cat) {
-    cat = await prisma.category.create({
-      data: { slug: normalized, name: name || normalized }
+    await prisma.category.upsert({
+      where: { slug },
+      update: { name },
+      create: { slug, name },
     });
-    console.log(`  → Created missing category: "${name}" (${normalized})`);
   }
-  return cat;
-}
 
-  // 3. Articles (Items)
-  const items = channel.item || [];
-  const itemArray = Array.isArray(items) ? items : [items];
+  const SLUG_ALIASES: Record<string, string> = {
+    'art-culture': 'culture',
+    'arts': 'culture',
+    'economie-finances': 'economie',
+    'finances': 'economie',
+    'faits_divers': 'faits-divers',
+    'international': 'internationale',
+  };
+
+  async function ensureCategory(slug: string, name: string) {
+    const normalized = SLUG_ALIASES[slug] || slug;
+    let cat = await prisma.category.findUnique({ where: { slug: normalized } });
+    if (!cat) {
+      cat = await prisma.category.create({ data: { slug: normalized, name: name || normalized } });
+    }
+    return cat;
+  }
+
+  // 4. Articles
   const articles = itemArray.filter((i: any) => getString(i['wp:post_type']) === 'post' && getString(i['wp:status']) === 'publish');
   console.log(`Found ${articles.length} published articles. Importing...`);
 
   let count = 0;
-  let skipped = 0;
   for (const item of articles) {
     const wpId = parseInt(item['wp:post_id']);
     const title = getString(item.title) || 'Untitled';
@@ -140,66 +122,55 @@ async function ensureCategory(slug: string, name: string) {
 
     const categoriesList = item.category || [];
     const catArray = Array.isArray(categoriesList) ? categoriesList : [categoriesList];
-
     const categoriesConnect = [];
     for (const catItem of catArray) {
       const catSlug = getString(catItem['@_nicename']);
-      const catName = getString(catItem['#text'] ?? catItem.__cdata ?? catItem) || catSlug;
       if (!catSlug) continue;
-      const dbCat = await ensureCategory(catSlug, catName || catSlug);
+      const dbCat = await ensureCategory(catSlug, getString(catItem['#text']) || catSlug);
       if (dbCat) categoriesConnect.push({ id: dbCat.id });
     }
 
-    // Extract featured image from WordPress meta
+    // Find featured image
+    let imageUrl: string | null = null;
     const postMeta = item['wp:postmeta'] || [];
     const metaArray = Array.isArray(postMeta) ? postMeta : [postMeta];
-    let featuredImageUrl: string | null = null;
     for (const meta of metaArray) {
       if (getString(meta['wp:meta_key']) === '_thumbnail_id') {
-        // Store the thumbnail ID reference if needed in future
+        const thumbId = getString(meta['wp:meta_value']);
+        if (thumbId && attachmentMap[thumbId]) {
+          imageUrl = attachmentMap[thumbId];
+        }
         break;
       }
+    }
+
+    // Fallback: search for first image in content
+    if (!imageUrl) {
+      const imgMatch = content.match(/<img[^>]+src="([^">]+)"/);
+      if (imgMatch) imageUrl = imgMatch[1];
     }
 
     try {
       await prisma.article.upsert({
         where: { slug },
         update: {
-          title,
-          content,
-          excerpt,
-          publishedAt,
-          authorId,
+          title, content, excerpt, publishedAt, authorId, imageUrl,
           categories: { set: categoriesConnect }
         },
         create: {
-          wpId,
-          title,
-          slug,
-          content,
-          excerpt,
-          publishedAt,
-          authorId,
+          wpId, title, slug, content, excerpt, publishedAt, authorId, imageUrl,
           categories: { connect: categoriesConnect },
           isPremium: false
         }
       });
       count++;
-      console.log(`  [${count}/${articles.length}] "${title.substring(0, 60)}..." → cats: [${categoriesConnect.map((c: any) => c.id).join(', ')}]`);
+      process.stdout.write(`\rImporting: ${count}/${articles.length}`);
     } catch (e: any) {
-      console.error(`  ✗ Error importing article ${wpId} (${slug}):`, e.message);
-      skipped++;
+      console.error(`\nError with ${slug}:`, e.message);
     }
   }
 
-  console.log(`\n✅ Import completed! Imported: ${count} | Errors: ${skipped}`);
+  console.log(`\n\n✅ Done! Imported/Updated: ${count}`);
 }
 
-main()
-  .catch(e => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+main().catch(e => console.error(e)).finally(() => prisma.$disconnect());
