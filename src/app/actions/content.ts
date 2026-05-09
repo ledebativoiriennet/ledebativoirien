@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { saveUpload } from "@/lib/upload";
 import { checkAdminOrEditor } from "@/lib/auth";
+import { logActivity } from "@/lib/activity";
 
 // --- BREAKING NEWS ---
 export async function updateBreakingNews(content: string, link: string | null, isActive: boolean) {
@@ -16,6 +17,12 @@ export async function updateBreakingNews(content: string, link: string | null, i
   await prisma.breakingNews.create({
     data: { content, link, isActive }
   });
+
+  await logActivity({
+    action: "UPDATE_BREAKING_NEWS",
+    details: `Contenu: ${content.substring(0, 50)}... | Actif: ${isActive}`
+  });
+
   return { success: true };
 }
 
@@ -34,12 +41,24 @@ export async function createFlashNews(time: string, content: string, source: str
   await prisma.flashNews.create({
     data: { time, content, source }
   });
+
+  await logActivity({
+    action: "CREATE_FLASH_NEWS",
+    details: `Flash: ${content.substring(0, 50)}...`
+  });
+
   return { success: true };
 }
 
 export async function deleteFlashNews(id: string) {
   await checkAdminOrEditor();
   await prisma.flashNews.delete({ where: { id } });
+
+  await logActivity({
+    action: "DELETE_FLASH_NEWS",
+    resource: `Flash ID: ${id}`
+  });
+
   return { success: true };
 }
 
@@ -66,6 +85,12 @@ export async function uploadTitrologie(formData: FormData) {
       }
     });
 
+    await logActivity({
+      action: "UPLOAD_TITROLOGIE",
+      resource: newspaperName,
+      details: `Une du ${dateStr || 'du jour'}`
+    });
+
     return { success: true };
   } catch (error) {
     console.error("Erreur Titrologie:", error);
@@ -76,6 +101,12 @@ export async function uploadTitrologie(formData: FormData) {
 export async function deleteTitrologie(id: string) {
   await checkAdminOrEditor();
   await prisma.titrologie.delete({ where: { id } });
+
+  await logActivity({
+    action: "DELETE_TITROLOGIE",
+    resource: `Titrologie ID: ${id}`
+  });
+
   return { success: true };
 }
 
@@ -94,6 +125,12 @@ export async function createPoll(question: string, options: string[]) {
         create: options.map(text => ({ text }))
       }
     }
+  });
+
+  await logActivity({
+    action: "CREATE_POLL",
+    resource: question,
+    details: `Options: ${options.join(', ')}`
   });
 
   return { success: true };
@@ -146,6 +183,12 @@ export async function uploadActivity(formData: FormData) {
 export async function deleteActivity(id: string) {
   await checkAdminOrEditor();
   await prisma.activity.delete({ where: { id } });
+
+  await logActivity({
+    action: "DELETE_ACTIVITY",
+    resource: `Activity ID: ${id}`
+  });
+
   return { success: true };
 }
 
@@ -179,6 +222,12 @@ export async function createObituary(formData: FormData) {
 export async function deleteObituary(id: string) {
   await checkAdminOrEditor();
   await prisma.obituary.delete({ where: { id } });
+
+  await logActivity({
+    action: "DELETE_OBITUARY",
+    resource: `Obituary ID: ${id}`
+  });
+
   return { success: true };
 }
 

@@ -19,6 +19,7 @@ model User {
   role          String         @default("USER") // ADMIN, EDITOR, USER
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
+  lastLoginAt   DateTime?
   subscriptions Subscription[]
   readingHistory ReadingHistory[]
   articleLikes   ArticleLike[]
@@ -73,7 +74,7 @@ model Article {
   content     String
   excerpt     String?
   imageUrl    String?
-  imageCaption String? // Légende / crédit photo
+  imageCaption String? // LÃ©gende / crÃ©dit photo
   isPremium   Boolean   @default(false)
   isConfidentiel Boolean @default(false)
   publishedAt DateTime?
@@ -85,7 +86,7 @@ model Article {
 
   videoUrl    String?
   videoFile   String?
-  videoCaption String? // Légende / crédit vidéo
+  videoCaption String? // LÃ©gende / crÃ©dit vidÃ©o
   isAudioAvailable Boolean @default(false)
 
   categories  Category[]
@@ -137,7 +138,7 @@ model Video {
 model MarketIndicator {
   id        String   @id @default(cuid())
   group     String   // e.g., 'CACAO', 'PETROCI', 'SIB', 'APAYM', 'BRVM', 'COTON'
-  label     String   // e.g., 'CACAO', 'CAFE', 'Euro €'
+  label     String   // e.g., 'CACAO', 'CAFE', 'Euro â‚¬'
   value     String   // e.g., '1903F/Kg', '108.76 $'
   trend     String   // 'UP', 'DOWN', 'FLAT'
   extraText String?  // e.g., 'A-J', 'NC - A-M'
@@ -159,7 +160,7 @@ model MarketHistory {
 
 model EconomicalIndicator {
   id          String   @id @default(cuid())
-  country     String   // e.g., 'Côte d\'Ivoire', 'UEMOA'
+  country     String   // e.g., 'CÃ´te d\'Ivoire', 'UEMOA'
   category    String   // e.g., 'PIB', 'Inflation', 'Dette'
   value       String
   unit        String?
@@ -243,9 +244,9 @@ model WeatherReport {
   id                  String   @id @default(cuid())
   city                String   @default("Abidjan")
   temperature         Int      // e.g., 32
-  apparentTemperature Int?     // Température ressentie
+  apparentTemperature Int?     // TempÃ©rature ressentie
   condition           String   // e.g., "Soleil", "Pluie", "Nuageux"
-  icon                String?  // e.g., "☀️", "🌧️"
+  icon                String?  // e.g., "â˜€ï¸�", "ðŸŒ§ï¸�"
   
   forecast1Day  String? // e.g., "Ven"
   forecast1Temp Int?
@@ -302,7 +303,7 @@ model FootballMatch {
   id        String   @id @default(cuid())
   team1     String
   team2     String
-  team1Flag String?  // Emoji (ex: 🇨🇮) ou code pays ou URL
+  team1Flag String?  // Emoji (ex: ðŸ‡¨ðŸ‡®) ou code pays ou URL
   team2Flag String?  // Emoji ou code pays ou URL
   matchDate DateTime
   phase     String?  // ex: "Groupe A", "Quarts de finale"
@@ -367,7 +368,7 @@ model AuthorSubscriber {
 
 model DigitalNewspaper {
   id            String   @id @default(cuid())
-  title         String   // e.g. "Le Débat Ivoirien N°150"
+  title         String   // e.g. "Le DÃ©bat Ivoirien NÂ°150"
   description   String?
   issueNumber   Int?
   price         Float    // e.g. 500 (FCFA)
@@ -430,4 +431,22 @@ model Company {
   purchases   Purchase[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  userName  String?
+  userEmail String?
+  action    String   // LOGIN, LOGOUT, CREATE, UPDATE, DELETE, etc.
+  resource  String?  // Article, User, Category, etc.
+  details   String?  // Description detaillee ou JSON
+  ipAddress String?
+  userAgent String?
+  browser   String?
+  device    String?
+  os        String?
+  city      String?
+  country   String?
+  createdAt DateTime @default(now())
 }

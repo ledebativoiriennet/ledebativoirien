@@ -66,6 +66,18 @@ export const authOptions: NextAuthOptions = {
       return session;
     }
   },
+  events: {
+    async signIn({ user }) {
+      const { logActivity } = await import("./activity");
+      await logActivity({
+        action: "LOGIN",
+        userId: user.id,
+        userName: user.name || undefined,
+        userEmail: user.email || undefined,
+        details: "Connexion réussie"
+      });
+    }
+  },
   pages: {
     signIn: '/login',
   },

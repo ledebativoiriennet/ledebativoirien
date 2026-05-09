@@ -8,6 +8,7 @@ import { join } from "path";
 import { saveUpload } from "@/lib/upload";
 import { sendNewArticleNotification } from "@/lib/newsletter";
 import { sendPushNotification } from "@/lib/push";
+import { logActivity } from "@/lib/activity";
 
 // Convert a title to a URL-friendly slug
 function generateSlug(title: string) {
@@ -106,6 +107,12 @@ export async function publishArticle(formData: FormData) {
       }, 500);
     }
 
+    await logActivity({
+      action: "CREATE_ARTICLE",
+      resource: `Article: ${newArticle.title}`,
+      details: `Article créé avec le slug: ${newArticle.slug}`
+    });
+
     return { success: true };
   } catch (error) {
     console.error("Erreur création article:", error);
@@ -133,6 +140,12 @@ export async function approveArticle(articleId: string) {
       sendPushNotification(articleId).catch(console.error);
     }, 500);
 
+    await logActivity({
+      action: "APPROVE_ARTICLE",
+      resource: `Article ID: ${articleId}`,
+      details: "Article validé et publié"
+    });
+
     return { success: true };
   } catch (error) {
     console.error("Erreur approveArticle:", error);
@@ -153,6 +166,12 @@ export async function toggleArticlePremiumStatus(articleId: string, currentStatu
       where: { id: articleId },
       data: { isPremium: !currentStatus }
     });
+    await logActivity({
+      action: "TOGGLE_PREMIUM",
+      resource: `Article ID: ${articleId}`,
+      details: `Passage à ${!currentStatus ? 'Premium' : 'Gratuit'}`
+    });
+
     return { success: true };
   } catch (error) {
     console.error("Erreur toggleArticlePremiumStatus:", error);
@@ -236,6 +255,12 @@ export async function updateArticle(articleId: string, formData: FormData) {
       }
     });
 
+    await logActivity({
+      action: "UPDATE_ARTICLE",
+      resource: `Article ID: ${articleId}`,
+      details: `Article modifié: ${title}`
+    });
+
     return { success: true };
   } catch (error) {
     console.error("Erreur updateArticle:", error);
@@ -256,6 +281,12 @@ export async function unpublishArticle(articleId: string) {
       where: { id: articleId },
       data: { publishedAt: null }
     });
+    await logActivity({
+      action: "UNPUBLISH_ARTICLE",
+      resource: `Article ID: ${articleId}`,
+      details: "Article retiré de la publication (brouillon)"
+    });
+
     return { success: true };
   } catch (error) {
     console.error("Erreur unpublishArticle:", error);
@@ -275,6 +306,12 @@ export async function deleteArticle(articleId: string) {
     await prisma.article.delete({
       where: { id: articleId }
     });
+    await logActivity({
+      action: "DELETE_ARTICLE",
+      resource: `Article ID: ${articleId}`,
+      details: "Article supprimé définitivement"
+    });
+
     return { success: true };
   } catch (error) {
     console.error("Erreur deleteArticle:", error);
