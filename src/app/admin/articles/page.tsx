@@ -106,7 +106,7 @@ export default async function AdminArticles({ searchParams }: { searchParams: Pr
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginTop: '2rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '0.5rem', marginTop: '2rem' }}>
           {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
             <Link 
               key={p} 
