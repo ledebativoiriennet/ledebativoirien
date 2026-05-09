@@ -195,7 +195,7 @@ export default async function Home() {
             <div className="grid-responsive-titrologie">
               {titrologieItems && titrologieItems.length > 0 ? (
                 titrologieItems.map(item => (
-                  <div key={item.id} style={{ height: '180px', backgroundColor: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div key={item.id} className="image-watermark-container" style={{ height: '180px', backgroundColor: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
                     <img src={item.imageUrl} alt={item.newspaperName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </div>
                 ))
@@ -290,7 +290,7 @@ export default async function Home() {
                   const imgUrl = getArticleImage(article);
                   return (
                     <li key={article.id} style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start" }}>
-                      <div style={{ width: "50px", height: "50px", backgroundColor: "var(--muted)", flexShrink: 0, borderRadius: "4px", overflow: "hidden" }}>
+                      <div className="image-watermark-container" style={{ width: "50px", height: "50px", backgroundColor: "var(--muted)", flexShrink: 0, borderRadius: "4px", overflow: "hidden" }}>
                         {imgUrl && <img src={imgUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
                       </div>
                       <Link href={`/article/${article.slug}`} style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--foreground)", lineHeight: 1.2, flex: 1 }}>
@@ -318,7 +318,7 @@ export default async function Home() {
                   return (
                     <li key={article.id} style={{ borderBottom: "1px solid var(--border)", padding: "0.75rem 1rem" }}>
                       <Link href={`/article/${article.slug}`} style={{ display: "flex", gap: "0.75rem" }}>
-                        <div style={{ width: "60px", height: "60px", backgroundColor: "var(--muted)", flexShrink: 0, borderRadius: "4px", overflow: "hidden" }}>
+                        <div className="image-watermark-container" style={{ width: "60px", height: "60px", backgroundColor: "var(--muted)", flexShrink: 0, borderRadius: "4px", overflow: "hidden" }}>
                           {imgUrl && <img src={imgUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
                         </div>
                         <div style={{ flex: 1 }}>
@@ -347,7 +347,7 @@ export default async function Home() {
               backgroundColor: '#fff',
               border: '1px solid var(--border)'
             }}>
-              <div style={{ 
+              <div className="image-watermark-container" style={{ 
                 position: 'relative', 
                 height: '450px', 
                 backgroundColor: '#0f172a'

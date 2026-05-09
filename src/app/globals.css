@@ -49,6 +49,36 @@ img, video, iframe {
   height: auto;
 }
 
+/* Universal Image Watermark */
+.image-watermark-container {
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+
+.image-watermark-container::after {
+  content: "";
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 40px; /* Adjust size */
+  height: 40px;
+  background-image: url('/logo.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.6;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)) grayscale(100%) brightness(200%);
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity 0.3s ease;
+}
+
+.image-watermark-container:hover::after {
+  opacity: 0.9;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
 a {
   color: inherit;
   text-decoration: none;

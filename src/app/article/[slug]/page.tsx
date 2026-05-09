@@ -264,7 +264,9 @@ export default async function ArticlePage({ params }: Props) {
           {/* Image de couverture (Nouveaux articles) */}
           {article.imageUrl && (
             <div style={{ marginBottom: "2rem", borderRadius: "8px", overflow: "hidden" }}>
-              <img src={article.imageUrl} alt={article.title} style={{ width: "100%", height: "auto", display: "block" }} />
+              <div className="image-watermark-container">
+                <img src={article.imageUrl} alt={article.title} style={{ width: "100%", height: "auto", display: "block" }} />
+              </div>
               {(article as any).imageCaption && (
                 <p style={{ fontSize: "0.75rem", color: "#64748b", fontStyle: "italic", textAlign: "center", padding: "0.4rem 0.75rem", backgroundColor: "#f8fafc", margin: 0, borderTop: "1px solid #e2e8f0" }}>
                   📷 {(article as any).imageCaption}
@@ -474,7 +476,7 @@ export default async function ArticlePage({ params }: Props) {
               const relImg = getArticleImage(rel);
               return (
                 <Link href={`/article/${rel.slug}`} key={rel.id} style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
-                  <div style={{ height: "140px", backgroundColor: "var(--muted)" }}>
+                  <div className="image-watermark-container" style={{ height: "140px", backgroundColor: "var(--muted)" }}>
                     {relImg && <img src={relImg} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />}
                   </div>
                   <div style={{ padding: "1rem" }}>
