@@ -27,9 +27,9 @@ export async function POST(request: Request) {
       }
     }
 
-    // 2. Fetch latest posts
-    const postRes = await fetch(`${WP_API_URL}/posts?per_page=30&_embed`);
-    if (!postRes.ok) throw new Error(`WP API error: ${postRes.status}`);
+    // 2. Fetch latest posts - Réduit à 10 pour éviter les timeouts sur Hostinger
+    const postRes = await fetch(`${WP_API_URL}/posts?per_page=10&_embed`);
+    if (!postRes.ok) throw new Error(`Erreur API WordPress: ${postRes.status} ${postRes.statusText}`);
     const posts = await postRes.json();
 
     let count = 0;
@@ -81,6 +81,8 @@ export async function POST(request: Request) {
 
   } catch (error: any) {
     console.error('Sync error:', error);
-    return NextResponse.json({ error: 'Erreur lors de la synchronisation' }, { status: 500 });
+    return NextResponse.json({ 
+      error: `Détail technique: ${error.message || 'Erreur inconnue'}` 
+    }, { status: 500 });
   }
 }
