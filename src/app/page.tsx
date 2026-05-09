@@ -46,7 +46,8 @@ export default async function Home() {
     chroniqueArticles,
     confidentielArticles,
     dossiersArticles,
-    cultureArticlesFetched
+    cultureArticlesFetched,
+    footballArticles
   ] = await Promise.all([
     prisma.article.findMany({
       where: { publishedAt: { not: null } },
@@ -108,7 +109,8 @@ export default async function Home() {
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'chronique' } } }, take: 10, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.article.findMany({ where: { isConfidentiel: true, publishedAt: { not: null } }, take: 8, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'dossiers' } } }, take: 5, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['art-culture', 'culture'] } } } }, take: 5, orderBy: { publishedAt: 'desc' }, include: { categories: true } })
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['art-culture', 'culture'] } } } }, take: 5, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'football' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } })
   ]);
 
   if (!recentArticles || recentArticles.length === 0) {
@@ -578,6 +580,36 @@ export default async function Home() {
                         <div>
                           <div style={{ fontSize: "0.65rem", color: "#059669", fontWeight: 800, textTransform: "uppercase", marginBottom: "0.2rem" }}>
                             Afrique de l'Ouest
+                          </div>
+                          <h3 style={{ fontSize: "0.85rem", fontWeight: 700, lineHeight: 1.3 }}>{article.title}</h3>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Football Articles Block */}
+          {footballArticles && footballArticles.length > 0 && (
+            <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", gridColumn: "1 / -1", marginTop: "1.5rem" }}>
+              <h2 className="portal-section-title" style={{ display: "flex", justifyContent: "space-between", borderBottom: '2px solid #dc2626', backgroundColor: '#fef2f2' }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#991b1b' }}>⚽ Football Ivoirien & International</span>
+                <Link href="/category/football" style={{ fontSize: "0.8rem", color: "#dc2626", textDecoration: "none", fontWeight: "bold" }}>Voir tout</Link>
+              </h2>
+              <div style={{ padding: "1rem" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
+                  {footballArticles.map((article: any) => {
+                    const imgUrl = getArticleImage(article);
+                    return (
+                      <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                        <div style={{ height: "120px", backgroundColor: "#fef2f2", overflow: "hidden", borderRadius: "8px", border: "1px solid #fee2e2" }}>
+                          {imgUrl ? <img src={imgUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : null}
+                        </div>
+                        <div>
+                          <div style={{ fontSize: "0.65rem", color: "#dc2626", fontWeight: 800, textTransform: "uppercase", marginBottom: "0.2rem" }}>
+                            Football
                           </div>
                           <h3 style={{ fontSize: "0.85rem", fontWeight: 700, lineHeight: 1.3 }}>{article.title}</h3>
                         </div>
