@@ -17,7 +17,6 @@ export default async function Home() {
   // Fetch massive data in parallel for high density
   const [
     recentArticles,
-    topCategories,
     poll,
     obituaries,
     politiqueArticles,
@@ -54,20 +53,6 @@ export default async function Home() {
       take: 150, // Increase pool for deduplication
       orderBy: { publishedAt: "desc" },
       include: { categories: true },
-    }),
-    prisma.category.findMany({
-      where: { 
-        articles: { some: {} },
-        slug: { notIn: ['politique', 'politiques', 'economie', 'economie-finances', 'faits-divers', 'actualite', 'a-la-une', 'societe', 'chronique', 'sport', 'sports', 'football', 'culture', 'arts'] }
-      },
-      orderBy: { articles: { _count: 'desc' } }, // Order by most articles
-      take: 6, // Fetch more to ensure diversity
-      include: {
-        articles: {
-          take: 6,
-          orderBy: { publishedAt: "desc" },
-        }
-      }
     }),
     prisma.poll.findFirst({ where: { isActive: true }, include: { options: true }, orderBy: { createdAt: 'desc' } }),
     prisma.obituary.findMany({ take: 5, orderBy: { createdAt: 'desc' } }),
@@ -486,8 +471,6 @@ export default async function Home() {
               </div>
             </div>
           </div>
-        )}
-
         {/* Publicité Milieu de page */}
         <AdBanner slot="HOME_MIDDLE" />
 
@@ -496,40 +479,6 @@ export default async function Home() {
 
         {/* Thematic Blocks */}
         <div className="grid-responsive-2col" style={{ gap: "1.5rem" }}>
-          {topCategories.map((category) => (
-            <div key={category.id} style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden" }}>
-              <h2 className="portal-section-title">{category.name === "Activité gouvernementale" ? "Activité Gouv" : category.name}</h2>
-              <div className="compact-list" style={{ padding: "1rem" }}>
-                {category.articles.filter(a => !displayedIds.has(a.id)).slice(0, 5).map((article, idx) => {
-                  const imgUrl = getArticleImage(article);
-                  displayedIds.add(article.id);
-                  return (
-                    <Link href={`/article/${article.slug}`} key={article.id} className="compact-item">
-                      {idx === 0 && (
-                        <div className="compact-thumb" style={{ overflow: 'hidden' }}>
-                          {imgUrl ? (
-                            <img src={imgUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                          ) : (
-                            <div style={{ background: 'var(--foreground)', color: 'white', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', fontWeight: 'bold' }}>LDI</div>
-                          )}
-                        </div>
-                      )}
-                      <div style={{ flex: 1 }}>
-                        {idx === 0 && (
-                          <div className="compact-meta">
-                            {new Date(article.publishedAt || new Date()).toLocaleDateString("fr-FR")}
-                          </div>
-                        )}
-                        <h3 className="compact-title" style={{ fontSize: idx === 0 ? "1rem" : "0.85rem" }}>
-                          {article.title}
-                        </h3>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
 
           {/* Politique Block */}
           {politiqueItems && politiqueItems.length > 0 && (
