@@ -16,6 +16,7 @@ import PopupAd from "@/components/PopupAd";
 import FloatingSocialPill from "@/components/FloatingSocialPill";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import GoogleAdSlot from "@/components/GoogleAdSlot";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -350,7 +351,9 @@ export default async function RootLayout({
         </div>
         
         <main className="container" style={{ minHeight: '60vh' }}>
+          <GoogleAdSlot adSlot="3353692131" width="728px" height="90px" />
           {children}
+          <GoogleAdSlot adSlot="1597757330" width="728px" height="90px" />
         </main>
 
         <footer style={{ backgroundColor: 'var(--foreground)', color: 'white', marginTop: '4rem', paddingTop: '4rem', paddingBottom: '2rem' }}>

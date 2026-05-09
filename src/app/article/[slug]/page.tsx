@@ -19,6 +19,7 @@ import { Metadata, ResolvingMetadata } from "next";
 import NewsletterWidget from "@/components/NewsletterWidget";
 import AuthorSubscribeButton from "@/components/AuthorSubscribeButton";
 import ReadingProgressBar from "@/components/ReadingProgressBar";
+import GoogleAdSlot from "@/components/GoogleAdSlot";
 
 export const revalidate = 60;
 
@@ -395,6 +396,8 @@ export default async function ArticlePage({ params }: Props) {
               </div>
             )}
           </div>
+
+          <GoogleAdSlot adSlot="9260624933" />
 
           {article.tags && article.tags.length > 0 && (
             <div style={{ marginTop: "3rem", paddingTop: "2rem", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>

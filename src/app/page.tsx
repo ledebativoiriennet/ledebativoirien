@@ -10,6 +10,7 @@ import SportsModule from "@/components/SportsModule";
 import { PollWidget } from "@/components/PollWidget";
 import PersonalizedFeed from "@/components/PersonalizedFeed";
 import HomeAudioModule from "@/components/HomeAudioModule";
+import GoogleAdSlot from "@/components/GoogleAdSlot";
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -485,6 +486,8 @@ export default async function Home() {
             </div>
           </div>
         )}
+
+        <GoogleAdSlot adSlot="9260624933" />
 
         {/* Dossiers & Enquêtes - CENTERED */}
         {dossiersArticles && dossiersArticles.length > 0 && (
