@@ -1,44 +1,44 @@
-import { MetadataRoute } from 'next';
-import { prisma } from '@/lib/prisma';
+import { MetadataRoute } from 'next'
+import { prisma } from '@/lib/prisma'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ledebativoirien.net';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ledebativoirien.net'
 
-  // 1. Catégories
-  const categories = await prisma.category.findMany({
-    select: { slug: true, updatedAt: true }
-  });
-  
-  const categoryUrls = categories.map((cat) => ({
-    url: `${baseUrl}/category/${cat.slug}`,
-    lastModified: cat.updatedAt,
-    changeFrequency: 'daily' as const,
-    priority: 0.8,
-  }));
-
-  // 2. Articles (les 1000 plus récents pour optimiser le temps de réponse)
+  // Récupérer tous les articles publiés
   const articles = await prisma.article.findMany({
     where: { publishedAt: { not: null } },
     select: { slug: true, updatedAt: true },
-    orderBy: { publishedAt: 'desc' },
-    take: 1000
-  });
+    orderBy: { updatedAt: 'desc' },
+    take: 1000 // Limite pour le sitemap principal
+  })
 
-  const articleUrls = articles.map((article) => ({
+  // Récupérer toutes les catégories
+  const categories = await prisma.category.findMany({
+    select: { slug: true, updatedAt: true }
+  })
+
+  const articleEntries: MetadataRoute.Sitemap = articles.map((article) => ({
     url: `${baseUrl}/article/${article.slug}`,
     lastModified: article.updatedAt,
-    changeFrequency: 'weekly' as const,
-    priority: 0.6,
-  }));
+    changeFrequency: 'daily',
+    priority: 0.7,
+  }))
+
+  const categoryEntries: MetadataRoute.Sitemap = categories.map((category) => ({
+    url: `${baseUrl}/category/${category.slug}`,
+    lastModified: category.updatedAt,
+    changeFrequency: 'weekly',
+    priority: 0.8,
+  }))
 
   return [
     {
       url: baseUrl,
       lastModified: new Date(),
-      changeFrequency: 'hourly',
-      priority: 1.0,
+      changeFrequency: 'always',
+      priority: 1,
     },
-    ...categoryUrls,
-    ...articleUrls,
-  ];
+    ...categoryEntries,
+    ...articleEntries,
+  ]
 }

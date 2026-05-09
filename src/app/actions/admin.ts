@@ -34,6 +34,7 @@ export async function publishArticle(formData: FormData) {
   const isPremium = formData.get("isPremium") === "on";
   const isAudioAvailable = formData.get("isAudioAvailable") === "on";
   const isConfidentiel = formData.get("isConfidentiel") === "on";
+  const isFeatured = formData.get("isFeatured") === "on";
   const imageFile = formData.get("image") as File | null;
   const categoryIds = formData.getAll("categories") as string[];
   const tagsString = formData.get("tags") as string || "";
@@ -82,6 +83,7 @@ export async function publishArticle(formData: FormData) {
         isPremium,
         isAudioAvailable,
         isConfidentiel,
+        isFeatured,
         publishedAt: role === "CONTRIBUTOR" ? null : new Date(),
         categories: categoryIds.length > 0 ? {
           connect: categoryIds.map(id => ({ id }))
@@ -179,6 +181,33 @@ export async function toggleArticlePremiumStatus(articleId: string, currentStatu
   }
 }
 
+export async function toggleArticleFeaturedStatus(articleId: string, currentStatus: boolean) {
+  const session = await getServerSession(authOptions);
+  const role = (session?.user as any)?.role;
+
+  if (role !== "ADMIN" && role !== "EDITOR") {
+    return { success: false, error: "Accès refusé." };
+  }
+
+  try {
+    await prisma.article.update({
+      where: { id: articleId },
+      data: { isFeatured: !currentStatus }
+    });
+    
+    await logActivity({
+      action: "TOGGLE_FEATURED",
+      resource: `Article ID: ${articleId}`,
+      details: `Passage à ${!currentStatus ? 'Mis en avant' : 'Standard'}`
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Erreur toggleArticleFeaturedStatus:", error);
+    return { success: false, error: "Erreur lors de la mise en avant." };
+  }
+}
+
 export async function updateArticle(articleId: string, formData: FormData) {
   const session = await getServerSession(authOptions);
   const role = (session?.user as any)?.role;
@@ -193,6 +222,7 @@ export async function updateArticle(articleId: string, formData: FormData) {
   const isPremium = formData.get("isPremium") === "on";
   const isAudioAvailable = formData.get("isAudioAvailable") === "on";
   const isConfidentiel = formData.get("isConfidentiel") === "on";
+  const isFeatured = formData.get("isFeatured") === "on";
   const categoryIds = formData.getAll("categories") as string[];
   const tagsString = formData.get("tags") as string || "";
   const imageCaption = formData.get("imageCaption") as string || null;
@@ -236,6 +266,7 @@ export async function updateArticle(articleId: string, formData: FormData) {
         isPremium,
         isAudioAvailable,
         isConfidentiel,
+        isFeatured,
         categories: {
           set: [],
           connect: categoryIds.map(id => ({ id }))

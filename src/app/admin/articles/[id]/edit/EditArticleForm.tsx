@@ -305,6 +305,19 @@ export default function EditArticleForm({ article, categories }: { article: any,
               🔒 Format Confidentiel
             </label>
           </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <input 
+              type="checkbox" 
+              name="isFeatured" 
+              id="isFeatured"
+              defaultChecked={article.isFeatured}
+              style={{ width: '1.2rem', height: '1.2rem', cursor: 'pointer' }}
+            />
+            <label htmlFor="isFeatured" style={{ fontWeight: 'bold', color: '#1d4ed8', cursor: 'pointer' }}>
+              ⭐️ Mettre en avant (Une)
+            </label>
+          </div>
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>

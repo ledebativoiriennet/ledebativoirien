@@ -60,8 +60,11 @@ export async function generateMetadata(
   if (!article) return { title: 'Article introuvable' };
 
   const previousImages = (await parent).openGraph?.images || [];
-  const articleImg = getArticleImage(article);
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ledebativoirien.net';
+  let articleImg = getArticleImage(article);
+  if (articleImg && !articleImg.startsWith('http')) {
+    articleImg = `${baseUrl}${articleImg.startsWith('/') ? '' : '/'}${articleImg}`;
+  }
   
   const description = article.excerpt || article.content.replace(/<[^>]*>?/gm, '').substring(0, 160) + '...';
 

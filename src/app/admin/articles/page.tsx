@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import ArticleActionButtons from "./ArticleActionButtons";
 import TogglePremiumButton from "./TogglePremiumButton";
+import ToggleFeaturedButton from "./ToggleFeaturedButton";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
@@ -73,9 +74,13 @@ export default async function AdminArticles({ searchParams }: { searchParams: Pr
                   ) : (
                     <span style={{ backgroundColor: '#e2e8f0', color: '#475569', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 'bold', display: 'inline-block' }}>Gratuit</span>
                   )}
+                  {article.isFeatured && (
+                    <span style={{ backgroundColor: '#dbeafe', color: '#1e40af', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 'bold', display: 'inline-block', marginLeft: '0.4rem' }}>🌟 À la Une</span>
+                  )}
                   {canApprove && (
-                    <div style={{ marginTop: '0.2rem' }}>
+                    <div style={{ marginTop: '0.2rem', display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
                       <TogglePremiumButton articleId={article.id} isPremium={article.isPremium} />
+                      <ToggleFeaturedButton articleId={article.id} isFeatured={article.isFeatured} />
                     </div>
                   )}
                 </td>
