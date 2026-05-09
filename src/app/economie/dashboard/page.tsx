@@ -76,8 +76,11 @@ export default async function EconomieDashboardPage() {
             </div>
           </section>
 
+          {/* AFRICAN MARKETS LIVE */}
+          <GlobalMarketSection type="africa" />
+
           {/* GLOBAL MARKETS LIVE */}
-          <GlobalMarketSection />
+          <GlobalMarketSection type="global" />
 
           {/* TOP MOVERS TABLE */}
           <section style={{ marginBottom: '4rem' }}>

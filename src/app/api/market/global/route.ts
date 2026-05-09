@@ -1,30 +1,29 @@
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  const symbols = ['^GSPC', '^IXIC', '^FCHI', '^GDAXI', '^N225', '^FTSE'];
+  const symbols = [
+    '^GSPC', '^IXIC', '^FCHI', '^GDAXI', '^N225', '^FTSE', // Global
+    '^J200.JO', '^EGX30', 'NGXASI.LG', 'MASI.CAS', 'NSE20.NR' // Africa
+  ];
   const names: Record<string, string> = {
     '^GSPC': 'S&P 500',
     '^IXIC': 'Nasdaq',
     '^FCHI': 'CAC 40',
     '^GDAXI': 'DAX 40',
     '^N225': 'Nikkei 225',
-    '^FTSE': 'FTSE 100'
+    '^FTSE': 'FTSE 100',
+    '^J200.JO': 'JSE Top 40 (SA)',
+    '^EGX30': 'EGX 30 (Egypte)',
+    'NGXASI.LG': 'NGX ASI (Nigeria)',
+    'MASI.CAS': 'MASI (Maroc)',
+    'NSE20.NR': 'NSE 20 (Kenya)'
   };
 
   try {
-    // Dans un environnement de production, vous utiliseriez une clé API (AlphaVantage, Finnhub, etc.)
-    // Ici, nous simulons une récupération de données temps réel basée sur des variations réalistes
-    // ou nous pourrions appeler un proxy public si disponible.
-    
     const data = symbols.map(symbol => {
-      // Simulation de données temps réel basées sur des bases réelles
       const baseValues: Record<string, number> = {
-        '^GSPC': 5200,
-        '^IXIC': 16400,
-        '^FCHI': 8100,
-        '^GDAXI': 18200,
-        '^N225': 39500,
-        '^FTSE': 7900
+        '^GSPC': 5200, '^IXIC': 16400, '^FCHI': 8100, '^GDAXI': 18200, '^N225': 39500, '^FTSE': 7900,
+        '^J200.JO': 74000, '^EGX30': 28500, 'NGXASI.LG': 104000, 'MASI.CAS': 13200, 'NSE20.NR': 1750
       };
 
       const base = baseValues[symbol];

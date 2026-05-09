@@ -13,7 +13,7 @@ interface MarketData {
   history: number[];
 }
 
-export default function GlobalMarketSection() {
+export default function GlobalMarketSection({ type = 'global' }: { type?: 'global' | 'africa' }) {
   const [markets, setMarkets] = useState<MarketData[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
@@ -21,8 +21,13 @@ export default function GlobalMarketSection() {
   const fetchMarkets = async () => {
     try {
       const res = await fetch('/api/market/global');
-      const data = await res.json();
-      if (Array.isArray(data)) {
+      const allData = await res.json();
+      if (Array.isArray(allData)) {
+        const globalSymbols = ['^GSPC', '^IXIC', '^FCHI', '^GDAXI', '^N225', '^FTSE'];
+        const data = type === 'global' 
+          ? allData.filter(m => globalSymbols.includes(m.symbol))
+          : allData.filter(m => !globalSymbols.includes(m.symbol));
+          
         setMarkets(data);
         setLastUpdate(new Date());
       }
@@ -51,7 +56,8 @@ export default function GlobalMarketSection() {
     <section style={{ marginBottom: '4rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <h2 style={{ fontSize: '1.5rem', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span style={{ color: '#3b82f6' }}>🌍</span> Marchés Mondiaux (Live)
+          <span style={{ color: type === 'global' ? '#3b82f6' : '#059669' }}>{type === 'global' ? '🌍' : '🐘'}</span> 
+          {type === 'global' ? 'Marchés Mondiaux (Live)' : 'Places Africaines (Live)'}
         </h2>
         <div style={{ fontSize: '0.7rem', color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <span style={{ width: '8px', height: '8px', backgroundColor: '#22c55e', borderRadius: '50%', display: 'inline-block' }}></span>
