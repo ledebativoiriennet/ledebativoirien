@@ -63,17 +63,38 @@ export default function AdminSyncPage() {
           <p className="text-[#888] mb-6 text-sm">
             Scanne toute la base de données et reconnecte les images manquantes des anciens articles.
           </p>
-          <button
-            onClick={handleRepair}
-            disabled={loading || loadingRepair}
-            className={`w-full px-6 py-3 rounded-lg font-bold transition-all ${
-              loadingRepair 
-                ? 'bg-gray-700 text-gray-400 cursor-not-allowed' 
-                : 'bg-blue-600 hover:bg-blue-700 text-white'
-            }`}
-          >
-            {loadingRepair ? 'Réparation en cours...' : '🔧 Réparer TOUTES les images'}
-          </button>
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={handleRepair}
+              disabled={loading || loadingRepair}
+              className={`w-full px-6 py-3 rounded-lg font-bold transition-all ${
+                loadingRepair 
+                  ? 'bg-gray-700 text-gray-400 cursor-not-allowed' 
+                  : 'bg-blue-600 hover:bg-blue-700 text-white'
+              }`}
+            >
+              {loadingRepair ? 'Réparation en cours...' : '🔧 Réparer via WP (Si en ligne)'}
+            </button>
+            <button
+              onClick={async () => {
+                setLoadingRepair(true);
+                try {
+                  const res = await fetch('/api/admin/reconnect-media', { method: 'POST' });
+                  const data = await res.json();
+                  setResult(res.ok ? data.message : `Erreur: ${data.error}`);
+                } catch (e) { setResult('Erreur réseau'); }
+                finally { setLoadingRepair(false); }
+              }}
+              disabled={loading || loadingRepair}
+              className={`w-full px-6 py-3 rounded-lg font-bold transition-all ${
+                loadingRepair 
+                  ? 'bg-gray-700 text-gray-400 cursor-not-allowed' 
+                  : 'bg-green-600 hover:bg-green-700 text-white'
+              }`}
+            >
+              🔗 Relier les images locales (Hostinger)
+            </button>
+          </div>
         </div>
       </div>
 
