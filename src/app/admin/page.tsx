@@ -170,6 +170,9 @@ export default async function AdminDashboard() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h1 style={{ fontSize: '2rem', fontWeight: 900, color: '#0f172a' }}>Tableau de bord <span style={{ color: '#64748b', fontSize: '1rem', fontWeight: 'normal' }}>(Style AdSense)</span></h1>
         <div style={{ display: 'flex', gap: '1rem' }}>
+           <a href="/admin/synchronisation" style={{ backgroundColor: '#10b981', color: 'white', padding: '0.5rem 1rem', borderRadius: '20px', fontWeight: 'bold', fontSize: '0.9rem', textDecoration: 'none' }}>
+            🔄 Synchroniser WordPress
+          </a>
            <a href="/admin/marketplace/ventes" style={{ backgroundColor: '#3b82f6', color: 'white', padding: '0.5rem 1rem', borderRadius: '20px', fontWeight: 'bold', fontSize: '0.9rem', textDecoration: 'none' }}>
             🛒 Ventes Kiosque
           </a>
