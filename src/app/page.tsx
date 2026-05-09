@@ -411,6 +411,33 @@ export default async function Home() {
         </div>
 
 
+
+        {/* Confidentiels Section */}
+        {confidentielArticles && confidentielArticles.length > 0 && (
+          <div style={{ marginBottom: "3rem", backgroundColor: "#fff5f5", border: "1px solid #feb2b2", borderRadius: "16px", overflow: "hidden" }}>
+            <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #feb2b2", display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "#7f1d1d", color: "white" }}>
+              <h2 style={{ fontSize: "1.1rem", fontWeight: 900, textTransform: "uppercase", margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                🔒 Les Confidentiels
+              </h2>
+              <Link href="/confidentiels" style={{ fontSize: "0.8rem", color: "white", textDecoration: "none", fontWeight: "bold" }}>Voir tout →</Link>
+            </div>
+            <div style={{ padding: "1rem" }}>
+              <div style={{ display: "flex", gap: "1.5rem", overflowX: "auto", paddingBottom: "0.5rem", WebkitOverflowScrolling: "touch" }}>
+                {confidentielArticles.map((article: any) => (
+                  <Link key={article.id} href={`/article/${article.slug}`} style={{ flexShrink: 0, width: "240px", textDecoration: "none" }}>
+                    <div style={{ fontSize: "0.65rem", color: "#b91c1c", fontWeight: 800, textTransform: "uppercase", marginBottom: "0.3rem" }}>
+                      {new Date(article.publishedAt).toLocaleDateString('fr-FR')}
+                    </div>
+                    <h3 style={{ fontSize: "0.9rem", fontWeight: 800, color: "var(--foreground)", lineHeight: 1.3, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", margin: 0 }}>
+                      {article.title}
+                    </h3>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Dossiers & Enquêtes - CENTERED */}
         {dossiersArticles && dossiersArticles.length > 0 && (
           <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "2.5rem" }}>
