@@ -13,7 +13,6 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { PushNotificationPrompt, ConsentManagerButton } from "@/components/PushNotificationPrompt";
 import { CookieConsentPopup } from "@/components/CookieConsentPopup";
 import PopupAd from "@/components/PopupAd";
-import FloatingSocialPill from "@/components/FloatingSocialPill";
 import WhatsAppPopup from "@/components/WhatsAppPopup";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -425,7 +424,6 @@ export default async function RootLayout({
           </div>
         </footer>
         <PopupAd />
-        <FloatingSocialPill siteSettings={siteSettings} />
         </Providers>
         </div>
       </body>
