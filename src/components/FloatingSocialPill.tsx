@@ -12,12 +12,13 @@ export default function FloatingSocialPill({ siteSettings }: Props) {
   if (!siteSettings) return null;
 
   const socials = [
+    { url: "https://whatsapp.com/channel/0029VbCauTA6xCSNYgDwIj1u", color: "#25D366", label: "💬", name: "WhatsApp" },
     { url: siteSettings.facebookUrl, color: "#1877F2", label: "f", name: "Facebook" },
     { url: siteSettings.twitterUrl, color: "#000000", label: "𝕏", name: "X" },
     { url: siteSettings.instagramUrl, color: "#dc2743", label: "📷", name: "Instagram", gradient: "linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)" },
     { url: siteSettings.linkedinUrl, color: "#0A66C2", label: "in", name: "LinkedIn" },
     { url: siteSettings.youtubeUrl, color: "#FF0000", label: "▶", name: "YouTube" },
-  ].filter(s => s.url);
+  ].filter(s => s.url || s.name === "WhatsApp");
 
   if (socials.length === 0) return null;
 
