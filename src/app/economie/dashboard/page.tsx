@@ -37,20 +37,20 @@ export default async function EconomieDashboardPage() {
   return (
     <div className="container" style={{ padding: '2rem 1rem', minHeight: '100vh' }}>
       <header style={{ marginBottom: '3rem', borderBottom: '1px solid var(--border)', paddingBottom: '1rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem' }}>
+        <div className="dashboard-header">
           <div>
-            <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: 'var(--primary)', marginBottom: '0.5rem' }}>Dashboard Économique</h1>
-            <p style={{ color: 'var(--muted)', fontSize: '1.1rem' }}>Le baromètre financier de l'espace UEMOA et de la Côte d'Ivoire.</p>
+            <h1 style={{ fontSize: 'clamp(1.8rem, 5vw, 2.5rem)', fontWeight: 900, color: 'var(--primary)', marginBottom: '0.5rem' }}>Dashboard Économique</h1>
+            <p style={{ color: 'var(--muted)', fontSize: 'clamp(0.9rem, 3vw, 1.1rem)' }}>Le baromètre financier de l'espace UEMOA et de la Côte d'Ivoire.</p>
           </div>
-          <div style={{ fontSize: '0.8rem', color: 'var(--muted)', textAlign: 'right' }}>
+          <div style={{ fontSize: '0.8rem', color: 'var(--muted)', textAlign: 'left' }}>
             Mise à jour : {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
           </div>
         </div>
       </header>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: '2.5rem' }}>
+      <div className="dashboard-grid">
         {/* MAIN CONTENT */}
-        <div>
+        <div style={{ minWidth: 0 }}>
           {/* BRVM INDICES */}
           <section style={{ marginBottom: '4rem' }}>
             <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -96,7 +96,7 @@ export default async function EconomieDashboardPage() {
           </section>
 
           {/* COMMODITIES & FOREX */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2.5rem', marginBottom: '4rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2.5rem', marginBottom: '4rem' }}>
             <section>
               <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '1.5rem' }}>Matières Premières</h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -130,7 +130,7 @@ export default async function EconomieDashboardPage() {
           {/* MACRO BAROMETER */}
           <section style={{ marginBottom: '4rem' }}>
             <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '1.5rem' }}>Baromètre Macro-économique</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
               <div style={{ padding: '1.5rem', backgroundColor: '#eff6ff', borderRadius: '12px', border: '1px solid #bfdbfe' }}>
                 <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#1e40af' }}>PIB CÔTE D'IVOIRE</div>
                 <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#1e3a8a' }}>+7.2%</div>
