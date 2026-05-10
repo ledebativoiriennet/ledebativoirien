@@ -36,7 +36,7 @@ export default function SondagesClient({ items }: { items: any[] }) {
       setOptionsCount(2);
       router.refresh();
     } else {
-      alert("Erreur lors de l'enregistrement.");
+      alert("Erreur lors de l'enregistrement : " + (res.error || "Une erreur inconnue est survenue."));
     }
     setLoading(false);
   }

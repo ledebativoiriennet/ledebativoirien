@@ -112,37 +112,47 @@ export async function deleteTitrologie(id: string) {
 
 // --- SONDAGES ---
 export async function createPoll(question: string, options: string[]) {
-  await checkAdminOrEditor();
-  
-  // On désactive les sondages précédents pour n'avoir qu'un sondage du jour
-  await prisma.poll.updateMany({ data: { isActive: false } });
+  try {
+    await checkAdminOrEditor();
+    
+    // On désactive les sondages précédents pour n'avoir qu'un sondage du jour
+    await prisma.poll.updateMany({ data: { isActive: false } });
 
-  await prisma.poll.create({
-    data: {
-      question,
-      isActive: true,
-      options: {
-        create: options.map(text => ({ text }))
+    await prisma.poll.create({
+      data: {
+        question,
+        isActive: true,
+        options: {
+          create: options.map(text => ({ text }))
+        }
       }
-    }
-  });
+    });
 
-  await logActivity({
-    action: "CREATE_POLL",
-    resource: question,
-    details: `Options: ${options.join(', ')}`
-  });
+    await logActivity({
+      action: "CREATE_POLL",
+      resource: question,
+      details: `Options: ${options.join(', ')}`
+    });
 
-  return { success: true };
+    return { success: true };
+  } catch (error) {
+    console.error("Erreur création sondage:", error);
+    return { success: false, error: (error as Error).message };
+  }
 }
 
 export async function togglePollStatus(id: string, isActive: boolean) {
-  await checkAdminOrEditor();
-  if (isActive) {
-    await prisma.poll.updateMany({ data: { isActive: false } });
+  try {
+    await checkAdminOrEditor();
+    if (isActive) {
+      await prisma.poll.updateMany({ data: { isActive: false } });
+    }
+    await prisma.poll.update({ where: { id }, data: { isActive } });
+    return { success: true };
+  } catch (error) {
+    console.error("Erreur statut sondage:", error);
+    return { success: false, error: (error as Error).message };
   }
-  await prisma.poll.update({ where: { id }, data: { isActive } });
-  return { success: true };
 }
 
 export async function deletePoll(id: string) {
