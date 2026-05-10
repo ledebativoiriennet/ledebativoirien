@@ -69,6 +69,15 @@ export async function publishArticle(formData: FormData) {
       savedVideoPath = await saveUpload(videoFile);
     }
 
+    // Essayer de trouver un auteur correspondant à l'utilisateur connecté
+    let authorId = null;
+    if (session?.user?.email) {
+      const author = await prisma.author.findFirst({
+        where: { email: session.user.email }
+      });
+      if (author) authorId = author.id;
+    }
+
     const newArticle = await prisma.article.create({
       data: {
         title,
@@ -85,6 +94,7 @@ export async function publishArticle(formData: FormData) {
         isConfidentiel,
         isFeatured,
         publishedAt: role === "CONTRIBUTOR" ? null : new Date(),
+        authorId,
         categories: categoryIds.length > 0 ? {
           connect: categoryIds.map(id => ({ id }))
         } : undefined,
@@ -115,7 +125,7 @@ export async function publishArticle(formData: FormData) {
       details: `Article créé avec le slug: ${newArticle.slug}`
     });
 
-    return { success: true };
+    return { success: true, id: newArticle.id };
   } catch (error) {
     console.error("Erreur création article:", error);
     return { success: false, error: "Erreur serveur lors de la publication." };
@@ -212,8 +222,21 @@ export async function updateArticle(articleId: string, formData: FormData) {
   const session = await getServerSession(authOptions);
   const role = (session?.user as any)?.role;
 
-  if (role !== "ADMIN" && role !== "EDITOR") {
-    return { success: false, error: "Accès refusé. Seul un Éditeur ou Administrateur peut modifier un article." };
+  if (role !== "ADMIN" && role !== "EDITOR" && role !== "CONTRIBUTOR") {
+    return { success: false, error: "Accès refusé." };
+  }
+
+  // Si c'est un contributeur, on vérifie s'il est l'auteur
+  if (role === "CONTRIBUTOR") {
+    const article = await prisma.article.findUnique({
+      where: { id: articleId },
+      include: { author: true }
+    });
+    
+    const userEmail = session?.user?.email;
+    if (!article || article.author?.email !== userEmail) {
+      return { success: false, error: "Accès refusé. Vous ne pouvez modifier que vos propres articles." };
+    }
   }
 
   const title = formData.get("title") as string;
