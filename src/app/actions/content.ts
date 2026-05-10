@@ -146,9 +146,26 @@ export async function togglePollStatus(id: string, isActive: boolean) {
 }
 
 export async function deletePoll(id: string) {
-  await checkAdminOrEditor();
-  await prisma.poll.delete({ where: { id } });
-  return { success: true };
+  try {
+    await checkAdminOrEditor();
+    
+    // Supprimer d'abord les options du sondage pour éviter l'erreur de clé étrangère (FK constraint)
+    await prisma.pollOption.deleteMany({
+      where: { pollId: id }
+    });
+
+    await prisma.poll.delete({ where: { id } });
+
+    await logActivity({
+      action: "DELETE_POLL",
+      resource: `Poll ID: ${id}`
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Erreur suppression sondage:", error);
+    return { success: false, error: (error as Error).message };
+  }
 }
 
 // --- AGENDA / ACTIVITES ---

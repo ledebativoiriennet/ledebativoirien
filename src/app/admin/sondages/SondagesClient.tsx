@@ -43,13 +43,21 @@ export default function SondagesClient({ items }: { items: any[] }) {
 
   async function handleToggle(id: string, currentState: boolean) {
     const res = await togglePollStatus(id, !currentState);
-    if (res.success) router.refresh();
+    if (res.success) {
+      router.refresh();
+    } else {
+      alert("Erreur : " + (res.error || "Impossible de modifier le statut."));
+    }
   }
 
   async function handleDelete(id: string) {
     if (!confirm("Voulez-vous supprimer ce sondage ?")) return;
     const res = await deletePoll(id);
-    if (res.success) router.refresh();
+    if (res.success) {
+      router.refresh();
+    } else {
+      alert("Erreur : " + (res.error || "Impossible de supprimer le sondage."));
+    }
   }
 
   return (
