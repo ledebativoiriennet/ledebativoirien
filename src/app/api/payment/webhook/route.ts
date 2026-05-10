@@ -43,7 +43,11 @@ export async function POST(request: Request) {
            let plan = 'Mensuel';
            if (amount === 200) { days = 1; plan = 'Quotidien'; }
            if (amount === 700) { days = 7; plan = 'Hebdo'; }
+           if (amount === 1000) { days = 7; plan = 'Confidentiel Hebdo'; }
+           if (amount === 2000) { days = 30; plan = 'Mensuel'; }
+           if (amount === 3000) { days = 30; plan = 'Confidentiel Mensuel'; }
            if (amount === 20000) { days = 365; plan = 'Annuel'; }
+           if (amount === 27000) { days = 365; plan = 'Ultimate Annuel'; }
            
            const endDate = new Date();
            endDate.setDate(endDate.getDate() + days);
@@ -58,9 +62,13 @@ export async function POST(request: Request) {
            });
            
            if (user.role === 'USER') {
+             let roleToSet = 'PREMIUM';
+             if (plan.includes('Ultimate')) roleToSet = 'ULTIMATE';
+             else if (plan.includes('Confidentiel')) roleToSet = 'CONFIDENTIEL';
+
              await prisma.user.update({
                where: { id: user.id },
-               data: { role: 'PREMIUM' }
+               data: { role: roleToSet }
              });
            }
         }

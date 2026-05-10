@@ -135,7 +135,10 @@ export default async function ArticlePage({ params }: Props) {
   // session est déjà déclaré plus haut
   // Stats for the article
   let initialLiked = false;
+  // Determine subscriber levels
   let isPremiumSubscriber = false;
+  let isConfidentielSubscriber = false;
+
   const initialLikeCount = await prisma.articleLike.count({ where: { articleId: article.id } });
 
   if (session?.user) {
@@ -145,11 +148,17 @@ export default async function ArticlePage({ params }: Props) {
     initialLiked = !!userLike;
 
     const role = (session.user as any).role;
-    isPremiumSubscriber = role === "ADMIN" || role === "EDITOR" || role === "PREMIUM";
+    isPremiumSubscriber = role === "ADMIN" || role === "EDITOR" || role === "PREMIUM" || role === "ULTIMATE";
+    isConfidentielSubscriber = role === "ADMIN" || role === "EDITOR" || role === "CONFIDENTIEL" || role === "ULTIMATE";
   }
 
   // Determine if paywall should be shown
-  const showPaywall = article.isPremium && !isPremiumSubscriber;
+  let showPaywall = false;
+  if (article.isConfidentiel) {
+    showPaywall = !isConfidentielSubscriber;
+  } else if (article.isPremium) {
+    showPaywall = !isPremiumSubscriber;
+  }
 
   // Fetch View Statistics
   const now = new Date();
@@ -397,7 +406,7 @@ export default async function ArticlePage({ params }: Props) {
 
             {showPaywall && (
               <div style={{ position: "relative", zIndex: 10, marginTop: "-2rem" }}>
-                <Paywall />
+                <Paywall type={article.isConfidentiel ? 'confidentiel' : 'premium'} />
               </div>
             )}
           </div>

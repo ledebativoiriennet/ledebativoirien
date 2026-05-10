@@ -31,10 +31,17 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Identifiants incorrects");
         }
 
-        // Si l'utilisateur a un abonnement actif, on force son rôle en PREMIUM (s'il était juste USER)
+        // Déterminer le rôle effectif basé sur les abonnements actifs
         let effectiveRole = user.role;
         if (effectiveRole === 'USER' && user.subscriptions.length > 0) {
-          effectiveRole = 'PREMIUM';
+          const plans = user.subscriptions.map(s => s.plan.toUpperCase());
+          if (plans.some(p => p.includes('ULTIMATE'))) {
+            effectiveRole = 'ULTIMATE';
+          } else if (plans.some(p => p.includes('CONFIDENTIEL'))) {
+            effectiveRole = 'CONFIDENTIEL';
+          } else {
+            effectiveRole = 'PREMIUM';
+          }
         }
 
         return {
