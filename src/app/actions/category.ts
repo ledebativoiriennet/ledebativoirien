@@ -31,13 +31,13 @@ export async function createCategory(formData: FormData) {
 
     const parentId = parentIdStr && parentIdStr !== "" ? parentIdStr : null;
 
-    await prisma.category.create({
+    const newCategory = await prisma.category.create({
       data: { name, slug, parentId }
     });
     
     revalidatePath("/admin/categories");
     revalidatePath("/admin/articles/create");
-    return { success: true };
+    return { success: true, category: { id: newCategory.id, name: newCategory.name } };
   } catch (error) {
     console.error("Erreur Category:", error);
     return { success: false, error: "Erreur lors de la création de la catégorie." };

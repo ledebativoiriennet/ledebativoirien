@@ -3,6 +3,7 @@
 import { useState, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { publishArticle } from "@/app/actions/admin";
+import { createCategory } from "@/app/actions/category";
 import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
 import Link from "next/link";
@@ -20,6 +21,29 @@ export default function CreateArticleForm({ categories }: { categories: Category
   const [content, setContent] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const quillRef = useRef<any>(null);
+
+  // New Category State
+  const [localCategories, setLocalCategories] = useState<Category[]>(categories);
+  const [showNewCat, setShowNewCat] = useState(false);
+  const [newCatName, setNewCatName] = useState("");
+  const [creatingCat, setCreatingCat] = useState(false);
+
+  const handleCreateCategory = async () => {
+    if (!newCatName.trim()) return;
+    setCreatingCat(true);
+    const fd = new FormData();
+    fd.append("name", newCatName);
+    
+    const res = await createCategory(fd);
+    if (res.success && res.category) {
+      setLocalCategories([...localCategories, res.category as Category]);
+      setShowNewCat(false);
+      setNewCatName("");
+    } else {
+      alert(res.error || "Erreur de création");
+    }
+    setCreatingCat(false);
+  };
 
   const imageHandler = () => {
     const input = document.createElement('input');
@@ -149,13 +173,43 @@ export default function CreateArticleForm({ categories }: { categories: Category
         </div>
 
         <div>
-          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Catégories (Maintenez Ctrl/Cmd pour en sélectionner plusieurs)</label>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+            <label style={{ fontWeight: 'bold', color: '#475569' }}>Catégories (Maintenez Ctrl/Cmd pour en sélectionner plusieurs)</label>
+            <button 
+              type="button" 
+              onClick={() => setShowNewCat(!showNewCat)}
+              style={{ fontSize: '0.8rem', backgroundColor: '#e0e7ff', color: '#4338ca', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+            >
+              + Nouvelle Catégorie
+            </button>
+          </div>
+
+          {showNewCat && (
+            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem', padding: '0.5rem', backgroundColor: '#f8fafc', borderRadius: '4px', border: '1px dashed #cbd5e1' }}>
+              <input 
+                type="text" 
+                value={newCatName}
+                onChange={(e) => setNewCatName(e.target.value)}
+                placeholder="Nom de la catégorie..."
+                style={{ flex: 1, padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
+              />
+              <button 
+                type="button" 
+                onClick={handleCreateCategory}
+                disabled={creatingCat || !newCatName.trim()}
+                style={{ backgroundColor: '#2563eb', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '4px', cursor: (creatingCat || !newCatName.trim()) ? 'not-allowed' : 'pointer' }}
+              >
+                {creatingCat ? '...' : 'Ajouter'}
+              </button>
+            </div>
+          )}
+
           <select 
             multiple 
             name="categories" 
             style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e1', backgroundColor: 'white', minHeight: '120px' }}
           >
-            {categories.map(cat => (
+            {localCategories.map(cat => (
               <option key={cat.id} value={cat.id} style={{ padding: '0.25rem' }}>{cat.name}</option>
             ))}
           </select>
