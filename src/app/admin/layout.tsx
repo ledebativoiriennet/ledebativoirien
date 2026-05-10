@@ -46,11 +46,13 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.25rem' }}>Espace {role}</p>
         </div>
         <nav style={{ padding: '1.5rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
-          <Link href="/admin" style={{ padding: '0.75rem 1rem', borderRadius: '4px', textDecoration: 'none', color: '#cbd5e1', fontWeight: 'bold', transition: 'all 0.2s' }}>📊 Tableau de bord</Link>
-          <Link href="/admin/articles" style={{ display: 'block', padding: '0.75rem', borderRadius: '8px', color: '#cbd5e1', textDecoration: 'none', fontWeight: 'bold', transition: 'all 0.2s' }}>📝 Articles</Link>
+          <Link href="/admin" style={{ display: 'block', padding: '0.75rem', borderRadius: '8px', backgroundColor: '#1e293b', color: 'white', textDecoration: 'none', fontWeight: 'bold', transition: 'all 0.2s' }}>🏠 Vue d'ensemble</Link>
+          <Link href="/admin/articles" style={{ display: 'block', padding: '0.75rem', borderRadius: '8px', color: '#cbd5e1', textDecoration: 'none', fontWeight: 'bold', transition: 'all 0.2s' }}>📰 Articles</Link>
+          <Link href="/admin/categories" style={{ display: 'block', padding: '0.75rem', borderRadius: '8px', color: '#cbd5e1', textDecoration: 'none', fontWeight: 'bold', transition: 'all 0.2s' }}>📁 Catégorie</Link>
+          <Link href="/admin/auteurs" style={{ display: 'block', padding: '0.75rem', borderRadius: '8px', color: '#cbd5e1', textDecoration: 'none', fontWeight: 'bold', transition: 'all 0.2s' }}>✍️ Auteurs</Link>
           <Link href="/admin/breaking-news" style={{ display: 'block', padding: '0.75rem', borderRadius: '8px', color: '#cbd5e1', textDecoration: 'none', fontWeight: 'bold', transition: 'all 0.2s' }}>🚨 Breaking News</Link>
           <Link href="/admin/flash-news" style={{ display: 'block', padding: '0.75rem', borderRadius: '8px', color: '#cbd5e1', textDecoration: 'none', fontWeight: 'bold', transition: 'all 0.2s' }}>⚡ Flash Infos</Link>
-          <Link href="/admin/titrologie" style={{ display: 'block', padding: '0.75rem', borderRadius: '8px', color: '#cbd5e1', textDecoration: 'none', fontWeight: 'bold', transition: 'all 0.2s' }}>📰 Titrologie</Link>
+          <Link href="/admin/titrologie" style={{ display: 'block', padding: '0.75rem', borderRadius: '8px', color: '#cbd5e1', textDecoration: 'none', fontWeight: 'bold', transition: 'all 0.2s' }}>🗞️ Titrologie</Link>
           <Link href="/admin/sondages" style={{ display: 'block', padding: '0.75rem', borderRadius: '8px', color: '#cbd5e1', textDecoration: 'none', fontWeight: 'bold', transition: 'all 0.2s' }}>📊 Sondages</Link>
           <Link href="/admin/agenda" style={{ display: 'block', padding: '0.75rem', borderRadius: '8px', color: '#cbd5e1', textDecoration: 'none', fontWeight: 'bold', transition: 'all 0.2s' }}>📅 Agenda</Link>
           <Link href="/admin/citations" style={{ display: 'block', padding: '0.75rem', borderRadius: '8px', color: '#cbd5e1', textDecoration: 'none', fontWeight: 'bold', transition: 'all 0.2s' }}>💬 Citations</Link>
@@ -68,6 +70,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             <>
               <Link href="/admin/entreprises" style={{ padding: '0.75rem 1rem', borderRadius: '4px', textDecoration: 'none', color: '#cbd5e1', fontWeight: 'bold', transition: 'all 0.2s' }}>🏢 Entreprises B2B</Link>
               <Link href="/admin/equipe" style={{ padding: '0.75rem 1rem', borderRadius: '4px', textDecoration: 'none', color: '#cbd5e1', fontWeight: 'bold', transition: 'all 0.2s' }}>🛡️ Équipe</Link>
+              <Link href="/admin/auteurs" style={{ padding: '0.75rem 1rem', borderRadius: '4px', textDecoration: 'none', color: '#cbd5e1', fontWeight: 'bold', transition: 'all 0.2s' }}>✍️ Auteurs & Rédacteurs</Link>
               <Link href="/admin/users" style={{ padding: '0.75rem 1rem', borderRadius: '4px', textDecoration: 'none', color: '#cbd5e1', fontWeight: 'bold', transition: 'all 0.2s' }}>👥 Lecteurs & Abonnés</Link>
               <Link href="/admin/newsletter" style={{ padding: '0.75rem 1rem', borderRadius: '4px', textDecoration: 'none', color: '#cbd5e1', fontWeight: 'bold', transition: 'all 0.2s' }}>✉️ Newsletter</Link>
               <Link href="/admin/leads" style={{ padding: '0.75rem 1rem', borderRadius: '4px', textDecoration: 'none', color: '#cbd5e1', fontWeight: 'bold', transition: 'all 0.2s' }}>💼 Leads Annonceurs</Link>

@@ -127,21 +127,17 @@ export default function EditArticleForm({ article, categories }: { article: any,
         </div>
 
         <div>
-          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Catégories</label>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '0.5rem', padding: '1rem', backgroundColor: '#f8fafc', borderRadius: '4px', border: '1px solid #cbd5e1' }}>
+          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Catégories (Maintenez Ctrl/Cmd pour en sélectionner plusieurs)</label>
+          <select 
+            multiple 
+            name="categories" 
+            defaultValue={articleCategoryIds}
+            style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e1', backgroundColor: 'white', minHeight: '120px' }}
+          >
             {categories.map(cat => (
-              <label key={cat.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.9rem', color: '#334155' }}>
-                <input 
-                  type="checkbox" 
-                  name="categories" 
-                  value={cat.id} 
-                  defaultChecked={articleCategoryIds.includes(cat.id)}
-                  style={{ cursor: 'pointer' }} 
-                />
-                {cat.name}
-              </label>
+              <option key={cat.id} value={cat.id} style={{ padding: '0.25rem' }}>{cat.name}</option>
             ))}
-          </div>
+          </select>
         </div>
 
         <div>
