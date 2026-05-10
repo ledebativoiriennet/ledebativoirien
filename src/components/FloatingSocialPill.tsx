@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 type Props = {
   siteSettings: any;
@@ -8,8 +9,9 @@ type Props = {
 
 export default function FloatingSocialPill({ siteSettings }: Props) {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
 
-  if (!siteSettings) return null;
+  if (!siteSettings || pathname === "/") return null;
 
   const socials = [
     { url: "https://whatsapp.com/channel/0029VbCauTA6xCSNYgDwIj1u", color: "#25D366", label: "💬", name: "WhatsApp" },
