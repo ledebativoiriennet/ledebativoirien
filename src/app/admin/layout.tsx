@@ -59,11 +59,14 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           <Link href="/admin/communiques" style={{ display: 'block', padding: '0.75rem', borderRadius: '8px', color: '#cbd5e1', textDecoration: 'none', fontWeight: 'bold', transition: 'all 0.2s' }}>📢 Communiqués</Link>
           <Link href="/admin/meteo" style={{ display: 'block', padding: '0.75rem', borderRadius: '8px', color: '#cbd5e1', textDecoration: 'none', fontWeight: 'bold', transition: 'all 0.2s' }}>⛅ Météo</Link>
           <Link href="/admin/sports" style={{ display: 'block', padding: '0.75rem', borderRadius: '8px', color: '#cbd5e1', textDecoration: 'none', fontWeight: 'bold', transition: 'all 0.2s' }}>⚽ Sports</Link>
+          <Link href="/admin/videos" style={{ display: 'block', padding: '0.75rem', borderRadius: '8px', color: '#cbd5e1', textDecoration: 'none', fontWeight: 'bold', transition: 'all 0.2s' }}>▶️ Vidéos WebTV</Link>
+          <Link href="/admin/economie" style={{ display: 'block', padding: '0.75rem', borderRadius: '8px', color: '#cbd5e1', textDecoration: 'none', fontWeight: 'bold', transition: 'all 0.2s' }}>📈 Indicateurs Macro</Link>
           <Link href="/admin/reseaux-sociaux" style={{ display: 'block', padding: '0.75rem', borderRadius: '8px', color: '#cbd5e1', textDecoration: 'none', fontWeight: 'bold', transition: 'all 0.2s' }}>🔗 Réseaux Sociaux</Link>
           <Link href="/admin/marketplace" style={{ display: 'block', padding: '0.75rem', borderRadius: '8px', color: '#cbd5e1', textDecoration: 'none', fontWeight: 'bold', transition: 'all 0.2s', border: '1px solid #dc2626', marginTop: '0.5rem', backgroundColor: 'rgba(220, 38, 38, 0.1)' }}>🛒 Kiosque PDF</Link>
           <Link href="/admin/publicites" style={{ display: 'block', padding: '0.75rem', borderRadius: '8px', color: '#cbd5e1', textDecoration: 'none', fontWeight: 'bold', transition: 'all 0.2s', border: '1px solid #3b82f6', marginTop: '0.5rem', backgroundColor: 'rgba(59, 130, 246, 0.1)' }}>📢 Régie Publicitaire</Link>
           {role === 'ADMIN' && (
             <>
+              <Link href="/admin/entreprises" style={{ padding: '0.75rem 1rem', borderRadius: '4px', textDecoration: 'none', color: '#cbd5e1', fontWeight: 'bold', transition: 'all 0.2s' }}>🏢 Entreprises B2B</Link>
               <Link href="/admin/equipe" style={{ padding: '0.75rem 1rem', borderRadius: '4px', textDecoration: 'none', color: '#cbd5e1', fontWeight: 'bold', transition: 'all 0.2s' }}>🛡️ Équipe</Link>
               <Link href="/admin/users" style={{ padding: '0.75rem 1rem', borderRadius: '4px', textDecoration: 'none', color: '#cbd5e1', fontWeight: 'bold', transition: 'all 0.2s' }}>👥 Lecteurs & Abonnés</Link>
               <Link href="/admin/newsletter" style={{ padding: '0.75rem 1rem', borderRadius: '4px', textDecoration: 'none', color: '#cbd5e1', fontWeight: 'bold', transition: 'all 0.2s' }}>✉️ Newsletter</Link>
