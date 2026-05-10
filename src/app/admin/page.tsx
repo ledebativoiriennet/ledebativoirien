@@ -20,34 +20,34 @@ export default async function AdminDashboard() {
     prisma.subscription.findMany(), // We fetch all to calculate revenues
     prisma.adInquiry.count(),
     prisma.articleLike.count(),
-    prisma.readingHistory.findMany({
-      where: { readAt: { gte: sevenDaysAgo } },
-      select: { readAt: true }
+    prisma.articleView.findMany({
+      where: { viewedAt: { gte: sevenDaysAgo } },
+      select: { viewedAt: true }
     })
   ]);
 
   // Helper to fetch top articles
   const getTopArticles = async (since: Date) => {
-    const histories = await prisma.readingHistory.groupBy({
+    const views = await prisma.articleView.groupBy({
       by: ['articleId'],
       _count: { articleId: true },
-      where: { readAt: { gte: since } },
+      where: { viewedAt: { gte: since } },
       orderBy: { _count: { articleId: 'desc' } },
       take: 10,
     });
 
-    if (histories.length === 0) return [];
+    if (views.length === 0) return [];
 
-    const articleIds = histories.map(h => h.articleId);
+    const articleIds = views.map(v => v.articleId);
     const articles = await prisma.article.findMany({
       where: { id: { in: articleIds } },
       select: { id: true, title: true, slug: true, categories: { select: { name: true }, take: 1 } }
     });
 
-    return histories.map(h => {
-      const art = articles.find(a => a.id === h.articleId);
+    return views.map(v => {
+      const art = articles.find(a => a.id === v.articleId);
       return {
-        count: h._count.articleId,
+        count: v._count.articleId,
         id: art?.id,
         title: art?.title,
         slug: art?.slug,
@@ -140,8 +140,8 @@ export default async function AdminDashboard() {
     readsByDay[d.toLocaleDateString('fr-FR', { weekday: 'short' })] = 0;
   }
   
-  recentReads.forEach(read => {
-    const day = new Date(read.readAt).toLocaleDateString('fr-FR', { weekday: 'short' });
+  recentReads.forEach(view => {
+    const day = new Date(view.viewedAt).toLocaleDateString('fr-FR', { weekday: 'short' });
     if (readsByDay[day] !== undefined) {
       readsByDay[day]++;
     }
@@ -380,9 +380,8 @@ export default async function AdminDashboard() {
         </div>
       </div>
 
-      {/* AUTRES INFOS */}
       <div style={{ marginTop: '2rem', padding: '1rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#475569', fontSize: '0.9rem' }}>
-        <p><strong>Note Technique :</strong> Les revenus estimés sont calculés à partir de la base d'abonnements enregistrés (Quotidien: 200F, Hebdo: 700F, Mensuel: 2000F). Les pages vues représentent les articles marqués comme "lus" dans l'historique des utilisateurs connectés.</p>
+        <p><strong>Note Technique :</strong> Les revenus estimés sont calculés à partir de la base d'abonnements enregistrés. Les pages vues représentent le trafic global dédoublonné (une vue par article par jour par visiteur).</p>
       </div>
 
     </div>

@@ -406,9 +406,11 @@ model ArticleView {
   id        String   @id @default(cuid())
   articleId String
   article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  ipHash    String?  // Hash IP + Date + ArticleID pour dédoublonnement
   viewedAt  DateTime @default(now())
 
   @@index([articleId, viewedAt])
+  @@index([ipHash])
 }
 
 model PushSubscription {
