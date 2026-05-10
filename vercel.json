@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/update-markets?secret=ldi_secret_update_2026",
+      "schedule": "0 6 * * *"
+    }
+  ]
+}

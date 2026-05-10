@@ -59,7 +59,14 @@ async function upsertIndicator(label: string, group: string, value: string, nume
 
 export async function GET(request: Request) {
   try {
-    const [gold, silver, cocoa, coffee, brent, wti, naturalGas, rates] = await Promise.all([
+    // 1. Vérification de la clé secrète pour la sécurité
+    const { searchParams } = new URL(request.url);
+    const secret = searchParams.get('secret');
+    if (secret !== process.env.CRON_SECRET && process.env.NODE_ENV === 'production') {
+      return NextResponse.json({ success: false, error: "Non autorisé" }, { status: 401 });
+    }
+
+    const [gold, silver, cocoa, coffee, brent, wti, naturalGas, cotton, zinc, rates] = await Promise.all([
       fetchYahoo("GC=F"),  // Or
       fetchYahoo("SI=F"),  // Argent
       fetchYahoo("CC=F"),  // Cacao Bourse
@@ -67,6 +74,8 @@ export async function GET(request: Request) {
       fetchYahoo("BZ=F"),  // Pétrole Brent
       fetchYahoo("CL=F"),  // Pétrole WTI
       fetchYahoo("NG=F"),  // Gaz Naturel
+      fetchYahoo("CT=F"),  // Coton
+      fetchYahoo("ZN=F"),  // Zinc
       fetchCurrencies()
     ]);
 
@@ -84,6 +93,13 @@ export async function GET(request: Request) {
       await upsertIndicator("Argent", "METAUX1", `${silver.price.toFixed(2)} $`, silver.price, trend, `${varPct}%`);
     }
 
+    // MÉTAUX: ZINC
+    if (zinc) {
+      const trend = zinc.price > zinc.prev ? "UP" : zinc.price < zinc.prev ? "DOWN" : "FLAT";
+      const varPct = ((zinc.price - zinc.prev) / zinc.prev * 100).toFixed(2);
+      await upsertIndicator("Zinc", "METAUX1", `${zinc.price.toFixed(2)} $`, zinc.price, trend, `${varPct}%`);
+    }
+
     // CACAO
     if (cocoa) {
       const trend = cocoa.price > cocoa.prev ? "UP" : cocoa.price < cocoa.prev ? "DOWN" : "FLAT";
@@ -96,6 +112,13 @@ export async function GET(request: Request) {
       const trend = coffee.price > coffee.prev ? "UP" : coffee.price < coffee.prev ? "DOWN" : "FLAT";
       const varPct = ((coffee.price - coffee.prev) / coffee.prev * 100).toFixed(2);
       await upsertIndicator("Café (Bourse)", "CACAO", `${coffee.price.toFixed(2)} $`, coffee.price, trend, `${varPct}%`);
+    }
+
+    // COTON (Groupe ANACARDE/COTON par convention du projet)
+    if (cotton) {
+      const trend = cotton.price > cotton.prev ? "UP" : cotton.price < cotton.prev ? "DOWN" : "FLAT";
+      const varPct = ((cotton.price - cotton.prev) / cotton.prev * 100).toFixed(2);
+      await upsertIndicator("Coton", "ANACARDE", `${cotton.price.toFixed(2)} $`, cotton.price, trend, `${varPct}%`);
     }
 
     // ÉNERGIE: Pétrole Brent
@@ -128,9 +151,10 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: "Marchés mis à jour : Or, Argent, Cacao, Café, Énergie (Brent/WTI/Gaz), Devises"
+      message: "Marchés mis à jour : Or, Argent, Zinc, Cacao, Café, Coton, Énergie, Devises"
     });
   } catch (error: any) {
+    console.error("[CRON ERROR]", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
