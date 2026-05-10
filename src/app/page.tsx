@@ -13,6 +13,7 @@ import HomeAudioModule from "@/components/HomeAudioModule";
 import GoogleAdSlot from "@/components/GoogleAdSlot";
 import SafeImage from "@/components/SafeImage";
 import WhatsAppAd from "@/components/WhatsAppAd";
+import SubscriptionBanner from "@/components/SubscriptionBanner";
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -611,6 +612,7 @@ export default async function Home() {
 
       {/* RIGHT COLUMN: Pubs & Les Plus Lus */}
       <aside className="portal-col-right">
+        <SubscriptionBanner />
 
 
         {/* Météo Widget */}

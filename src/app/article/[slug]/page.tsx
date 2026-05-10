@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { Paywall } from "@/components/Paywall";
+import SubscriptionBanner from "@/components/SubscriptionBanner";
 import Link from "next/link";
 import { getArticleImage } from "@/lib/utils";
 import { AdSlot } from "@/components/AdSlot";
@@ -203,6 +204,14 @@ export default async function ArticlePage({ params }: Props) {
       <ArticleStatsRecorder articleId={article.id} />
       <div className="article-layout" style={{ marginTop: "clamp(0.5rem, 5vw, 2rem)", marginBottom: "4rem" }}>
       
+      {/* LEFT COLUMN: Subscription Banner */}
+      <aside className="portal-col-left" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <SubscriptionBanner />
+        <div style={{ position: 'sticky', top: '100px' }}>
+          <SocialShareButtons title={article.title} layout="vertical" />
+        </div>
+      </aside>
+
       {/* CENTER COLUMN: Article Content & Bottom related */}
       <div className="portal-col-center">
         <article className="article-main-container">
