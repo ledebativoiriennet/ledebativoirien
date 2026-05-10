@@ -44,15 +44,40 @@ export async function createCategory(formData: FormData) {
   }
 }
 
-export async function deleteCategory(id: string) {
+export async function deleteCategory(id: string, transferCategoryId?: string) {
   await checkAdminOrEditor();
   try {
+    if (transferCategoryId && transferCategoryId !== id) {
+       const categoryWithArticles = await prisma.category.findUnique({
+         where: { id },
+         include: { articles: { select: { id: true } } }
+       });
+       
+       if (categoryWithArticles && categoryWithArticles.articles.length > 0) {
+          const articleIds = categoryWithArticles.articles.map(a => ({ id: a.id }));
+          await prisma.category.update({
+            where: { id: transferCategoryId },
+            data: { articles: { connect: articleIds } }
+          });
+       }
+
+       await prisma.category.updateMany({
+         where: { parentId: id },
+         data: { parentId: transferCategoryId }
+       });
+    } else {
+       await prisma.category.updateMany({
+         where: { parentId: id },
+         data: { parentId: null }
+       });
+    }
+
     await prisma.category.delete({ where: { id } });
     revalidatePath("/admin/categories");
     revalidatePath("/admin/articles/create");
     return { success: true };
   } catch (error) {
     console.error("Erreur suppression Category:", error);
-    return { success: false, error: "Impossible de supprimer cette catégorie (elle est peut-être liée à des articles)." };
+    return { success: false, error: "Impossible de supprimer cette catégorie. Veuillez réessayer." };
   }
 }
