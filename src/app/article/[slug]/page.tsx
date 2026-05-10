@@ -20,6 +20,7 @@ import NewsletterWidget from "@/components/NewsletterWidget";
 import AuthorSubscribeButton from "@/components/AuthorSubscribeButton";
 import ReadingProgressBar from "@/components/ReadingProgressBar";
 import GoogleAdSlot from "@/components/GoogleAdSlot";
+import SafeImage from "@/components/SafeImage";
 
 export const revalidate = 60;
 
@@ -269,7 +270,7 @@ export default async function ArticlePage({ params }: Props) {
           {article.imageUrl && (
             <div style={{ marginBottom: "2rem", borderRadius: "8px", overflow: "hidden" }}>
               <div className="image-watermark-container">
-                <img src={article.imageUrl} alt={article.title} style={{ width: "100%", height: "auto", display: "block" }} />
+                <SafeImage src={article.imageUrl} alt={article.title} style={{ width: "100%", height: "auto", display: "block" }} />
               </div>
               {(article as any).imageCaption && (
                 <p style={{ fontSize: "0.75rem", color: "#64748b", fontStyle: "italic", textAlign: "center", padding: "0.4rem 0.75rem", backgroundColor: "#f8fafc", margin: 0, borderTop: "1px solid #e2e8f0" }}>
@@ -483,7 +484,7 @@ export default async function ArticlePage({ params }: Props) {
               return (
                 <Link href={`/article/${rel.slug}`} key={rel.id} style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
                   <div className="image-watermark-container" style={{ height: "140px", backgroundColor: "var(--muted)" }}>
-                    {relImg && <img src={relImg} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />}
+                    {relImg && <SafeImage src={relImg} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />}
                   </div>
                   <div style={{ padding: "1rem" }}>
                     <h3 style={{ fontSize: "0.95rem", fontWeight: 700, lineHeight: 1.3 }}>{rel.title}</h3>

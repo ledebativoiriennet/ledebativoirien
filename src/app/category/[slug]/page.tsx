@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getArticleImage } from "@/lib/utils";
 import { Metadata } from "next";
+import SafeImage from "@/components/SafeImage";
 
 export const revalidate = 60;
 
@@ -66,7 +67,7 @@ export default async function CategoryPage({ params }: Props) {
               <div className="article-card" style={{ height: '100%' }}>
                 <div className="article-card-image" style={{ height: '180px', position: 'relative' }}>
                   {imgUrl ? (
-                    <img src={imgUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <SafeImage src={imgUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
                     <div style={{ background: 'var(--foreground)', color: 'white', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', fontWeight: 'bold' }}>LDI</div>
                   )}

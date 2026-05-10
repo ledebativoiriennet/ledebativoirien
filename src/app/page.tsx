@@ -11,6 +11,7 @@ import { PollWidget } from "@/components/PollWidget";
 import PersonalizedFeed from "@/components/PersonalizedFeed";
 import HomeAudioModule from "@/components/HomeAudioModule";
 import GoogleAdSlot from "@/components/GoogleAdSlot";
+import SafeImage from "@/components/SafeImage";
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -197,7 +198,7 @@ export default async function Home() {
               {titrologieItems && titrologieItems.length > 0 ? (
                 titrologieItems.map(item => (
                   <div key={item.id} className="image-watermark-container" style={{ height: '180px', backgroundColor: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
-                    <img src={item.imageUrl} alt={item.newspaperName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <SafeImage src={item.imageUrl} alt={item.newspaperName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </div>
                 ))
               ) : (
@@ -292,7 +293,7 @@ export default async function Home() {
                   return (
                     <li key={article.id} style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start" }}>
                       <div className="image-watermark-container" style={{ width: "50px", height: "50px", backgroundColor: "var(--muted)", flexShrink: 0, borderRadius: "4px", overflow: "hidden" }}>
-                        {imgUrl && <img src={imgUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                        {imgUrl && <SafeImage src={imgUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
                       </div>
                       <Link href={`/article/${article.slug}`} style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--foreground)", lineHeight: 1.2, flex: 1 }}>
                         {article.title}
@@ -320,7 +321,7 @@ export default async function Home() {
                     <li key={article.id} style={{ borderBottom: "1px solid var(--border)", padding: "0.75rem 1rem" }}>
                       <Link href={`/article/${article.slug}`} style={{ display: "flex", gap: "0.75rem" }}>
                         <div className="image-watermark-container" style={{ width: "60px", height: "60px", backgroundColor: "var(--muted)", flexShrink: 0, borderRadius: "4px", overflow: "hidden" }}>
-                          {imgUrl && <img src={imgUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                          {imgUrl && <SafeImage src={imgUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
                         </div>
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: "0.65rem", color: "#b91c1c", fontWeight: "bold", textTransform: "uppercase", marginBottom: "0.2rem" }}>Faits Divers</div>
@@ -354,7 +355,7 @@ export default async function Home() {
                 backgroundColor: '#0f172a'
               }}>
                 {getArticleImage(mainFeatured) ? (
-                  <img src={getArticleImage(mainFeatured) as string} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <SafeImage src={getArticleImage(mainFeatured) as string} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
                   <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #0f172a, #334155)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <span style={{ fontSize: '4rem', fontWeight: 900, color: 'white', opacity: 0.1 }}>LE DÉBAT IVOIRIEN</span>
@@ -522,7 +523,7 @@ export default async function Home() {
                   return (
                     <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                       <div style={{ height: "150px", backgroundColor: "#f3e8ff", borderRadius: "12px", overflow: "hidden", border: "1px solid #e9d5ff" }}>
-                        {imgUrl ? <img src={imgUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : null}
+                        {imgUrl ? <SafeImage src={imgUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : null}
                       </div>
                       <h3 style={{ fontSize: "0.9rem", fontWeight: 800, lineHeight: 1.3 }}>{article.title}</h3>
                     </Link>
@@ -554,7 +555,7 @@ export default async function Home() {
                     return (
                       <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                         <div style={{ height: "120px", backgroundColor: "var(--muted)", overflow: "hidden", borderRadius: "4px" }}>
-                          {imgUrl ? <img src={imgUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : <div style={{ background: 'var(--foreground)', color: 'white', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>LDI</div>}
+                          {imgUrl ? <SafeImage src={imgUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : <div style={{ background: 'var(--foreground)', color: 'white', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>LDI</div>}
                         </div>
                         <div>
                           <div style={{ fontSize: "0.65rem", color: "var(--primary)", fontWeight: "bold", textTransform: "uppercase", marginBottom: "0.2rem" }}>
@@ -584,7 +585,7 @@ export default async function Home() {
                     return (
                       <Link href={`/article/${article.slug}`} key={article.id} style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                         <div style={{ height: "120px", backgroundColor: "#f0f9ff", overflow: "hidden", borderRadius: "8px", border: "1px solid #bae6fd" }}>
-                          {imgUrl ? <img src={imgUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : null}
+                          {imgUrl ? <SafeImage src={imgUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : null}
                         </div>
                         <div>
                           <div style={{ fontSize: "0.65rem", color: "#0369a1", fontWeight: 800, textTransform: "uppercase", marginBottom: "0.2rem" }}>
@@ -689,7 +690,7 @@ export default async function Home() {
               {activities.map((activity) => (
                 <li key={activity.id} style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start" }}>
                   <div style={{ width: "60px", height: "60px", backgroundColor: "var(--muted)", flexShrink: 0, borderRadius: "4px", overflow: "hidden" }}>
-                    {activity.imageUrl && <img src={activity.imageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                    {activity.imageUrl && <SafeImage src={activity.imageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
                   </div>
                   <div>
                     <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--foreground)", lineHeight: 1.2 }}>{activity.title}</div>
@@ -740,7 +741,7 @@ export default async function Home() {
                     <li key={article.id} style={{ borderBottom: "1px solid var(--border)", padding: "0.75rem 1rem" }}>
                       <Link href={`/article/${article.slug}`} style={{ display: "flex", gap: "0.75rem" }}>
                         <div style={{ width: "60px", height: "60px", backgroundColor: "var(--muted)", flexShrink: 0, borderRadius: "4px", overflow: "hidden" }}>
-                          {imgUrl && <img src={imgUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                          {imgUrl && <SafeImage src={imgUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
                         </div>
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--foreground)", lineHeight: 1.3 }}>{article.title}</div>
