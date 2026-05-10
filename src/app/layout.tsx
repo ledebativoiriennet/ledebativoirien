@@ -14,6 +14,7 @@ import { PushNotificationPrompt, ConsentManagerButton } from "@/components/PushN
 import { CookieConsentPopup } from "@/components/CookieConsentPopup";
 import PopupAd from "@/components/PopupAd";
 import FloatingSocialPill from "@/components/FloatingSocialPill";
+import WhatsAppPopup from "@/components/WhatsAppPopup";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import GoogleAdSlot from "@/components/GoogleAdSlot";
@@ -357,6 +358,7 @@ export default async function RootLayout({
         </main>
 
         <footer style={{ backgroundColor: 'var(--foreground)', color: 'white', marginTop: '4rem', paddingTop: '4rem', paddingBottom: '2rem' }}>
+          <WhatsAppPopup />
           <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '3rem', marginBottom: '3rem' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>

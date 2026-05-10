@@ -21,6 +21,7 @@ import AuthorSubscribeButton from "@/components/AuthorSubscribeButton";
 import ReadingProgressBar from "@/components/ReadingProgressBar";
 import GoogleAdSlot from "@/components/GoogleAdSlot";
 import SafeImage from "@/components/SafeImage";
+import WhatsAppAd from "@/components/WhatsAppAd";
 
 export const revalidate = 60;
 
@@ -523,8 +524,11 @@ export default async function ArticlePage({ params }: Props) {
           <TableOfContents />
         </div>
 
+        <GoogleAdSlot adSlot="3353692131" />
+        <WhatsAppAd />
+
         {/* Les Plus Lus */}
-        <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "1.5rem" }}>
+        <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "2rem" }}>
           <h2 className="portal-section-title dark">Les plus lus</h2>
           <div style={{ padding: "1rem" }}>
             <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>

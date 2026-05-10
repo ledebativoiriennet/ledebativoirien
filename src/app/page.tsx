@@ -12,6 +12,7 @@ import PersonalizedFeed from "@/components/PersonalizedFeed";
 import HomeAudioModule from "@/components/HomeAudioModule";
 import GoogleAdSlot from "@/components/GoogleAdSlot";
 import SafeImage from "@/components/SafeImage";
+import WhatsAppAd from "@/components/WhatsAppAd";
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -211,10 +212,11 @@ export default async function Home() {
           </div>
         </div>
 
-        {/* Flux Personnalisé pour l'utilisateur (Server Component) */}
         <div style={{ marginTop: "1.5rem" }}>
           <PersonalizedFeed />
         </div>
+
+        <WhatsAppAd />
 
         <AdBanner slot="HOME_SIDEBAR" />
 
