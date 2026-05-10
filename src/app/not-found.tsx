@@ -3,91 +3,123 @@ import Link from "next/link";
 export default function NotFound() {
   return (
     <div style={{ 
-      minHeight: '70vh', 
+      minHeight: '100vh', 
       display: 'flex', 
       flexDirection: 'column', 
       alignItems: 'center', 
       justifyContent: 'center', 
       textAlign: 'center',
-      padding: '4rem 2rem',
-      backgroundColor: 'var(--background)'
+      padding: '2rem',
+      backgroundColor: '#0f172a',
+      color: 'white',
+      position: 'relative',
+      overflow: 'hidden'
     }}>
-      <div style={{ maxWidth: '600px', width: '100%' }}>
-        <div style={{ marginBottom: '2rem', position: 'relative' }}>
+      {/* Background Glow */}
+      <div style={{ 
+        position: 'absolute', 
+        top: '50%', 
+        left: '50%', 
+        transform: 'translate(-50%, -50%)',
+        width: '600px', 
+        height: '600px', 
+        background: 'radial-gradient(circle, rgba(220, 38, 38, 0.15) 0%, transparent 70%)',
+        zIndex: 0
+      }} />
+
+      <div style={{ maxWidth: '800px', width: '100%', position: 'relative', zIndex: 1 }}>
+        <div style={{ marginBottom: '3rem' }}>
           <img 
-            src="/404-illustration.png" 
-            alt="Page non trouvée" 
-            style={{ width: '100%', maxWidth: '400px', height: 'auto', borderRadius: '20px' }} 
+            src="/404-premium.png" 
+            alt="Erreur 404" 
+            style={{ 
+              width: '100%', 
+              maxWidth: '500px', 
+              height: 'auto', 
+              filter: 'drop-shadow(0 20px 50px rgba(0,0,0,0.5))',
+              animation: 'float 6s ease-in-out infinite'
+            }} 
           />
-          <h1 style={{ 
-            fontSize: '8rem', 
-            fontWeight: 900, 
-            margin: 0, 
-            lineHeight: 1, 
-            opacity: 0.1, 
-            position: 'absolute', 
-            top: '50%', 
-            left: '50%', 
-            transform: 'translate(-50%, -50%)',
-            zIndex: -1,
-            color: 'var(--primary)'
-          }}>404</h1>
         </div>
 
-        <h2 style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: '1rem', color: 'var(--foreground)' }}>
-          Oups ! Cette page est introuvable.
+        <h2 style={{ 
+          fontSize: 'clamp(2rem, 5vw, 3.5rem)', 
+          fontWeight: 900, 
+          marginBottom: '1.5rem', 
+          letterSpacing: '-0.02em',
+          lineHeight: 1.1
+        }}>
+          L'information s'est <span style={{ color: '#dc2626' }}>égarée</span>.
         </h2>
         
-        <p style={{ fontSize: '1.1rem', color: 'var(--muted)', marginBottom: '2.5rem', lineHeight: 1.6 }}>
-          Il semble que l'article ou la page que vous recherchez ait été déplacé, supprimé ou n'ait jamais existé. 
-          Ne vous inquiétez pas, vous pouvez retourner à l'essentiel.
+        <p style={{ 
+          fontSize: '1.25rem', 
+          color: '#94a3b8', 
+          marginBottom: '3rem', 
+          lineHeight: 1.6,
+          maxWidth: '600px',
+          margin: '0 auto 3rem auto'
+        }}>
+          La page que vous recherchez n'existe pas ou a été déplacée. 
+          Le débat continue sur nos autres rubriques.
         </p>
 
-        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
           <Link href="/" style={{ 
-            backgroundColor: 'var(--primary)', 
+            backgroundColor: '#dc2626', 
             color: 'white', 
-            padding: '0.8rem 2rem', 
-            borderRadius: '30px', 
-            fontWeight: 'bold', 
+            padding: '1rem 2.5rem', 
+            borderRadius: '12px', 
+            fontWeight: 900, 
             textDecoration: 'none',
-            boxShadow: '0 4px 14px rgba(0,0,0,0.2)',
-            transition: 'transform 0.2s'
-          }} className="hover-scale">
-            Retour à l'accueil
+            fontSize: '1rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            boxShadow: '0 10px 20px rgba(220, 38, 38, 0.3)',
+            transition: 'all 0.3s ease'
+          }} className="hover-premium">
+            Retour à l'essentiel
           </Link>
           
           <Link href="/search" style={{ 
-            backgroundColor: 'var(--card-bg)', 
-            color: 'var(--foreground)', 
-            padding: '0.8rem 2rem', 
-            borderRadius: '30px', 
-            fontWeight: 'bold', 
+            backgroundColor: 'rgba(255,255,255,0.05)', 
+            color: 'white', 
+            padding: '1rem 2.5rem', 
+            borderRadius: '12px', 
+            fontWeight: 900, 
             textDecoration: 'none',
-            border: '1px solid var(--border)',
-            transition: 'background-color 0.2s'
-          }}>
-            Rechercher un article
+            fontSize: '1rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            border: '1px solid rgba(255,255,255,0.1)',
+            backdropFilter: 'blur(10px)',
+            transition: 'all 0.3s ease'
+          }} className="hover-blur">
+            Rechercher
           </Link>
         </div>
 
-        <div style={{ marginTop: '4rem', paddingTop: '2rem', borderTop: '1px solid var(--border)' }}>
-          <p style={{ fontSize: '0.9rem', color: 'var(--muted)', marginBottom: '1rem' }}>Voici quelques rubriques populaires :</p>
-          <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link href="/category/actualite" style={{ fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 'bold' }}>Actualité</Link>
-            <span style={{ color: 'var(--border)' }}>•</span>
-            <Link href="/category/politique" style={{ fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 'bold' }}>Politique</Link>
-            <span style={{ color: 'var(--border)' }}>•</span>
-            <Link href="/category/economie" style={{ fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 'bold' }}>Économie</Link>
-            <span style={{ color: 'var(--border)' }}>•</span>
-            <Link href="/marketplace" style={{ fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 'bold' }}>Kiosque PDF</Link>
-          </div>
+        <div style={{ marginTop: '5rem', display: 'flex', gap: '2rem', justifyContent: 'center', opacity: 0.5, fontSize: '0.8rem', fontWeight: 'bold', textTransform: 'uppercase' }}>
+          <Link href="/category/actualite" style={{ color: 'white', textDecoration: 'none' }}>Actualité</Link>
+          <Link href="/category/politique" style={{ color: 'white', textDecoration: 'none' }}>Politique</Link>
+          <Link href="/marketplace" style={{ color: 'white', textDecoration: 'none' }}>Kiosque</Link>
         </div>
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .hover-scale:hover {
-          transform: translateY(-2px);
+        @keyframes float {
+          0% { transform: translateY(0px); }
+          50% { transform: translateY(-20px); }
+          100% { transform: translateY(0px); }
+        }
+        .hover-premium:hover {
+          background-color: #ef4444;
+          transform: translateY(-3px);
+          box-shadow: 0 15px 30px rgba(220, 38, 38, 0.4);
+        }
+        .hover-blur:hover {
+          background-color: rgba(255,255,255,0.1);
+          transform: translateY(-3px);
         }
       `}} />
     </div>

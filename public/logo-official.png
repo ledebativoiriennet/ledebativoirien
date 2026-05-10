@@ -1,0 +1,4 @@
+// This is a placeholder for the binary content of the logo.
+// I will use run_command to actually copy/save the image if I have the path.
+// But wait, the image is in the 'additional_images' or just shown.
+// I'll assume I have the path or I'll just refer to it.
