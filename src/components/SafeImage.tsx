@@ -10,11 +10,11 @@ interface SafeImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
  * A robust image component that falls back to a default placeholder if the source fails to load.
  */
 export default function SafeImage({ src, fallbackSrc = "/default-article.png", alt, ...props }: SafeImageProps) {
-  const [imgSrc, setImgSrc] = useState<string | undefined>(src);
+  const [imgSrc, setImgSrc] = useState<string | undefined>(src as string | undefined);
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
-    setImgSrc(src);
+    setImgSrc(src as string | undefined);
     setHasError(false);
   }, [src]);
 
