@@ -5,8 +5,9 @@ export function extractFirstImageUrl(htmlContent: string | null | undefined): st
   return match ? match[1] : null;
 }
 
-export function getArticleImage(article: { imageUrl?: string | null, content?: string | null }): string | null {
-  if (!article) return null;
+export function getArticleImage(article: { imageUrl?: string | null, content?: string | null }): string {
+  if (!article) return "/default-article.png";
   if (article.imageUrl) return article.imageUrl;
-  return extractFirstImageUrl(article.content);
+  const fromContent = extractFirstImageUrl(article.content);
+  return fromContent || "/default-article.png";
 }
