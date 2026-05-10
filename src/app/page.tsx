@@ -14,6 +14,7 @@ import GoogleAdSlot from "@/components/GoogleAdSlot";
 import SafeImage from "@/components/SafeImage";
 import WhatsAppAd from "@/components/WhatsAppAd";
 import SubscriptionBanner from "@/components/SubscriptionBanner";
+import WebTVModule from "@/components/WebTVModule";
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -1047,24 +1048,7 @@ export default async function Home() {
     </section>
 
     {/* FULL-WIDTH ESPACE VIDEOS */}
-    <section style={{ backgroundColor: '#1e293b', color: 'white', padding: '3rem 0' }}>
-      <div className="container">
-        <h2 className="portal-section-title" style={{ backgroundColor: 'transparent', borderBottom: '2px solid var(--primary)', padding: '0 0 0.5rem 0', display: 'inline-block' }}>Web TV LDI - En Vidéo</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
-          {videos.map((vid) => (
-            <div key={`video-${vid.id}`} style={{ display: "flex", flexDirection: "column", gap: "0.75rem", cursor: "pointer" }}>
-              <div style={{ aspectRatio: "16/9", backgroundColor: "black", position: "relative", borderRadius: "4px", overflow: "hidden", transform: 'translateZ(0)' }}>
-                <img src={`https://picsum.photos/seed/${vid.id}/600/400`} alt={vid.title} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.7 }} />
-                <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: "50px", height: "50px", borderRadius: "50%", backgroundColor: "var(--primary)", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: "1.2rem", boxShadow: "0 4px 6px rgba(0,0,0,0.3)" }}>
-                  ▶
-                </div>
-              </div>
-              <h3 style={{ fontSize: "0.95rem", fontWeight: 700, lineHeight: 1.3 }}>{vid.title}</h3>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
+    <WebTVModule videos={videos} />
 
     {/* FULL-WIDTH ESPACE ACTU AUDIO */}
     <HomeAudioModule 
