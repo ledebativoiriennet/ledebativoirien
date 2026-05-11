@@ -8,9 +8,9 @@ export default async function ReseauxPage() {
 
   return (
     <div>
-      <h1 style={{ fontSize: '2rem', fontWeight: 900, color: '#0f172a', marginBottom: '2rem' }}>🔗 Réseaux Sociaux</h1>
+      <h1 style={{ fontSize: '2rem', fontWeight: 900, color: '#0f172a', marginBottom: '2rem' }}>⚙️ Configuration du Site</h1>
       <p style={{ color: '#64748b', marginBottom: '2rem' }}>
-        Configurez les liens vers vos réseaux sociaux officiels pour vos lecteurs.
+        Gérez les liens de vos réseaux sociaux et injectez du code personnalisé (scripts, tracking, widgets) dans le header et le footer.
       </p>
       
       <ReseauxClient settings={settings} />
