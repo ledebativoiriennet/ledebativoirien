@@ -131,7 +131,7 @@ export default async function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <head>
-        <meta name="google-adsense-account" content={process.env.NEXT_PUBLIC_ADSENSE_ID} />
+        <meta name="google-adsense-account" content={process.env.NEXT_PUBLIC_ADSENSE_ID || ""} />
         {skinAd && (
           <style dangerouslySetInnerHTML={{ __html: `
             body {
@@ -144,6 +144,8 @@ export default async function RootLayout({
             }
           ` }} />
         )}
+      </head>
+      <body className={inter.variable}>
         {process.env.NEXT_PUBLIC_ADSENSE_ID && (
           <Script
             id="adsense-init"
@@ -156,8 +158,6 @@ export default async function RootLayout({
         {siteSettings?.headerCode && (
           <div dangerouslySetInnerHTML={{ __html: siteSettings.headerCode }} />
         )}
-      </head>
-      <body className={inter.variable}>
         {skinAd && skinAd.linkUrl && (
           <a 
             href={skinAd.linkUrl} 

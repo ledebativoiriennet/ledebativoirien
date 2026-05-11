@@ -23,6 +23,8 @@ const GOOD_BOTS = [
   { pattern: /discordbot/i, name: 'Discordbot' },
   { pattern: /whatsapp/i, name: 'WhatsApp Bot' },
   { pattern: /telegrambot/i, name: 'TelegramBot' },
+  { pattern: /mediapartners-google/i, name: 'AdSense Bot' },
+  { pattern: /adsbot-google/i, name: 'AdsBot Google' },
 ];
 
 const BAD_BOTS = [
