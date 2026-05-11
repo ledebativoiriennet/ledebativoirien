@@ -338,6 +338,21 @@ model SiteSettings {
   instagramUrl String?
   linkedinUrl  String?
   youtubeUrl   String?
+
+  // Facebook API
+  facebookPageId      String?
+  facebookAccessToken String? // Long-lived Page Access Token
+
+  // X (Twitter) API
+  twitterApiKey       String?
+  twitterApiSecret    String?
+  twitterAccessToken  String?
+  twitterAccessSecret String?
+
+  // LinkedIn API
+  linkedinAccessToken String?
+  linkedinUrn         String? // urn:li:organization:ID or urn:li:person:ID
+
   updatedAt    DateTime @updatedAt
 }
 

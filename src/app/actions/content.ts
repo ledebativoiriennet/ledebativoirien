@@ -280,12 +280,30 @@ export async function deleteJobOffer(id: string) {
 }
 
 // --- SITE SETTINGS (SOCIALS) ---
-export async function updateSiteSettings(data: { facebookUrl?: string, twitterUrl?: string, instagramUrl?: string, linkedinUrl?: string, youtubeUrl?: string }) {
-  await checkAdminOrEditor();
-  await prisma.siteSettings.upsert({
-    where: { id: "global" },
-    update: { ...data },
-    create: { id: "global", ...data }
-  });
-  return { success: true };
+export async function updateSiteSettings(data: { 
+  facebookUrl?: string, 
+  twitterUrl?: string, 
+  instagramUrl?: string, 
+  linkedinUrl?: string, 
+  youtubeUrl?: string,
+  facebookPageId?: string,
+  facebookAccessToken?: string,
+  twitterApiKey?: string,
+  twitterApiSecret?: string,
+  twitterAccessToken?: string,
+  twitterAccessSecret?: string,
+  linkedinAccessToken?: string,
+  linkedinUrn?: string
+}) {
+  try {
+    await prisma.siteSettings.upsert({
+      where: { id: "global" },
+      update: data,
+      create: { id: "global", ...data }
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Erreur updateSiteSettings:", error);
+    return { success: false };
+  }
 }

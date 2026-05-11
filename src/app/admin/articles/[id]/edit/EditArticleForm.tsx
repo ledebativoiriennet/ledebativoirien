@@ -370,6 +370,29 @@ export default function EditArticleForm({ article, categories }: { article: any,
           </div>
         </div>
 
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', backgroundColor: '#eff6ff', padding: '1.5rem', borderRadius: '8px', border: '1px solid #bfdbfe' }}>
+          <h3 style={{ margin: 0, fontSize: '1.1rem', color: '#1e40af', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            📢 Repartager sur les réseaux sociaux
+          </h3>
+          <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <input type="checkbox" name="publishToFb" id="publishToFb" style={{ width: '1.2rem', height: '1.2rem', cursor: 'pointer' }} />
+              <label htmlFor="publishToFb" style={{ fontWeight: 'bold', color: '#1877F2', cursor: 'pointer' }}>Facebook</label>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <input type="checkbox" name="publishToTwitter" id="publishToTwitter" style={{ width: '1.2rem', height: '1.2rem', cursor: 'pointer' }} />
+              <label htmlFor="publishToTwitter" style={{ fontWeight: 'bold', color: '#000000', cursor: 'pointer' }}>X (Twitter)</label>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <input type="checkbox" name="publishToLinkedin" id="publishToLinkedin" style={{ width: '1.2rem', height: '1.2rem', cursor: 'pointer' }} />
+              <label htmlFor="publishToLinkedin" style={{ fontWeight: 'bold', color: '#0A66C2', cursor: 'pointer' }}>LinkedIn</label>
+            </div>
+          </div>
+          <p style={{ fontSize: '0.8rem', color: '#1e40af', margin: 0 }}>
+            Note: Cocher ces cases publiera à nouveau l'article sur les réseaux sélectionnés.
+          </p>
+        </div>
+
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>
           <button 
             type="button"

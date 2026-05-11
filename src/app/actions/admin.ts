@@ -9,6 +9,7 @@ import { saveUpload } from "@/lib/upload";
 import { sendNewArticleNotification } from "@/lib/newsletter";
 import { sendPushNotification } from "@/lib/push";
 import { logActivity } from "@/lib/activity";
+import { publishToAllSocials } from "@/lib/social-publish";
 
 // Convert a title to a URL-friendly slug
 function generateSlug(title: string) {
@@ -111,11 +112,22 @@ export async function publishArticle(formData: FormData) {
       }
     });
 
+    const publishToFb = formData.get("publishToFb") === "on";
+    const publishToTwitter = formData.get("publishToTwitter") === "on";
+    const publishToLinkedin = formData.get("publishToLinkedin") === "on";
+
     // Envoyer la notification de manière asynchrone pour ne pas bloquer Next.js
     if (role !== "CONTRIBUTOR") {
       setTimeout(() => {
         sendNewArticleNotification(newArticle.id).catch(console.error);
         sendPushNotification(newArticle.id).catch(console.error);
+
+        // Social Publish
+        publishToAllSocials(newArticle.id, { 
+          facebook: publishToFb, 
+          twitter: publishToTwitter, 
+          linkedin: publishToLinkedin 
+        }).catch(console.error);
       }, 500);
     }
 
@@ -129,6 +141,124 @@ export async function publishArticle(formData: FormData) {
   } catch (error) {
     console.error("Erreur création article:", error);
     return { success: false, error: "Erreur serveur lors de la publication." };
+  }
+}
+
+export async function updateArticle(articleId: string, formData: FormData) {
+  const session = await getServerSession(authOptions);
+  const role = (session?.user as any)?.role;
+
+  if (role !== "ADMIN" && role !== "EDITOR" && role !== "CONTRIBUTOR") {
+    return { success: false, error: "Accès refusé." };
+  }
+
+  // Si c'est un contributeur, on vérifie s'il est l'auteur
+  if (role === "CONTRIBUTOR") {
+    const article = await prisma.article.findUnique({
+      where: { id: articleId },
+      include: { author: true }
+    });
+    
+    const userEmail = session?.user?.email;
+    if (!article || article.author?.email !== userEmail) {
+      return { success: false, error: "Accès refusé. Vous ne pouvez modifier que vos propres articles." };
+    }
+  }
+
+  const title = formData.get("title") as string;
+  const excerpt = formData.get("excerpt") as string;
+  const content = formData.get("content") as string;
+  const isPremium = formData.get("isPremium") === "on";
+  const isAudioAvailable = formData.get("isAudioAvailable") === "on";
+  const isConfidentiel = formData.get("isConfidentiel") === "on";
+  const isFeatured = formData.get("isFeatured") === "on";
+  const categoryIds = formData.getAll("categories") as string[];
+  const tagsString = formData.get("tags") as string || "";
+  const imageCaption = formData.get("imageCaption") as string || null;
+  const videoCaption = formData.get("videoCaption") as string || null;
+
+  if (!title || !content) {
+    return { success: false, error: "Le titre et le contenu sont obligatoires." };
+  }
+
+  let imageUrl = formData.get("existingImageUrl") as string;
+  const externalLink = formData.get("imageUrlLink") as string;
+  if (externalLink) {
+    imageUrl = externalLink;
+  }
+
+  const imageFile = formData.get("image") as File | null;
+  if (imageFile && imageFile.size > 0) {
+    imageUrl = await saveUpload(imageFile);
+  }
+
+  try {
+    const videoUrl = formData.get("videoUrl") as string || null;
+    const videoFile = formData.get("videoFile") as File | null;
+    let savedVideoPath = formData.get("existingVideoFile") as string || null;
+
+    if (videoFile && videoFile.size > 0) {
+      savedVideoPath = await saveUpload(videoFile);
+    }
+
+    await prisma.article.update({
+      where: { id: articleId },
+      data: {
+        title,
+        excerpt,
+        content,
+        imageUrl: imageUrl || null,
+        imageCaption: imageCaption || null,
+        videoUrl,
+        videoFile: savedVideoPath,
+        videoCaption: videoCaption || null,
+        isPremium,
+        isAudioAvailable,
+        isConfidentiel,
+        isFeatured,
+        categories: {
+          set: [],
+          connect: categoryIds.map(id => ({ id }))
+        },
+        tags: {
+          set: [],
+          connectOrCreate: tagsString.split(',').map(tag => {
+            const trimmed = tag.trim();
+            if (!trimmed) return null;
+            const tagSlug = generateSlug(trimmed);
+            return {
+              where: { slug: tagSlug },
+              create: { name: trimmed, slug: tagSlug }
+            };
+          }).filter(t => t !== null) as any
+        }
+      }
+    });
+
+    const publishToFb = formData.get("publishToFb") === "on";
+    const publishToTwitter = formData.get("publishToTwitter") === "on";
+    const publishToLinkedin = formData.get("publishToLinkedin") === "on";
+
+    if (publishToFb || publishToTwitter || publishToLinkedin) {
+      setTimeout(() => {
+        publishToAllSocials(articleId, { 
+          facebook: publishToFb, 
+          twitter: publishToTwitter, 
+          linkedin: publishToLinkedin 
+        }).catch(console.error);
+      }, 500);
+    }
+
+    await logActivity({
+      action: "UPDATE_ARTICLE",
+      resource: `Article ID: ${articleId}`,
+      details: `Article modifié: ${title}`
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Erreur updateArticle:", error);
+    return { success: false, error: "Erreur lors de la modification de l'article." };
   }
 }
 
