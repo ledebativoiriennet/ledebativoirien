@@ -45,8 +45,8 @@ export default async function AdminArticles({ searchParams }: { searchParams: Pr
             <tr style={{ backgroundColor: '#f1f5f9', borderBottom: '1px solid #e2e8f0' }}>
               <th style={{ padding: '1rem', fontWeight: 'bold', color: '#475569', fontSize: '0.85rem', width: '50%' }}>Titre</th>
               <th style={{ padding: '1rem', fontWeight: 'bold', color: '#475569', fontSize: '0.85rem' }}>Statut</th>
-              <th style={{ padding: '1rem', fontWeight: 'bold', color: '#475569', fontSize: '0.85rem' }}>Auteur</th>
-              <th style={{ padding: '1rem', fontWeight: 'bold', color: '#475569', fontSize: '0.85rem' }}>Catégories</th>
+              <th className="desktop-only" style={{ padding: '1rem', fontWeight: 'bold', color: '#475569', fontSize: '0.85rem' }}>Auteur</th>
+              <th className="desktop-only" style={{ padding: '1rem', fontWeight: 'bold', color: '#475569', fontSize: '0.85rem' }}>Catégories</th>
               <th style={{ padding: '1rem', fontWeight: 'bold', color: '#475569', fontSize: '0.85rem' }}>Publication</th>
             </tr>
           </thead>
@@ -84,10 +84,10 @@ export default async function AdminArticles({ searchParams }: { searchParams: Pr
                     </div>
                   )}
                 </td>
-                <td style={{ padding: '1rem', fontSize: '0.85rem', color: '#64748b' }}>
+                <td className="desktop-only" style={{ padding: '1rem', fontSize: '0.85rem', color: '#64748b' }}>
                   {article.author?.name || 'Rédaction'}
                 </td>
-                <td style={{ padding: '1rem', fontSize: '0.85rem', color: '#64748b' }}>
+                <td className="desktop-only" style={{ padding: '1rem', fontSize: '0.85rem', color: '#64748b' }}>
                   {article.categories.map(c => c.name).join(', ')}
                 </td>
                 <td style={{ padding: '1rem', fontSize: '0.85rem', color: '#64748b' }}>

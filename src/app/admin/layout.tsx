@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { ReactNode } from "react";
 import LogoutButton from "./LogoutButton";
+import MobileMenuHandler from "./MobileMenuHandler";
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const session = await getServerSession(authOptions);
@@ -26,6 +27,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
   return (
     <div className="admin-layout">
+      <MobileMenuHandler />
       <input type="checkbox" id="admin-menu-toggle" className="admin-menu-checkbox" />
       
       <label htmlFor="admin-menu-toggle" className="admin-menu-toggle">
