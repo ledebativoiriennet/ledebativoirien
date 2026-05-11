@@ -153,6 +153,9 @@ export default async function RootLayout({
             strategy="afterInteractive"
           />
         )}
+        {siteSettings?.headerCode && (
+          <div dangerouslySetInnerHTML={{ __html: siteSettings.headerCode }} />
+        )}
       </head>
       <body className={inter.variable}>
         {skinAd && skinAd.linkUrl && (
@@ -424,6 +427,9 @@ export default async function RootLayout({
           </div>
         </footer>
         <PopupAd />
+        {siteSettings?.footerCode && (
+          <div dangerouslySetInnerHTML={{ __html: siteSettings.footerCode }} />
+        )}
         </Providers>
         </div>
       </body>

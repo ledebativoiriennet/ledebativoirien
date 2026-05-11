@@ -13,6 +13,7 @@ export default function VisitorTracker() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        path: pathname,
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       })
     }).catch(() => {}); // Erreur ignorée silencieusement

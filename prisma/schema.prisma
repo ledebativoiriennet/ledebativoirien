@@ -212,17 +212,22 @@ model JobOffer {
 }
 
 model Visitor {
-  id        String   @id @default(cuid())
-  ipHash    String
-  country   String?
-  city      String?
-  browser   String?
-  os        String?
-  device    String?
-  brand     String?
-  visitedAt DateTime @default(now())
+  id          String   @id @default(cuid())
+  ipHash      String
+  country     String?
+  city        String?
+  browser     String?
+  os          String?
+  device      String?
+  brand       String?
+  isBot       Boolean  @default(false)
+  botName     String?
+  botCategory String?  // GOOD, BAD
+  path        String?  // Page visitée
+  visitedAt   DateTime @default(now())
 
   @@index([ipHash])
+  @@index([isBot])
 }
 
 model Advertisement {
@@ -352,6 +357,10 @@ model SiteSettings {
   // LinkedIn API
   linkedinAccessToken String?
   linkedinUrn         String? // urn:li:organization:ID or urn:li:person:ID
+
+  // Injection de code
+  headerCode          String? // Code injecté dans <head>
+  footerCode          String? // Code injecté avant </body>
 
   updatedAt    DateTime @updatedAt
 }

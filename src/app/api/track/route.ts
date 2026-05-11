@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { UAParser } from "ua-parser-js";
 import crypto from "crypto";
+import { detectBot } from "@/lib/bot-detector";
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,10 +17,13 @@ export async function POST(req: NextRequest) {
     const deviceType = result.device.type ? (result.device.type.charAt(0).toUpperCase() + result.device.type.slice(1)) : "Desktop";
     const brand = result.device.vendor || "Unknown";
 
+    const botInfo = detectBot(userAgent);
+
     let country = req.headers.get("x-vercel-ip-country");
     let city = req.headers.get("x-vercel-ip-city");
 
     const body = await req.json().catch(() => ({}));
+    const path = body.path || "/";
 
     // Appel optionnel API publique si pas sur Vercel
     if (!country && ip !== "unknown" && ip !== "::1" && ip !== "127.0.0.1") {
@@ -37,11 +41,11 @@ export async function POST(req: NextRequest) {
 
     if (!country) country = body.timezone ? body.timezone.split("/")[1] || "Unknown" : "Unknown";
 
-    // Hash IP + Date du jour
+    // Hash IP + Date du jour + Path (pour compter les visites par page)
     const todayStr = new Date().toISOString().split("T")[0];
-    const ipHash = crypto.createHash("sha256").update(`${ip}-${todayStr}`).digest("hex");
+    const ipHash = crypto.createHash("sha256").update(`${ip}-${todayStr}-${path}`).digest("hex");
 
-    // Enregistrer s'il n'existe pas aujourd'hui
+    // Enregistrer s'il n'existe pas aujourd'hui pour ce chemin
     const existing = await prisma.visitor.findFirst({
       where: { ipHash }
     });
@@ -55,7 +59,11 @@ export async function POST(req: NextRequest) {
           browser,
           os,
           device: deviceType,
-          brand
+          brand,
+          isBot: botInfo.isBot,
+          botName: botInfo.name,
+          botCategory: botInfo.category,
+          path: path
         }
       });
     }

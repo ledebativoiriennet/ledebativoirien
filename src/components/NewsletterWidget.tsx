@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { subscribeNewsletter } from "@/app/actions/newsletter";
+import Honeypot from "./Honeypot";
 
 export default function NewsletterWidget() {
   const [email, setEmail] = useState("");
@@ -9,12 +10,15 @@ export default function NewsletterWidget() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!email) return;
     setLoading(true);
     setError("");
-    const result = await subscribeNewsletter(email);
+    
+    const formData = new FormData(e.currentTarget);
+    const result = await subscribeNewsletter(formData);
+    
     if (result.success) {
       setSuccess(true);
       setEmail("");
@@ -35,8 +39,10 @@ export default function NewsletterWidget() {
         </div>
       ) : (
         <form onSubmit={handleSubmit}>
+          <Honeypot />
           <input 
             type="email" 
+            name="email"
             placeholder="Votre email" 
             className="input" 
             style={{ marginBottom: "0.5rem" }} 

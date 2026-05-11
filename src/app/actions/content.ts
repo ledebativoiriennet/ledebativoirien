@@ -293,7 +293,9 @@ export async function updateSiteSettings(data: {
   twitterAccessToken?: string,
   twitterAccessSecret?: string,
   linkedinAccessToken?: string,
-  linkedinUrn?: string
+  linkedinUrn?: string,
+  headerCode?: string,
+  footerCode?: string
 }) {
   try {
     await prisma.siteSettings.upsert({

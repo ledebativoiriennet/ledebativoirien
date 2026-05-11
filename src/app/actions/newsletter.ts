@@ -2,7 +2,15 @@
 
 import { prisma } from "@/lib/prisma";
 
-export async function subscribeNewsletter(email: string) {
+export async function subscribeNewsletter(formData: FormData) {
+  const email = formData.get("email") as string;
+  const honeypot = formData.get("website_url") as string;
+
+  if (honeypot) {
+    console.warn("Newsletter subscription blocked by honeypot");
+    return { success: false, error: "Bot detected" };
+  }
+
   if (!email || !email.includes("@")) return { success: false, error: "Email invalide" };
 
   try {

@@ -66,7 +66,11 @@ export default async function AdminDashboard() {
     visitorsAll, visitorsToday, visitorsWeek, visitorsMonth, 
     countryStatsRaw, browserStatsRaw, deviceStatsRaw, brandStatsRaw,
     marketplacePurchases,
-    pendingManualCount
+    pendingManualCount,
+    botCount,
+    goodBotCount,
+    badBotCount,
+    topBotsRaw
   ] = await Promise.all([
     getTopArticles(startOfDay),
     getTopArticles(sevenDaysAgo),
@@ -80,7 +84,19 @@ export default async function AdminDashboard() {
     prisma.visitor.groupBy({ by: ['device'], _count: { _all: true }, orderBy: { _count: { device: 'desc' } }, take: 10 }),
     prisma.visitor.groupBy({ by: ['brand'], _count: { _all: true }, orderBy: { _count: { brand: 'desc' } }, take: 10 }),
     prisma.purchase.findMany({ where: { status: 'COMPLETED' } }), // Only completed for revenue
-    prisma.purchase.count({ where: { status: 'PENDING', paymentMethod: 'MANUAL_TRANSFER' } }) // Pending manual
+    prisma.purchase.count({ where: { status: 'PENDING', paymentMethod: 'MANUAL_TRANSFER' } }), // Pending manual
+    
+    // Bot Statistics
+    prisma.visitor.count({ where: { isBot: true } }),
+    prisma.visitor.count({ where: { isBot: true, botCategory: 'GOOD' } }),
+    prisma.visitor.count({ where: { isBot: true, botCategory: 'BAD' } }),
+    prisma.visitor.groupBy({ 
+      by: ['botName'], 
+      where: { isBot: true }, 
+      _count: { _all: true }, 
+      orderBy: { _count: { botName: 'desc' } }, 
+      take: 5 
+    })
   ]);
 
   const mapStats = (stats: any[], key: string) => stats.map(s => ({ name: s[key] || 'Inconnu', value: s._count._all }));
@@ -88,6 +104,11 @@ export default async function AdminDashboard() {
   const browserData = mapStats(browserStatsRaw, 'browser');
   const deviceData = mapStats(deviceStatsRaw, 'device');
   const brandData = mapStats(brandStatsRaw, 'brand');
+
+  const totalBots = botCount;
+  const goodBots = goodBotCount;
+  const badBots = badBotCount;
+  const topBots = topBotsRaw.map(b => ({ name: b.botName || 'Inconnu', count: b._count._all }));
 
   // Calcul du CA Estimé et Répartition
   let totalRevenue = 0;
@@ -377,6 +398,44 @@ export default async function AdminDashboard() {
         <div style={{ backgroundColor: 'white', padding: '1rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', textAlign: 'center' }}>
           <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase' }}>Visiteurs (Total)</div>
           <div style={{ fontSize: '2rem', fontWeight: 900, color: '#10b981' }}>{visitorsAll}</div>
+        </div>
+      </div>
+
+      {/* SECTION BOTS */}
+      <div style={{ marginTop: '3rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+        <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', borderTop: '4px solid #64748b' }}>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem' }}>🤖 Activité des Robots</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 'bold' }}>TOTAL</div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{totalBots}</div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '0.75rem', color: '#10b981', fontWeight: 'bold' }}>BONS (SEO)</div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#10b981' }}>{goodBots}</div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '0.75rem', color: '#ef4444', fontWeight: 'bold' }}>MAUVAIS / BLOQUÉS</div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#ef4444' }}>{badBots}</div>
+            </div>
+          </div>
+          <p style={{ fontSize: '0.8rem', color: '#64748b' }}>
+            Les "bons" robots incluent Googlebot, Bingbot, etc. Les "mauvais" sont les scrapers et outils SEO agressifs bloqués par le middleware.
+          </p>
+        </div>
+
+        <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', borderTop: '4px solid #64748b' }}>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem' }}>🔝 Top Robots Identifiés</h2>
+          {topBots.length === 0 ? <p style={{ fontSize: '0.85rem', color: '#64748b' }}>Aucun robot identifié pour le moment.</p> : (
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {topBots.map((bot, i) => (
+                <li key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
+                  <span style={{ color: '#475569' }}>{bot.name}</span>
+                  <span style={{ fontWeight: 'bold' }}>{bot.count}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
 

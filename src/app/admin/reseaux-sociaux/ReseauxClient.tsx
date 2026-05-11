@@ -27,6 +27,8 @@ export default function ReseauxClient({ settings }: { settings: any }) {
       twitterAccessSecret: formData.get("twitterAccessSecret") as string,
       linkedinAccessToken: formData.get("linkedinAccessToken") as string,
       linkedinUrn: formData.get("linkedinUrn") as string,
+      headerCode: formData.get("headerCode") as string,
+      footerCode: formData.get("footerCode") as string,
     };
 
     const res = await updateSiteSettings(data);
@@ -123,6 +125,37 @@ export default function ReseauxClient({ settings }: { settings: any }) {
           <div>
             <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#FF0000' }}>YouTube URL</label>
             <input name="youtubeUrl" type="url" defaultValue={settings?.youtubeUrl || ""} style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '4px' }} />
+          </div>
+        </div>
+        
+        {/* INJECTION DE CODE */}
+        <div style={{ padding: '1rem', border: '1px solid #64748b', borderRadius: '8px', backgroundColor: '#f8fafc' }}>
+          <h2 style={{ color: '#0f172a', marginTop: 0, fontSize: '1.2rem' }}>Injection de Code (Header / Footer)</h2>
+          <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '1rem' }}>
+            Utilisez ces champs pour intégrer des scripts tiers (Google Analytics, Pixels, Chatbots, etc.). 
+            Attention : un code mal formé peut casser le site.
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div>
+              <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>Code Header (Injecté dans &lt;head&gt;)</label>
+              <textarea 
+                name="headerCode" 
+                defaultValue={settings?.headerCode || ""} 
+                rows={5} 
+                style={{ width: '100%', padding: '0.5rem', border: '1px solid #cbd5e1', borderRadius: '4px', fontFamily: 'monospace', fontSize: '0.85rem' }} 
+                placeholder="<!-- Scripts Google Tag Manager, etc. -->"
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>Code Footer (Injecté avant &lt;/body&gt;)</label>
+              <textarea 
+                name="footerCode" 
+                defaultValue={settings?.footerCode || ""} 
+                rows={5} 
+                style={{ width: '100%', padding: '0.5rem', border: '1px solid #cbd5e1', borderRadius: '4px', fontFamily: 'monospace', fontSize: '0.85rem' }} 
+                placeholder="<!-- Scripts de chat, widgets, etc. -->"
+              />
+            </div>
           </div>
         </div>
         
