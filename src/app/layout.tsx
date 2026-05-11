@@ -131,7 +131,12 @@ export default async function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <head>
-        <meta name="google-adsense-account" content={process.env.NEXT_PUBLIC_ADSENSE_ID || ""} />
+        <meta name="google-adsense-account" content={process.env.NEXT_PUBLIC_ADSENSE_ID || "ca-pub-4879894549191568"} />
+        <script 
+          async 
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_ID || "ca-pub-4879894549191568"}`}
+          crossOrigin="anonymous"
+        ></script>
         {skinAd && (
           <style dangerouslySetInnerHTML={{ __html: `
             body {
@@ -146,15 +151,6 @@ export default async function RootLayout({
         )}
       </head>
       <body className={inter.variable}>
-        {process.env.NEXT_PUBLIC_ADSENSE_ID && (
-          <Script
-            id="adsense-init"
-            async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_ID}`}
-            crossOrigin="anonymous"
-            strategy="afterInteractive"
-          />
-        )}
         {siteSettings?.headerCode && (
           <div dangerouslySetInnerHTML={{ __html: siteSettings.headerCode }} />
         )}
