@@ -70,7 +70,11 @@ export default async function AdminDashboard() {
     botCount,
     goodBotCount,
     badBotCount,
-    topBotsRaw
+    topBotsRaw,
+    rawDayVisits,
+    rawWeekVisits,
+    rawMonthVisits,
+    rawYearVisits
   ] = await Promise.all([
     getTopArticles(startOfDay),
     getTopArticles(sevenDaysAgo),
@@ -96,8 +100,74 @@ export default async function AdminDashboard() {
       _count: { _all: true }, 
       orderBy: { _count: { botName: 'desc' } }, 
       take: 5 
-    })
+    }),
+
+    // Visits Chart Data
+    // Day (Last 24 hours, grouped by hour)
+    prisma.$queryRaw`SELECT strftime('%H', visitedAt) as label, COUNT(*) as count FROM Visitor WHERE visitedAt >= datetime('now', '-1 day') AND isBot = 0 GROUP BY label ORDER BY label` as Promise<{label: string, count: number}[]>,
+    
+    // Week (Last 7 days, grouped by day)
+    prisma.$queryRaw`SELECT strftime('%Y-%m-%d', visitedAt) as label, COUNT(*) as count FROM Visitor WHERE visitedAt >= datetime('now', '-7 days') AND isBot = 0 GROUP BY label ORDER BY label` as Promise<{label: string, count: number}[]>,
+    
+    // Month (Last 30 days, grouped by day)
+    prisma.$queryRaw`SELECT strftime('%Y-%m-%d', visitedAt) as label, COUNT(*) as count FROM Visitor WHERE visitedAt >= datetime('now', '-30 days') AND isBot = 0 GROUP BY label ORDER BY label` as Promise<{label: string, count: number}[]>,
+    
+    // Year (Last 12 months, grouped by month)
+    prisma.$queryRaw`SELECT strftime('%Y-%m', visitedAt) as label, COUNT(*) as count FROM Visitor WHERE visitedAt >= datetime('now', '-1 year') AND isBot = 0 GROUP BY label ORDER BY label` as Promise<{label: string, count: number}[]>
   ]);
+
+  // Post-processing visit data to ensure all periods are represented
+  const processVisitData = (raw: {label: string, count: number}[], type: 'day' | 'week' | 'month' | 'year') => {
+    const data: { label: string, count: number }[] = [];
+    const now = new Date();
+
+    if (type === 'day') {
+      for (let i = 23; i >= 0; i--) {
+        const d = new Date(now.getTime() - i * 3600000);
+        const label = d.getHours().toString().padStart(2, '0');
+        const found = raw.find(r => r.label === label);
+        data.push({ label: `${label}h`, count: Number(found?.count || 0) });
+      }
+    } else if (type === 'week') {
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(now.getTime() - i * 86400000);
+        const label = d.toISOString().split('T')[0];
+        const found = raw.find(r => r.label === label);
+        data.push({ 
+          label: d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' }), 
+          count: Number(found?.count || 0) 
+        });
+      }
+    } else if (type === 'month') {
+      for (let i = 29; i >= 0; i--) {
+        const d = new Date(now.getTime() - i * 86400000);
+        const label = d.toISOString().split('T')[0];
+        const found = raw.find(r => r.label === label);
+        data.push({ 
+          label: d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }), 
+          count: Number(found?.count || 0) 
+        });
+      }
+    } else if (type === 'year') {
+      for (let i = 11; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const label = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}`;
+        const found = raw.find(r => r.label === label);
+        data.push({ 
+          label: d.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' }), 
+          count: Number(found?.count || 0) 
+        });
+      }
+    }
+    return data;
+  };
+
+  const visitsData = {
+    day: processVisitData(rawDayVisits as any, 'day'),
+    week: processVisitData(rawWeekVisits as any, 'week'),
+    month: processVisitData(rawMonthVisits as any, 'month'),
+    year: processVisitData(rawYearVisits as any, 'year'),
+  };
 
   const mapStats = (stats: any[], key: string) => stats.map(s => ({ name: s[key] || 'Inconnu', value: s._count._all }));
   const countryData = mapStats(countryStatsRaw, 'country');
@@ -242,35 +312,6 @@ export default async function AdminDashboard() {
       {/* GRAPHIQUE D'AUDIENCE & ACTIVITÉ ÉCONOMIQUE */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '2rem' }}>
         
-        {/* Trafic */}
-        <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-          <h2 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '2rem', color: '#0f172a' }}>Trafic & Lectures (7 Derniers Jours)</h2>
-          
-          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', height: '200px', gap: '1rem', paddingTop: '2rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '1rem' }}>
-            {chartData.map((data, index) => {
-              const heightPercent = (data.count / maxReads) * 100;
-              return (
-                <div key={index} className="group" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
-                  <div style={{ position: 'relative', width: '100%', maxWidth: '40px', height: '100%', display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
-                    <div style={{ 
-                      width: '100%', 
-                      height: `${heightPercent}%`, 
-                      backgroundColor: heightPercent > 0 ? '#3b82f6' : '#e2e8f0', 
-                      borderRadius: '4px 4px 0 0',
-                      transition: 'height 0.5s ease',
-                      minHeight: heightPercent === 0 ? '4px' : 'auto'
-                    }}></div>
-                    {/* Tooltip / Valeur au dessus */}
-                    <div style={{ position: 'absolute', bottom: `calc(${heightPercent}% + 5px)`, fontSize: '0.8rem', fontWeight: 'bold', color: '#64748b' }}>
-                      {data.count}
-                    </div>
-                  </div>
-                  <div style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'capitalize', fontWeight: 'bold' }}>{data.day}</div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
 
         {/* Activité Économique */}
         <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
@@ -380,6 +421,7 @@ export default async function AdminDashboard() {
         browserData={browserData.length ? browserData : [{name: "Aucune donnée", value: 1}]}
         deviceData={deviceData.length ? deviceData : [{name: "Aucune donnée", value: 1}]}
         brandData={brandData.length ? brandData : [{name: "Aucune donnée", value: 1}]}
+        visitsData={visitsData}
       />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginTop: '2rem' }}>
