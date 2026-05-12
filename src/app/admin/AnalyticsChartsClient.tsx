@@ -13,7 +13,8 @@ import {
   Legend,
 } from 'chart.js';
 import { Bar, Doughnut, Pie, Line } from 'react-chartjs-2';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 ChartJS.register(
   CategoryScale,
@@ -45,7 +46,16 @@ export default function AnalyticsChartsClient({
     year: { label: string, count: number }[]
   }
 }) {
+  const router = useRouter();
   const [period, setPeriod] = useState<'day' | 'week' | 'month' | 'year'>('week');
+
+  // Auto-refresh data every 60 seconds for "real-time" feel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      router.refresh();
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [router]);
 
   const currentVisits = visitsData[period];
 
@@ -165,7 +175,7 @@ export default function AnalyticsChartsClient({
       <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', marginBottom: '2.5rem', border: '1px solid #f1f5f9' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
           <div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0f172a', margin: 0 }}>📈 Évolution des Visites</h2>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0f172a', margin: 0 }}>📈 Évolution des Visites <span style={{ fontSize: '0.7rem', color: '#10b981', verticalAlign: 'middle', marginLeft: '0.5rem', border: '1px solid #10b981', padding: '2px 6px', borderRadius: '10px', textTransform: 'uppercase' }}>Live</span></h2>
             <p style={{ color: '#64748b', fontSize: '0.9rem', margin: '0.25rem 0 0 0' }}>Analyse du trafic humain dédoublonné</p>
           </div>
           
