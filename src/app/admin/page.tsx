@@ -104,16 +104,16 @@ export default async function AdminDashboard() {
 
     // Visits Chart Data
     // Day (Last 24 hours, grouped by hour)
-    prisma.$queryRaw`SELECT strftime('%H', visitedAt) as label, COUNT(*) as count FROM Visitor WHERE visitedAt >= datetime('now', '-1 day') AND isBot = 0 GROUP BY label ORDER BY label` as Promise<{label: string, count: number}[]>,
+    prisma.$queryRaw`SELECT strftime('%H', datetime(visitedAt / 1000, 'unixepoch')) as label, COUNT(*) as count FROM Visitor WHERE visitedAt >= ${now.getTime() - 24*3600000} AND isBot = 0 GROUP BY label ORDER BY label` as Promise<{label: string, count: number}[]>,
     
     // Week (Last 7 days, grouped by day)
-    prisma.$queryRaw`SELECT strftime('%Y-%m-%d', visitedAt) as label, COUNT(*) as count FROM Visitor WHERE visitedAt >= datetime('now', '-7 days') AND isBot = 0 GROUP BY label ORDER BY label` as Promise<{label: string, count: number}[]>,
+    prisma.$queryRaw`SELECT strftime('%Y-%m-%d', datetime(visitedAt / 1000, 'unixepoch')) as label, COUNT(*) as count FROM Visitor WHERE visitedAt >= ${now.getTime() - 7*86400000} AND isBot = 0 GROUP BY label ORDER BY label` as Promise<{label: string, count: number}[]>,
     
     // Month (Last 30 days, grouped by day)
-    prisma.$queryRaw`SELECT strftime('%Y-%m-%d', visitedAt) as label, COUNT(*) as count FROM Visitor WHERE visitedAt >= datetime('now', '-30 days') AND isBot = 0 GROUP BY label ORDER BY label` as Promise<{label: string, count: number}[]>,
+    prisma.$queryRaw`SELECT strftime('%Y-%m-%d', datetime(visitedAt / 1000, 'unixepoch')) as label, COUNT(*) as count FROM Visitor WHERE visitedAt >= ${now.getTime() - 30*86400000} AND isBot = 0 GROUP BY label ORDER BY label` as Promise<{label: string, count: number}[]>,
     
     // Year (Last 12 months, grouped by month)
-    prisma.$queryRaw`SELECT strftime('%Y-%m', visitedAt) as label, COUNT(*) as count FROM Visitor WHERE visitedAt >= datetime('now', '-1 year') AND isBot = 0 GROUP BY label ORDER BY label` as Promise<{label: string, count: number}[]>
+    prisma.$queryRaw`SELECT strftime('%Y-%m', datetime(visitedAt / 1000, 'unixepoch')) as label, COUNT(*) as count FROM Visitor WHERE visitedAt >= ${now.getTime() - 365*86400000} AND isBot = 0 GROUP BY label ORDER BY label` as Promise<{label: string, count: number}[]>
   ]);
 
   // Post-processing visit data to ensure all periods are represented
