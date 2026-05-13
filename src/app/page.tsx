@@ -76,7 +76,7 @@ export default async function Home() {
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['economie', 'economie-finances', 'finances'] } } } }, take: 15, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.pressRelease.findMany({ take: 5, orderBy: { createdAt: 'desc' } }),
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'publie-reportage' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
-    prisma.article.findMany({ where: { isAudioAvailable: true, publishedAt: { not: null } }, take: 8, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { isAudioAvailable: true, publishedAt: { not: null } }, take: 100, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['international', 'internationale', 'diplomatie'] } } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['afrique-occidentale', 'cedeau', 'afrique', 'benin', 'togo', 'mali', 'burkina-faso', 'senegal', 'guinee'] } } } }, take: 10, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'a-la-une' } } }, take: 5, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
