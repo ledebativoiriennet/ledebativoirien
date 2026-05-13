@@ -53,6 +53,10 @@ export default function LiveStreamBadge() {
           cursor: "default",
           userSelect: "none",
           whiteSpace: "nowrap",
+          fontFamily: "inherit",
+          margin: 0,
+          boxSizing: "border-box",
+          lineHeight: "1",
         }}
       >
         <span style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "rgba(255,255,255,0.25)", flexShrink: 0 }} />
@@ -84,11 +88,15 @@ export default function LiveStreamBadge() {
           animation: "liveBadgePulse 2s ease-in-out infinite",
           outline: "none",
           transition: "background 0.2s",
+          fontFamily: "inherit",
+          margin: 0,
+          boxSizing: "border-box",
+          lineHeight: "1",
         }}
       >
         <span style={{
-          width: "7px",
-          height: "7px",
+          width: "6px",
+          height: "6px",
           borderRadius: "50%",
           backgroundColor: "#ef4444",
           flexShrink: 0,
