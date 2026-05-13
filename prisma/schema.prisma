@@ -477,3 +477,13 @@ model ActivityLog {
   country   String?
   createdAt DateTime @default(now())
 }
+
+model LiveStream {
+  id        String   @id @default(cuid())
+  title     String   @default("Direct LDI")
+  url       String
+  platform  String   @default("OTHER") // YOUTUBE, FACEBOOK, TIKTOK, OTHER
+  isActive  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

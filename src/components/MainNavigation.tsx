@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import LiveStreamBadge from '@/components/LiveStreamBadge';
 
 interface Article {
   id: string;
@@ -54,6 +55,9 @@ export default function MainNavigation({ categories }: MainNavigationProps) {
         <Link href="/confidentiels" className="nav-link" style={{ fontWeight: 'bold', borderBottom: '2px solid #7f1d1d' }} onMouseEnter={() => setActiveCategory(null)}>
           🔒 Confidentiels
         </Link>
+        <div onMouseEnter={() => setActiveCategory(null)} style={{ display: 'flex', alignItems: 'center' }}>
+          <LiveStreamBadge />
+        </div>
         {categories.map(c => (
           <div key={c.id} className="nav-item" onMouseEnter={() => setActiveCategory(c.id)}>
             <Link href={`/category/${c.slug}`} className="nav-link" style={{ whiteSpace: 'nowrap' }}>
