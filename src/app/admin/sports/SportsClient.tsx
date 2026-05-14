@@ -71,6 +71,37 @@ export default function SportsClient({ initialMatches }: { initialMatches: any[]
 
           <div style={{ display: 'flex', gap: '1rem' }}>
             <div style={{ flex: 1 }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Sélectionner le Sport</label>
+              <select 
+                name="sport_preset" 
+                onChange={(e) => {
+                  const [icon, name] = e.target.value.split('|');
+                  const form = e.target.form;
+                  if (form) {
+                    (form.elements.namedItem('sport') as HTMLInputElement).value = name;
+                    (form.elements.namedItem('sportIcon') as HTMLInputElement).value = icon;
+                  }
+                }}
+                style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: 'white' }}
+              >
+                <option value="⚽|Football">⚽ Football</option>
+                <option value="🏀|Basketball">🏀 Basketball</option>
+                <option value="🎾|Tennis">🎾 Tennis</option>
+                <option value="🏉|Rugby">🏉 Rugby</option>
+                <option value="🥊|Boxe">🥊 Boxe</option>
+                <option value="🚲|Cyclisme">🚲 Cyclisme</option>
+                <option value="⛳|Golf">⛳ Golf</option>
+                <option value="🏁|Auto-Moto">🏁 Auto-Moto</option>
+                <option value="🏇|Equitation">🏇 Equitation</option>
+                <option value="🏊|Natation">🏊 Natation</option>
+                <option value="🏃|Athlétisme">🏃 Athlétisme</option>
+                <option value="other|Autre">Autre (Saisir manuellement)</option>
+              </select>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <div style={{ flex: 1 }}>
               <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Sport (Nom)</label>
               <input type="text" name="sport" defaultValue="Football" required style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '4px' }} />
             </div>
