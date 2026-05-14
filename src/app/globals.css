@@ -411,7 +411,7 @@ a:hover {
 
 @media (min-width: 1024px) {
   .article-layout {
-    grid-template-columns: 200px 1fr 320px;
+    grid-template-columns: 1fr 320px;
   }
 }
 
