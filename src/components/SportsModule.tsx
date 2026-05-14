@@ -57,7 +57,7 @@ export default async function SportsModule() {
             {match.status === 'LIVE' && (
               <span style={{ position: 'absolute', top: '-10px', right: '10px', backgroundColor: '#dc2626', color: 'white', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 'bold' }}>EN DIRECT</span>
             )}
-            <div style={{ textAlign: 'center', fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+            <div style={{ textAlign: 'center', fontSize: '0.7rem', color: 'white', textTransform: 'uppercase', fontWeight: 'bold', marginBottom: '0.5rem', opacity: 0.8 }}>
               {match.phase} • {new Date(match.matchDate).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
             </div>
             
