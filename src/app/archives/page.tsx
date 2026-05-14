@@ -15,15 +15,17 @@ export default async function ArchivesPage() {
     include: { categories: true }
   });
 
-  // Group by year and month
+  // Group by year, month and day
   const grouped = articles.reduce((acc: any, article) => {
     const date = new Date(article.publishedAt!);
     const year = date.getFullYear();
     const month = date.toLocaleString('fr-FR', { month: 'long' });
+    const day = date.getDate();
     
     if (!acc[year]) acc[year] = {};
-    if (!acc[year][month]) acc[year][month] = [];
-    acc[year][month].push(article);
+    if (!acc[year][month]) acc[year][month] = {};
+    if (!acc[year][month][day]) acc[year][month][day] = [];
+    acc[year][month][day].push(article);
     return acc;
   }, {});
 
@@ -41,22 +43,34 @@ export default async function ArchivesPage() {
         ) : (
           years.map(year => (
             <div key={year} style={{ marginBottom: '3rem' }}>
-              <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '1.5rem', color: 'var(--foreground)' }}>{year}</h2>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+                <span style={{ backgroundColor: 'var(--primary)', color: 'white', padding: '0.2rem 1rem', borderRadius: '4px', fontWeight: 900 }}>{year}</span>
+                <div style={{ height: '2px', backgroundColor: 'var(--border)', flex: 1 }}></div>
+              </div>
+
               {Object.keys(grouped[year]).map(month => (
-                <div key={month} style={{ marginBottom: '2rem', paddingLeft: '1.5rem', borderLeft: '2px solid var(--primary)' }}>
-                  <h3 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '1rem', textTransform: 'capitalize' }}>{month}</h3>
-                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                    {grouped[year][month].map((article: any) => (
-                      <li key={article.id}>
-                        <Link href={`/article/${article.slug}`} style={{ fontSize: '1.1rem', color: 'var(--foreground)', textDecoration: 'none', fontWeight: 600 }}>
-                          <span style={{ color: 'var(--muted)', fontSize: '0.9rem', marginRight: '1rem', fontWeight: 'normal' }}>
-                            {new Date(article.publishedAt!).toLocaleDateString('fr-FR', { day: 'numeric' })}
-                          </span>
-                          {article.title}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
+                <div key={month} style={{ marginBottom: '2.5rem' }}>
+                  <h3 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '1.2rem', textTransform: 'capitalize', color: 'var(--primary)' }}>{month}</h3>
+                  
+                  {Object.keys(grouped[year][month]).sort((a, b) => Number(b) - Number(a)).map(day => (
+                    <div key={day} style={{ marginBottom: '1.5rem', paddingLeft: '1rem', borderLeft: '3px solid #e2e8f0' }}>
+                      <h4 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--muted)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        📅 Jour {day}
+                      </h4>
+                      <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        {grouped[year][month][day].map((article: any) => (
+                          <li key={article.id}>
+                            <Link href={`/article/${article.slug}`} style={{ fontSize: '1.05rem', color: 'var(--foreground)', textDecoration: 'none', fontWeight: 600, display: 'block' }}>
+                              <span style={{ fontSize: '0.8rem', color: 'var(--primary)', marginRight: '0.75rem', opacity: 0.8 }}>
+                                {new Date(article.publishedAt!).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                              {article.title}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
                 </div>
               ))}
             </div>
