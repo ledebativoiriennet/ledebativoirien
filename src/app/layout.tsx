@@ -165,7 +165,7 @@ export default async function RootLayout({
             <span style={{ display: 'none' }}>{skinAd.title}</span>
           </a>
         )}
-        <div style={{ position: 'relative', zIndex: 1, backgroundColor: skinAd ? 'transparent' : 'var(--background)' }}>
+        <div style={{ position: 'relative', zIndex: 1, backgroundColor: skinAd ? 'transparent' : 'var(--background)', overflowX: 'hidden', width: '100%' }}>
         <CookieConsentPopup />
         <PushNotificationPrompt />
         {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
@@ -349,14 +349,16 @@ export default async function RootLayout({
             </div>
           </div>
         
-        <main className="container" style={{ minHeight: '60vh' }}>
-          <GoogleAdSlot adSlot="3353692131" width="728px" height="90px" />
-          {children}
-          <GoogleAdSlot adSlot="1597757330" width="728px" height="90px" />
+        <main style={{ minHeight: '60vh', width: '100%' }}>
+          <div className="container">
+            <GoogleAdSlot adSlot="3353692131" width="728px" height="90px" />
+            {children}
+            <GoogleAdSlot adSlot="1597757330" width="728px" height="90px" />
+          </div>
         </main>
 
-        <footer style={{ backgroundColor: 'var(--foreground)', color: 'white', marginTop: '4rem', paddingTop: '4rem', paddingBottom: '2rem' }}>
-          <WhatsAppPopup />
+        <WhatsAppPopup />
+        <footer style={{ width: '100%', backgroundColor: 'var(--foreground)', color: 'white', marginTop: '4rem', paddingTop: '4rem', paddingBottom: '2rem' }}>
           <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '3rem', marginBottom: '3rem' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
