@@ -17,6 +17,8 @@ export default function SportsClient({ initialMatches }: { initialMatches: any[]
       team2Flag: formData.get("team2Flag") as string,
       matchDate: new Date(formData.get("matchDate") as string),
       phase: formData.get("phase") as string,
+      sport: formData.get("sport") as string,
+      sportIcon: formData.get("sportIcon") as string,
     };
 
     try {
@@ -67,6 +69,17 @@ export default function SportsClient({ initialMatches }: { initialMatches: any[]
             <input type="text" name="phase" placeholder="Ex: CAN 2025 - Groupe A" style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '4px' }} />
           </div>
 
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <div style={{ flex: 1 }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Sport (Nom)</label>
+              <input type="text" name="sport" defaultValue="Football" required style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '4px' }} />
+            </div>
+            <div style={{ width: '80px' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Icône</label>
+              <input type="text" name="sportIcon" defaultValue="⚽" required style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '4px' }} />
+            </div>
+          </div>
+
           <button type="submit" disabled={loading} style={{ marginTop: '1rem', padding: '0.75rem', backgroundColor: '#3b82f6', color: 'white', fontWeight: 'bold', borderRadius: '4px', border: 'none', cursor: loading ? 'not-allowed' : 'pointer' }}>
             {loading ? 'Enregistrement...' : 'Ajouter le match'}
           </button>
@@ -78,8 +91,9 @@ export default function SportsClient({ initialMatches }: { initialMatches: any[]
         {initialMatches.map(match => (
           <div key={match.id} style={{ backgroundColor: 'white', padding: '1rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase' }}>
-                {match.phase} • {new Date(match.matchDate).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+              <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ fontSize: '1.2rem' }}>{match.sportIcon}</span>
+                {match.sport} • {match.phase} • {new Date(match.matchDate).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
               </div>
               <div style={{ display: 'flex', gap: '0.5rem' }}>
                 <span style={{ padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 'bold', backgroundColor: match.status === 'LIVE' ? '#fee2e2' : '#f1f5f9', color: match.status === 'LIVE' ? '#dc2626' : '#475569' }}>

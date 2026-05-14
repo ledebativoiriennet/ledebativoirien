@@ -32,7 +32,7 @@ export default async function SportsModule() {
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: 'linear-gradient(90deg, #fef08a, #f59e0b, #fbbf24)' }}></div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
         <h2 style={{ fontSize: '1.2rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1px', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span>⚽</span> Mondial 2026
+          <span>{matches[0]?.sportIcon || '⚽'}</span> {matches[0]?.sport || 'Mondial 2026'}
         </h2>
       </div>
       

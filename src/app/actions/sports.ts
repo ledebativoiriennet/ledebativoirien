@@ -12,6 +12,8 @@ export async function createMatch(data: {
   matchDate: Date;
   phase?: string;
   status?: string;
+  sport?: string;
+  sportIcon?: string;
 }) {
   try {
     await checkAdminOrEditor();
@@ -24,6 +26,8 @@ export async function createMatch(data: {
         matchDate: data.matchDate,
         phase: data.phase || null,
         status: data.status || "UPCOMING",
+        sport: data.sport || "Football",
+        sportIcon: data.sportIcon || "⚽",
       }
     });
     revalidatePath("/admin/sports");

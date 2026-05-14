@@ -315,6 +315,8 @@ model FootballMatch {
   phase     String?  // ex: "Groupe A", "Quarts de finale"
   score     String?  // ex: "2 - 1"
   status    String   @default("UPCOMING") // UPCOMING, LIVE, FINISHED
+  sport     String   @default("Football")
+  sportIcon String?  @default("⚽")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
