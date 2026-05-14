@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import MatchCountdown from "./MatchCountdown";
 
 function getFlagElement(countryCode: string) {
   if (!countryCode) return <span>🌍</span>;
@@ -78,6 +79,8 @@ export default async function SportsModule() {
                 <span style={{ fontWeight: 'bold', fontSize: '0.9rem', textAlign: 'center' }}>{match.team2}</span>
               </div>
             </div>
+            
+            <MatchCountdown targetDate={match.matchDate} status={match.status} />
           </div>
         ))}
       </div>
