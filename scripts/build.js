@@ -34,13 +34,8 @@ try {
   // 3. Move new build to .next
   fs.renameSync(tempDir, nextDir);
 
-  // 4. Clean up the old build asynchronously (doesn't block)
-  if (fs.existsSync(oldDir)) {
-    fs.rm(oldDir, { recursive: true, force: true }, (err) => {
-      if (err) console.warn('Warning: Could not remove old build directory:', err.message);
-    });
-  }
-
+  // 4. Do NOT clean up oldDir immediately. Next.js might still be reading from it until it fully restarts.
+  // We will clean it up at the start of the next build (see step 1).
   console.log('Deployment swap complete!');
 } catch (err) {
   console.error('Error during directory swap:', err);
