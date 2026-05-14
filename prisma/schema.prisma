@@ -1,8 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-3.0.x", "debian-openssl-1.1.x"]
 }
 
@@ -12,105 +9,102 @@ datasource db {
 }
 
 model User {
-  id            String         @id @default(cuid())
-  name          String?
-  email         String?        @unique
-  password      String?
-  role          String         @default("USER") // ADMIN, EDITOR, USER
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  lastLoginAt   DateTime?
-  subscriptions Subscription[]
-  readingHistory ReadingHistory[]
-  articleLikes   ArticleLike[]
-  purchases      Purchase[]
+  id                String             @id @default(cuid())
+  name              String?
+  email             String?            @unique
+  password          String?
+  role              String             @default("USER")
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  companyId         String?
+  lastLoginAt       DateTime?
+  articleLikes      ArticleLike[]
+  purchases         Purchase[]
   pushSubscriptions PushSubscription[]
-  companyId      String?
-  company        Company?       @relation(fields: [companyId], references: [id])
+  readingHistory    ReadingHistory[]
+  subscriptions     Subscription[]
+  company           Company?           @relation(fields: [companyId], references: [id])
 }
 
 model Subscription {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  plan      String   @default("PREMIUM")
-  status    String   @default("ACTIVE")
-  startDate DateTime @default(now())
+  plan      String    @default("PREMIUM")
+  status    String    @default("ACTIVE")
+  startDate DateTime  @default(now())
   endDate   DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User      @relation(fields: [userId], references: [id])
 }
 
 model Author {
-  id        String    @id @default(cuid())
-  wpId      Int?      @unique
-  name      String
-  slug      String    @unique
-  email     String?
-  articles  Article[]
+  id          String             @id @default(cuid())
+  wpId        Int?               @unique
+  name        String
+  slug        String             @unique
+  email       String?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  articles    Article[]
   subscribers AuthorSubscriber[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
 }
 
 model Category {
-  id        String    @id @default(cuid())
-  wpId      Int?      @unique
+  id        String     @id @default(cuid())
+  wpId      Int?       @unique
   name      String
-  slug      String    @unique
+  slug      String     @unique
   parentId  String?
-  parent    Category?  @relation("CategoryToCategory", fields: [parentId], references: [id])
-  children  Category[] @relation("CategoryToCategory")
-  articles  Article[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
+  parent    Category?  @relation("CategoryToCategory", fields: [parentId], references: [id])
+  children  Category[] @relation("CategoryToCategory")
+  articles  Article[]  @relation("ArticleToCategory")
 }
 
 model Article {
-  id          String    @id @default(cuid())
-  wpId        Int?      @unique
-  title       String
-  slug        String    @unique
-  content     String
-  excerpt     String?
-  imageUrl    String?
-  imageCaption String? // LÃ©gende / crÃ©dit photo
-  isPremium   Boolean   @default(false)
-  isConfidentiel Boolean @default(false)
-  isFeatured    Boolean   @default(false)
-  publishedAt DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  authorId    String?
-  author      Author?   @relation(fields: [authorId], references: [id])
-
-  videoUrl    String?
-  videoFile   String?
-  videoCaption String? // LÃ©gende / crÃ©dit vidÃ©o
-  isAudioAvailable Boolean @default(false)
-
-  categories  Category[]
-  tags        Tag[]
-  readingHistory ReadingHistory[]
-  likes          ArticleLike[]
-  views          ArticleView[]
+  id               String           @id @default(cuid())
+  wpId             Int?             @unique
+  title            String
+  slug             String           @unique
+  content          String
+  excerpt          String?
+  imageUrl         String?
+  imageCaption     String?
+  isPremium        Boolean          @default(false)
+  isConfidentiel   Boolean          @default(false)
+  isFeatured       Boolean          @default(false)
+  publishedAt      DateTime?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  authorId         String?
+  videoUrl         String?
+  videoFile        String?
+  videoCaption     String?
+  isAudioAvailable Boolean          @default(false)
+  author           Author?          @relation(fields: [authorId], references: [id])
+  likes            ArticleLike[]
+  views            ArticleView[]
+  readingHistory   ReadingHistory[]
+  categories       Category[]       @relation("ArticleToCategory")
+  tags             Tag[]            @relation("ArticleToTag")
 }
 
 model Poll {
   id        String       @id @default(cuid())
   question  String
   isActive  Boolean      @default(true)
-  options   PollOption[]
   createdAt DateTime     @default(now())
+  options   PollOption[]
 }
 
 model PollOption {
-  id        String   @id @default(cuid())
-  pollId    String
-  poll      Poll     @relation(fields: [pollId], references: [id], onDelete: Cascade)
-  text      String
-  votes     Int      @default(0)
+  id     String @id @default(cuid())
+  pollId String
+  text   String
+  votes  Int    @default(0)
+  poll   Poll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
 }
 
 model Obituary {
@@ -125,8 +119,8 @@ model PressRelease {
   id        String   @id @default(cuid())
   title     String
   company   String
-  url       String?
   createdAt DateTime @default(now())
+  url       String?
 }
 
 model Video {
@@ -137,38 +131,38 @@ model Video {
 }
 
 model MarketIndicator {
-  id        String   @id @default(cuid())
-  group     String   // e.g., 'CACAO', 'PETROCI', 'SIB', 'APAYM', 'BRVM', 'COTON'
-  label     String   // e.g., 'CACAO', 'CAFE', 'Euro â‚¬'
-  value     String   // e.g., '1903F/Kg', '108.76 $'
-  trend     String   // 'UP', 'DOWN', 'FLAT'
-  extraText String?  // e.g., 'A-J', 'NC - A-M'
-  dateLabel String   // e.g., '30 AVRIL 2026'
-  order     Int      @default(0)
-  updatedAt DateTime @updatedAt
+  id        String          @id @default(cuid())
+  group     String
+  label     String
+  value     String
+  trend     String
+  extraText String?
+  dateLabel String
+  order     Int             @default(0)
+  updatedAt DateTime        @updatedAt
   history   MarketHistory[]
 }
 
 model MarketHistory {
-  id          String   @id @default(cuid())
+  id          String          @id @default(cuid())
   indicatorId String
-  indicator   MarketIndicator @relation(fields: [indicatorId], references: [id], onDelete: Cascade)
   value       Float
-  date        DateTime @default(now())
+  date        DateTime        @default(now())
+  indicator   MarketIndicator @relation(fields: [indicatorId], references: [id], onDelete: Cascade)
 
   @@index([indicatorId, date])
 }
 
 model EconomicalIndicator {
-  id          String   @id @default(cuid())
-  country     String   // e.g., 'CÃ´te d\'Ivoire', 'UEMOA'
-  category    String   // e.g., 'PIB', 'Inflation', 'Dette'
-  value       String
-  unit        String?
-  year        Int
-  trend       String?  // UP, DOWN, FLAT
-  source      String?
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  country   String
+  category  String
+  value     String
+  unit      String?
+  year      Int
+  trend     String?
+  source    String?
+  updatedAt DateTime @updatedAt
 }
 
 model Activity {
@@ -185,17 +179,17 @@ model Tag {
   id        String    @id @default(cuid())
   name      String    @unique
   slug      String    @unique
-  articles  Article[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  articles  Article[] @relation("ArticleToTag")
 }
 
 model FlashNews {
   id        String   @id @default(cuid())
-  time      String   // e.g., "14:30"
+  time      String
   content   String
   link      String?
-  source    String?  // e.g., "AFP"
+  source    String?
   createdAt DateTime @default(now())
 }
 
@@ -222,8 +216,8 @@ model Visitor {
   brand       String?
   isBot       Boolean  @default(false)
   botName     String?
-  botCategory String?  // GOOD, BAD
-  path        String?  // Page visitée
+  botCategory String?
+  path        String?
   visitedAt   DateTime @default(now())
 
   @@index([ipHash])
@@ -232,12 +226,12 @@ model Visitor {
 
 model Advertisement {
   id          String    @id @default(cuid())
-  title       String    // Nom de la campagne
-  company     String    // Annonceur
-  imageUrl    String    // Image ou document
-  linkUrl     String?   // Redirection au clic
-  slot        String    // HOME_TOP, HOME_MIDDLE, HOME_SIDEBAR, ARTICLE_TOP, ARTICLE_MIDDLE, ARTICLE_BOTTOM, GLOBAL_POPUP
-  status      String    @default("PENDING") // PENDING, ACTIVE, REJECTED
+  title       String
+  company     String
+  imageUrl    String
+  linkUrl     String?
+  slot        String
+  status      String    @default("PENDING")
   startDate   DateTime?
   endDate     DateTime?
   clicks      Int       @default(0)
@@ -249,25 +243,21 @@ model Advertisement {
 model WeatherReport {
   id                  String   @id @default(cuid())
   city                String   @default("Abidjan")
-  temperature         Int      // e.g., 32
-  apparentTemperature Int?     // TempÃ©rature ressentie
-  condition           String   // e.g., "Soleil", "Pluie", "Nuageux"
-  icon                String?  // e.g., "â˜€ï¸�", "ðŸŒ§ï¸�"
-  
-  forecast1Day  String? // e.g., "Ven"
-  forecast1Temp Int?
-  forecast1Icon String?
-  
-  forecast2Day  String? // e.g., "Sam"
-  forecast2Temp Int?
-  forecast2Icon String?
-  
-  forecast3Day  String? // e.g., "Dim"
-  forecast3Temp Int?
-  forecast3Icon String?
-
-  date        DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  temperature         Int
+  condition           String
+  icon                String?
+  date                DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  forecast1Day        String?
+  forecast1Icon       String?
+  forecast1Temp       Int?
+  forecast2Day        String?
+  forecast2Icon       String?
+  forecast2Temp       Int?
+  forecast3Day        String?
+  forecast3Icon       String?
+  forecast3Temp       Int?
+  apparentTemperature Int?
 }
 
 model AdInquiry {
@@ -286,35 +276,35 @@ model AdInquiry {
 model ReadingHistory {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   articleId String
-  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
   readAt    DateTime @default(now())
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, articleId]) // An article is tracked once per user to avoid duplicates, we just update readAt
+  @@unique([userId, articleId])
 }
 
 model ArticleLike {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   articleId String
-  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, articleId]) // A user can only like an article once
+  @@unique([userId, articleId])
 }
 
 model FootballMatch {
   id        String   @id @default(cuid())
   team1     String
   team2     String
-  team1Flag String?  // Emoji (ex: ðŸ‡¨ðŸ‡®) ou code pays ou URL
-  team2Flag String?  // Emoji ou code pays ou URL
+  team1Flag String?
+  team2Flag String?
   matchDate DateTime
-  phase     String?  // ex: "Groupe A", "Quarts de finale"
-  score     String?  // ex: "2 - 1"
-  status    String   @default("UPCOMING") // UPCOMING, LIVE, FINISHED
+  phase     String?
+  score     String?
+  status    String   @default("UPCOMING")
   sport     String   @default("Football")
   sportIcon String?  @default("⚽")
   createdAt DateTime @default(now())
@@ -339,32 +329,23 @@ model Titrologie {
 }
 
 model SiteSettings {
-  id           String   @id @default("global")
-  facebookUrl  String?
-  twitterUrl   String?
-  instagramUrl String?
-  linkedinUrl  String?
-  youtubeUrl   String?
-
-  // Facebook API
+  id                  String   @id @default("global")
+  facebookUrl         String?
+  updatedAt           DateTime @updatedAt
+  instagramUrl        String?
+  linkedinUrl         String?
+  twitterUrl          String?
+  youtubeUrl          String?
+  facebookAccessToken String?
   facebookPageId      String?
-  facebookAccessToken String? // Long-lived Page Access Token
-
-  // X (Twitter) API
+  linkedinAccessToken String?
+  linkedinUrn         String?
+  twitterAccessSecret String?
+  twitterAccessToken  String?
   twitterApiKey       String?
   twitterApiSecret    String?
-  twitterAccessToken  String?
-  twitterAccessSecret String?
-
-  // LinkedIn API
-  linkedinAccessToken String?
-  linkedinUrn         String? // urn:li:organization:ID or urn:li:person:ID
-
-  // Injection de code
-  headerCode          String? // Code injecté dans <head>
-  footerCode          String? // Code injecté avant </body>
-
-  updatedAt    DateTime @updatedAt
+  footerCode          String?
+  headerCode          String?
 }
 
 model Quote {
@@ -387,53 +368,53 @@ model AuthorSubscriber {
   id        String   @id @default(cuid())
   email     String
   authorId  String
-  author    Author   @relation(fields: [authorId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+  author    Author   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@unique([email, authorId])
 }
 
 model DigitalNewspaper {
-  id            String   @id @default(cuid())
-  title         String   // e.g. "Le DÃ©bat Ivoirien NÂ°150"
+  id            String     @id @default(cuid())
+  title         String
   description   String?
   issueNumber   Int?
-  price         Float    // e.g. 500 (FCFA)
+  price         Float
   coverImageUrl String?
-  pdfUrl        String   // Path to the actual PDF file
-  publishedAt   DateTime @default(now())
-  isActive      Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  pdfUrl        String
+  publishedAt   DateTime   @default(now())
+  isActive      Boolean    @default(true)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
   purchases     Purchase[]
 }
 
 model Purchase {
-  id                 String   @id @default(cuid())
+  id                 String           @id @default(cuid())
   userId             String?
-  user               User?    @relation(fields: [userId], references: [id])
   customerEmail      String
   customerName       String?
   digitalNewspaperId String
-  digitalNewspaper   DigitalNewspaper @relation(fields: [digitalNewspaperId], references: [id])
   companyId          String?
-  company            Company?         @relation(fields: [companyId], references: [id])
   amount             Float
-  status             String   @default("PENDING") // PENDING, COMPLETED, FAILED
-  paymentMethod      String?  // CINETPAY
-  transactionId      String?  @unique
-  downloadToken      String   @unique @default(cuid())
-  downloadCount      Int      @default(0)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  status             String           @default("PENDING")
+  paymentMethod      String?
+  transactionId      String?          @unique
+  downloadToken      String           @unique @default(cuid())
+  downloadCount      Int              @default(0)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  company            Company?         @relation(fields: [companyId], references: [id])
+  digitalNewspaper   DigitalNewspaper @relation(fields: [digitalNewspaperId], references: [id])
+  user               User?            @relation(fields: [userId], references: [id])
 }
 
 model ArticleView {
   id        String   @id @default(cuid())
   articleId String
-  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
-  ipHash    String?  // Hash IP + Date + ArticleID pour dédoublonnement
   viewedAt  DateTime @default(now())
+  ipHash    String?
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
 
   @@index([articleId, viewedAt])
   @@index([ipHash])
@@ -445,21 +426,21 @@ model PushSubscription {
   p256dh    String
   auth      String
   userId    String?
-  user      User?    @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
 }
 
 model Company {
-  id          String   @id @default(cuid())
-  name        String
-  email       String   @unique
-  logoUrl     String?
-  plan        String   @default("B2B_STANDARD")
-  maxUsers    Int      @default(10)
-  users       User[]
-  purchases   Purchase[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String     @id @default(cuid())
+  name      String
+  email     String     @unique
+  logoUrl   String?
+  plan      String     @default("B2B_STANDARD")
+  maxUsers  Int        @default(10)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  purchases Purchase[]
+  users     User[]
 }
 
 model ActivityLog {
@@ -467,9 +448,9 @@ model ActivityLog {
   userId    String?
   userName  String?
   userEmail String?
-  action    String   // LOGIN, LOGOUT, CREATE, UPDATE, DELETE, etc.
-  resource  String?  // Article, User, Category, etc.
-  details   String?  // Description detaillee ou JSON
+  action    String
+  resource  String?
+  details   String?
   ipAddress String?
   userAgent String?
   browser   String?
@@ -484,7 +465,7 @@ model LiveStream {
   id        String   @id @default(cuid())
   title     String   @default("Direct LDI")
   url       String
-  platform  String   @default("OTHER") // YOUTUBE, FACEBOOK, TIKTOK, OTHER
+  platform  String   @default("OTHER")
   isActive  Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

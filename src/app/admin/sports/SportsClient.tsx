@@ -3,6 +3,22 @@
 import { useState } from "react";
 import { createMatch, updateMatchScore, deleteMatch } from "@/app/actions/sports";
 
+function getFlagElement(countryCode: string) {
+  if (!countryCode) return <span>🌍</span>;
+  if (/[\u0080-\uFFFF]/.test(countryCode)) return <span>{countryCode}</span>;
+  if (countryCode.length === 2) {
+    const code = countryCode.toLowerCase();
+    return (
+      <img 
+        src={`https://flagcdn.com/w80/${code}.png`}
+        alt={countryCode}
+        style={{ width: '30px', height: 'auto', borderRadius: '2px', border: '1px solid #e2e8f0' }} 
+      />
+    );
+  }
+  return <span>{countryCode}</span>;
+}
+
 export default function SportsClient({ initialMatches }: { initialMatches: any[] }) {
   const [loading, setLoading] = useState(false);
 
@@ -136,7 +152,7 @@ export default function SportsClient({ initialMatches }: { initialMatches: any[]
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '8px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
-                <span style={{ fontSize: '1.5rem' }}>{match.team1Flag}</span>
+                {getFlagElement(match.team1Flag || "")}
                 <span style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{match.team1}</span>
               </div>
               
@@ -151,7 +167,7 @@ export default function SportsClient({ initialMatches }: { initialMatches: any[]
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1, justifyContent: 'flex-end' }}>
                 <span style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{match.team2}</span>
-                <span style={{ fontSize: '1.5rem' }}>{match.team2Flag}</span>
+                {getFlagElement(match.team2Flag || "")}
               </div>
             </div>
             

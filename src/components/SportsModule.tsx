@@ -1,15 +1,30 @@
 import { prisma } from "@/lib/prisma";
 
-function getFlagEmoji(countryCode: string) {
-  if (!countryCode) return "🌍";
-  // If it's already an emoji or not a 2-letter code, return as is
-  if (countryCode.length !== 2 || /[\u0080-\uFFFF]/.test(countryCode)) return countryCode;
+function getFlagElement(countryCode: string) {
+  if (!countryCode) return <span>🌍</span>;
   
-  const codePoints = countryCode
-    .toUpperCase()
-    .split('')
-    .map(char => 127397 + char.charCodeAt(0));
-  return String.fromCodePoint(...codePoints);
+  // If it's already an emoji, return it
+  if (/[\u0080-\uFFFF]/.test(countryCode)) return <span>{countryCode}</span>;
+  
+  // If it's a 2-letter code, use FlagCDN
+  if (countryCode.length === 2) {
+    const code = countryCode.toLowerCase();
+    return (
+      <img 
+        src={`https://flagcdn.com/w160/${code}.png`}
+        alt={countryCode}
+        style={{ 
+          width: '60px', 
+          height: 'auto', 
+          borderRadius: '4px', 
+          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+          display: 'block'
+        }} 
+      />
+    );
+  }
+  
+  return <span>{countryCode}</span>;
 }
 
 export default async function SportsModule() {
@@ -47,8 +62,8 @@ export default async function SportsModule() {
             </div>
             
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
-                <span style={{ fontSize: '2.5rem', lineHeight: 1 }}>{getFlagEmoji(match.team1Flag || "")}</span>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem', flex: 1 }}>
+                <div style={{ height: '40px', display: 'flex', alignItems: 'center' }}>{getFlagElement(match.team1Flag || "")}</div>
                 <span style={{ fontWeight: 'bold', fontSize: '0.9rem', textAlign: 'center' }}>{match.team1}</span>
               </div>
               
@@ -58,8 +73,8 @@ export default async function SportsModule() {
                 </span>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
-                <span style={{ fontSize: '2.5rem', lineHeight: 1 }}>{getFlagEmoji(match.team2Flag || "")}</span>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem', flex: 1 }}>
+                <div style={{ height: '40px', display: 'flex', alignItems: 'center' }}>{getFlagElement(match.team2Flag || "")}</div>
                 <span style={{ fontWeight: 'bold', fontSize: '0.9rem', textAlign: 'center' }}>{match.team2}</span>
               </div>
             </div>
