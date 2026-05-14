@@ -36,6 +36,19 @@ try {
 
   // 4. Do NOT clean up oldDir immediately. Next.js might still be reading from it until it fully restarts.
   // We will clean it up at the start of the next build (see step 1).
+
+  // 5. Trigger Passenger restart (Hostinger/cPanel)
+  try {
+    const tmpDir = path.join(__dirname, '../tmp');
+    if (!fs.existsSync(tmpDir)) {
+      fs.mkdirSync(tmpDir);
+    }
+    fs.writeFileSync(path.join(tmpDir, 'restart.txt'), String(Date.now()));
+    console.log('Created tmp/restart.txt to trigger Hostinger graceful restart.');
+  } catch (e) {
+    console.error('Warning: Could not create tmp/restart.txt:', e.message);
+  }
+
   console.log('Deployment swap complete!');
 } catch (err) {
   console.error('Error during directory swap:', err);
