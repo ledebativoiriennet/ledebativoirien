@@ -1,10 +1,10 @@
 import React from 'react';
 import { prisma } from "@/lib/prisma";
+import Link from "next/link";
+import MainNavigation from "@/components/MainNavigation";
 
 // Seuil de fraîcheur : 4 heures en millisecondes
 const RECENT_THRESHOLD_MS = 4 * 60 * 60 * 1000;
-import Link from "next/link";
-import MainNavigation from "@/components/MainNavigation";
 
 export const metadata = {
   title: "Flash Infos / Dépêches - Le Débat Ivoirien",

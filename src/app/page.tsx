@@ -670,7 +670,9 @@ export default async function Home() {
 
         {/* Dépêches Widget */}
         <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "1.5rem" }}>
-          <h2 className="portal-section-title" style={{ backgroundColor: "#dc2626", borderColor: "#991b1b" }}>Flash Infos / Dépêches</h2>
+          <Link href="/depeches" style={{ textDecoration: 'none' }}>
+            <h2 className="portal-section-title" style={{ backgroundColor: "#dc2626", borderColor: "#991b1b" }}>Flash Infos / Dépêches</h2>
+          </Link>
           <div style={{ padding: "0" }}>
             <ul style={{ listStyle: "none", padding: 0, margin: 0, maxHeight: '300px', overflowY: 'auto' }}>
               {flashNewsItems.map((flash) => (
@@ -683,7 +685,7 @@ export default async function Home() {
                 </li>
               ))}
             </ul>
-            <Link href="#" style={{ display: "block", textAlign: "center", fontSize: "0.8rem", padding: "0.5rem", backgroundColor: "#f8fafc", color: "var(--primary)", fontWeight: "bold", borderTop: "1px solid var(--border)" }}>Toutes les dépêches</Link>
+            <Link href="/depeches" style={{ display: "block", textAlign: "center", fontSize: "0.8rem", padding: "0.5rem", backgroundColor: "#f8fafc", color: "var(--primary)", fontWeight: "bold", borderTop: "1px solid var(--border)" }}>Toutes les dépêches</Link>
           </div>
         </div>
 
