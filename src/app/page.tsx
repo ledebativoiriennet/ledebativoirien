@@ -159,7 +159,6 @@ export default async function Home() {
     <>
     <div>
       <AdBanner slot="HOME_TOP" />
-      <SportsModule />
 
       {/* Trending Tags (Hashtags) */}
       {processedTrendingTags && processedTrendingTags.length > 0 && (
@@ -231,6 +230,8 @@ export default async function Home() {
         <div style={{ marginTop: "1.5rem" }}>
           <AdSlot format="skyscraper" />
         </div>
+
+        <SportsModule />
         
         {/* Humour / Caricature */}
         <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginTop: "1.5rem" }}>
