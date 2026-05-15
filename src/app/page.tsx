@@ -616,61 +616,6 @@ export default async function Home() {
 
       {/* RIGHT COLUMN: Pubs & Les Plus Lus */}
       <aside className="portal-col-right">
-        <SubscriptionBanner />
-
-
-        {/* Météo Widget */}
-        {weatherReport && (
-          <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "1.5rem", position: 'relative', backgroundImage: 'linear-gradient(to bottom, #38bdf8, #0ea5e9)', color: 'white' }}>
-             <div style={{ padding: '1rem', height: '120px', position: 'relative' }}>
-               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                 <div>
-                   <div style={{ fontSize: '1rem', fontWeight: 800, textTransform: 'uppercase' }}>{weatherReport.city}</div>
-                   <div style={{ fontSize: '0.7rem', opacity: 0.9 }}>{weatherReport.condition}</div>
-                 </div>
-                 <div style={{ fontSize: '3rem', lineHeight: 1 }}>{weatherReport.icon}</div>
-               </div>
-               <div style={{ position: 'absolute', bottom: '1rem', left: '1rem', display: 'flex', alignItems: 'flex-end', gap: '0.5rem' }}>
-                 <span style={{ fontSize: '2.5rem', fontWeight: 900, lineHeight: 0.8 }}>{weatherReport.temperature}°</span>
-                 <span style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>C</span>
-               </div>
-               {weatherReport.apparentTemperature != null && (
-                 <div style={{ position: 'absolute', bottom: '1rem', right: '1rem', fontSize: '0.7rem', opacity: 0.9, textAlign: 'right' }}>
-                   <span>Ressenti&nbsp;</span>
-                   <span style={{ fontWeight: 900 }}>{weatherReport.apparentTemperature}°C</span>
-                 </div>
-               )}
-             </div>
-             
-             {/* 3 Days Forecast */}
-             {(weatherReport.forecast1Day || weatherReport.forecast2Day || weatherReport.forecast3Day) && (
-               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', backgroundColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(4px)', borderTop: '1px solid rgba(255,255,255,0.3)' }}>
-                 {weatherReport.forecast1Day && (
-                   <div style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)' }}>
-                     <div style={{ fontSize: '0.65rem', fontWeight: 'bold', textTransform: 'uppercase' }}>{weatherReport.forecast1Day}</div>
-                     <div style={{ fontSize: '1.2rem', margin: '0.2rem 0' }}>{weatherReport.forecast1Icon}</div>
-                     <div style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{weatherReport.forecast1Temp}°</div>
-                   </div>
-                 )}
-                 {weatherReport.forecast2Day && (
-                   <div style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)' }}>
-                     <div style={{ fontSize: '0.65rem', fontWeight: 'bold', textTransform: 'uppercase' }}>{weatherReport.forecast2Day}</div>
-                     <div style={{ fontSize: '1.2rem', margin: '0.2rem 0' }}>{weatherReport.forecast2Icon}</div>
-                     <div style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{weatherReport.forecast2Temp}°</div>
-                   </div>
-                 )}
-                 {weatherReport.forecast3Day && (
-                   <div style={{ padding: '0.5rem', textAlign: 'center' }}>
-                     <div style={{ fontSize: '0.65rem', fontWeight: 'bold', textTransform: 'uppercase' }}>{weatherReport.forecast3Day}</div>
-                     <div style={{ fontSize: '1.2rem', margin: '0.2rem 0' }}>{weatherReport.forecast3Icon}</div>
-                     <div style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{weatherReport.forecast3Temp}°</div>
-                   </div>
-                 )}
-               </div>
-             )}
-          </div>
-        )}
-
         {/* Dépêches Widget */}
         <div style={{ backgroundColor: "#fff", border: "1px solid #ddd", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "1.5rem" }}>
           <style dangerouslySetInnerHTML={{ __html: `
@@ -783,6 +728,63 @@ export default async function Home() {
             </Link>
           </div>
         </div>
+
+        <SubscriptionBanner />
+
+
+        {/* Météo Widget */}
+        {weatherReport && (
+          <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "1.5rem", position: 'relative', backgroundImage: 'linear-gradient(to bottom, #38bdf8, #0ea5e9)', color: 'white' }}>
+             <div style={{ padding: '1rem', height: '120px', position: 'relative' }}>
+               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                 <div>
+                   <div style={{ fontSize: '1rem', fontWeight: 800, textTransform: 'uppercase' }}>{weatherReport.city}</div>
+                   <div style={{ fontSize: '0.7rem', opacity: 0.9 }}>{weatherReport.condition}</div>
+                 </div>
+                 <div style={{ fontSize: '3rem', lineHeight: 1 }}>{weatherReport.icon}</div>
+               </div>
+               <div style={{ position: 'absolute', bottom: '1rem', left: '1rem', display: 'flex', alignItems: 'flex-end', gap: '0.5rem' }}>
+                 <span style={{ fontSize: '2.5rem', fontWeight: 900, lineHeight: 0.8 }}>{weatherReport.temperature}°</span>
+                 <span style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>C</span>
+               </div>
+               {weatherReport.apparentTemperature != null && (
+                 <div style={{ position: 'absolute', bottom: '1rem', right: '1rem', fontSize: '0.7rem', opacity: 0.9, textAlign: 'right' }}>
+                   <span>Ressenti&nbsp;</span>
+                   <span style={{ fontWeight: 900 }}>{weatherReport.apparentTemperature}°C</span>
+                 </div>
+               )}
+             </div>
+             
+             {/* 3 Days Forecast */}
+             {(weatherReport.forecast1Day || weatherReport.forecast2Day || weatherReport.forecast3Day) && (
+               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', backgroundColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(4px)', borderTop: '1px solid rgba(255,255,255,0.3)' }}>
+                 {weatherReport.forecast1Day && (
+                   <div style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)' }}>
+                     <div style={{ fontSize: '0.65rem', fontWeight: 'bold', textTransform: 'uppercase' }}>{weatherReport.forecast1Day}</div>
+                     <div style={{ fontSize: '1.2rem', margin: '0.2rem 0' }}>{weatherReport.forecast1Icon}</div>
+                     <div style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{weatherReport.forecast1Temp}°</div>
+                   </div>
+                 )}
+                 {weatherReport.forecast2Day && (
+                   <div style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)' }}>
+                     <div style={{ fontSize: '0.65rem', fontWeight: 'bold', textTransform: 'uppercase' }}>{weatherReport.forecast2Day}</div>
+                     <div style={{ fontSize: '1.2rem', margin: '0.2rem 0' }}>{weatherReport.forecast2Icon}</div>
+                     <div style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{weatherReport.forecast2Temp}°</div>
+                   </div>
+                 )}
+                 {weatherReport.forecast3Day && (
+                   <div style={{ padding: '0.5rem', textAlign: 'center' }}>
+                     <div style={{ fontSize: '0.65rem', fontWeight: 'bold', textTransform: 'uppercase' }}>{weatherReport.forecast3Day}</div>
+                     <div style={{ fontSize: '1.2rem', margin: '0.2rem 0' }}>{weatherReport.forecast3Icon}</div>
+                     <div style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{weatherReport.forecast3Temp}°</div>
+                   </div>
+                 )}
+               </div>
+             )}
+          </div>
+        )}
+
+
 
         {/* Activités Widget */}
         <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "1.5rem" }}>
