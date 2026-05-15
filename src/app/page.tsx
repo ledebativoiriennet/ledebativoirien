@@ -3,6 +3,9 @@ import { getArticleImage } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import MainNavigation from "@/components/MainNavigation";
+
+// Seuil de fraîcheur : 4 heures en millisecondes
+const RECENT_THRESHOLD_MS = 4 * 60 * 60 * 1000;
 import NewsletterWidget from "@/components/NewsletterWidget";
 import { AdSlot } from "@/components/AdSlot";
 import AdBanner from "@/components/AdBanner";
@@ -669,23 +672,115 @@ export default async function Home() {
         )}
 
         {/* Dépêches Widget */}
-        <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "1.5rem" }}>
-          <Link href="/depeches" style={{ textDecoration: 'none' }}>
-            <h2 className="portal-section-title" style={{ backgroundColor: "#dc2626", borderColor: "#991b1b" }}>Flash Infos / Dépêches</h2>
+        <div style={{ backgroundColor: "#fff", border: "1px solid #ddd", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "1.5rem" }}>
+          <style dangerouslySetInnerHTML={{ __html: `
+            .home-flash-header {
+              background: #cc0000;
+              color: #fff;
+              padding: 0.55rem 1rem;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              border-bottom: 3px solid #aa0000;
+            }
+            .home-flash-title {
+              font-size: 0.9rem;
+              font-weight: 800;
+              text-transform: uppercase;
+              letter-spacing: 0.06em;
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+            }
+            .home-flash-title::before {
+              content: '';
+              display: inline-block;
+              width: 8px;
+              height: 8px;
+              background: #fff;
+              border-radius: 50%;
+              animation: home-pulse-dot 1.5s infinite;
+            }
+            @keyframes home-pulse-dot {
+              0%   { opacity: 1; transform: scale(1); }
+              50%  { opacity: 0.4; transform: scale(0.8); }
+              100% { opacity: 1; transform: scale(1); }
+            }
+            .home-flash-item {
+              display: flex;
+              align-items: flex-start;
+              gap: 0.6rem;
+              padding: 0.6rem 0.75rem;
+              border-bottom: 1px solid #f0f0f0;
+              transition: background 0.15s ease;
+            }
+            .home-flash-item:last-child { border-bottom: none; }
+            .home-flash-item:hover { background: #fef9f9; }
+
+            .home-flash-time {
+              flex-shrink: 0;
+              min-width: 38px;
+              font-size: 0.7rem;
+              font-weight: 700;
+              text-align: right;
+              font-family: 'Arial Narrow', Arial, sans-serif;
+            }
+            .home-flash-bullet {
+              flex-shrink: 0;
+              width: 5px;
+              height: 5px;
+              border-radius: 50%;
+              margin-top: 0.4rem;
+            }
+            .home-flash-content {
+              flex: 1;
+              font-size: 0.8rem;
+              line-height: 1.4;
+              color: #1a1a1a;
+            }
+            
+            /* État récent vs ancien */
+            .home-flash-item--recent .home-flash-time { color: #cc0000; }
+            .home-flash-item--recent .home-flash-bullet { background: #cc0000; }
+            .home-flash-item--stale .home-flash-time { color: #aaa; }
+            .home-flash-item--stale .home-flash-bullet { background: #ccc; }
+            .home-flash-item--stale .home-flash-content { color: #666; }
+          `}} />
+          
+          <Link href="/depeches" style={{ textDecoration: 'none' }} className="home-flash-header">
+            <div className="home-flash-title">Flash Infos</div>
+            <span style={{ fontSize: '0.65rem', opacity: 0.8, fontWeight: 700 }}>DIRECT ›</span>
           </Link>
+
           <div style={{ padding: "0" }}>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0, maxHeight: '300px', overflowY: 'auto' }}>
-              {flashNewsItems.map((flash) => (
-                <li key={flash.id} style={{ display: "flex", gap: "0.75rem", padding: "0.75rem", borderBottom: "1px solid var(--border)", alignItems: 'flex-start' }}>
-                  <div style={{ color: "#dc2626", fontWeight: 900, fontSize: "0.8rem", flexShrink: 0 }}>{flash.time}</div>
-                  <div>
-                    <div style={{ fontSize: "0.85rem", lineHeight: 1.3 }}>{flash.content}</div>
-                    {flash.source && <div style={{ fontSize: "0.6rem", color: "var(--muted)", marginTop: "0.2rem", fontWeight: "bold" }}>Source: {flash.source}</div>}
-                  </div>
-                </li>
-              ))}
+            <ul style={{ listStyle: "none", padding: 0, margin: 0, maxHeight: '350px', overflowY: 'auto' }}>
+              {flashNewsItems.map((flash) => {
+                const isRecent = Date.now() - new Date(flash.createdAt).getTime() < RECENT_THRESHOLD_MS;
+                const timeStr = new Date(flash.createdAt).toLocaleTimeString('fr-FR', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                });
+
+                return (
+                  <li key={flash.id} className={`home-flash-item ${isRecent ? 'home-flash-item--recent' : 'home-flash-item--stale'}`}>
+                    <div className="home-flash-time">{timeStr}</div>
+                    <div className="home-flash-bullet" />
+                    <div className="home-flash-content">
+                      {flash.link ? (
+                        <Link href={flash.link} style={{ color: 'inherit', textDecoration: 'none' }}>
+                          {flash.content}
+                        </Link>
+                      ) : (
+                        flash.content
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
-            <Link href="/depeches" style={{ display: "block", textAlign: "center", fontSize: "0.8rem", padding: "0.5rem", backgroundColor: "#f8fafc", color: "var(--primary)", fontWeight: "bold", borderTop: "1px solid var(--border)" }}>Toutes les dépêches</Link>
+            <Link href="/depeches" style={{ display: "block", textAlign: "center", fontSize: "0.75rem", padding: "0.55rem", backgroundColor: "#f8fafc", color: "#cc0000", fontWeight: "800", borderTop: "1px solid #ddd", textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Plus de flash infos...
+            </Link>
           </div>
         </div>
 
