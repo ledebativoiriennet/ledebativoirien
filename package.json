@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "chmod +x node_modules/@prisma/engines/* && (prisma db push --accept-data-loss || true) && prisma generate && node scripts/seed-energie.cjs && next build",
+    "build": "chmod +x node_modules/@prisma/engines/* && prisma generate && next build",
     "start": "next start",
     "lint": "eslint"
   },
