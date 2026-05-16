@@ -33,8 +33,13 @@ export async function POST(req: NextRequest) {
     const ref = finalReferrer.toLowerCase();
 
     // 1. Check UTM Source in URL (if available in path or referer)
-    const urlObj = new URL(path, "https://ledebativoirien.net");
-    const utmSource = urlObj.searchParams.get("utm_source");
+    let utmSource = null;
+    try {
+      const urlObj = new URL(path, "https://ledebativoirien.net");
+      utmSource = urlObj.searchParams.get("utm_source");
+    } catch (e) {
+      // Ignorer
+    }
     
     if (utmSource) {
       source = utmSource.charAt(0).toUpperCase() + utmSource.slice(1);
@@ -52,8 +57,14 @@ export async function POST(req: NextRequest) {
       else if (ref.includes("t.me") || ref.includes("telegram")) source = "Telegram";
       else {
         try {
-          const domain = new URL(finalReferrer).hostname.replace("www.", "");
-          source = domain;
+          if (finalReferrer.startsWith('http')) {
+            const domain = new URL(finalReferrer).hostname.replace("www.", "");
+            source = domain;
+          } else if (finalReferrer.includes('://')) {
+            source = finalReferrer.split('://')[1].split('/')[0].replace("www.", "");
+          } else {
+            source = "Autre";
+          }
         } catch (e) {
           source = "Autre";
         }

@@ -117,7 +117,7 @@ export default async function AdminDashboard() {
     prisma.$queryRaw`SELECT strftime('%Y-%m', datetime(visitedAt / 1000, 'unixepoch')) as label, COUNT(*) as count FROM Visitor WHERE visitedAt >= ${now.getTime() - 365*86400000} AND isBot = 0 GROUP BY label ORDER BY label` as Promise<{label: string, count: number}[]>,
 
     // Traffic Sources
-    prisma.visitor.groupBy({ by: ['source'], _count: { _all: true }, orderBy: { _count: { source: 'desc' } }, take: 10 })
+    prisma.visitor.groupBy({ by: ['source'], _count: { _all: true } })
   ]);
 
   // Post-processing visit data to ensure all periods are represented
@@ -178,7 +178,9 @@ export default async function AdminDashboard() {
   const browserData = mapStats(browserStatsRaw, 'browser');
   const deviceData = mapStats(deviceStatsRaw, 'device');
   const brandData = mapStats(brandStatsRaw, 'brand');
-  const sourceData = mapStats(sourceStatsRaw, 'source');
+  const sourceData = mapStats(sourceStatsRaw, 'source')
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 10);
 
   const totalBots = botCount;
   const goodBots = goodBotCount;
