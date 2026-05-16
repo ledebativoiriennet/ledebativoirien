@@ -3,12 +3,17 @@ import { prisma } from "@/lib/prisma";
 
 async function fetchYahoo(ticker: string) {
   try {
-    const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=2d`, { next: { revalidate: 0 } });
+    const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=2d`, { 
+      next: { revalidate: 0 },
+      cache: 'no-store'
+    });
+    if (!res.ok) return null;
     const data = await res.json();
+    if (!data.chart?.result?.[0]) return null;
     const result = data.chart.result[0].meta;
     return {
       price: result.regularMarketPrice as number,
-      prev: (result.previousClose || result.chartPreviousClose) as number
+      prev: (result.previousClose || result.chartPreviousClose || result.regularMarketPrice) as number
     };
   } catch (e) {
     console.error("Yahoo fetch error", ticker, e);
@@ -18,7 +23,11 @@ async function fetchYahoo(ticker: string) {
 
 async function fetchCurrencies() {
   try {
-    const res = await fetch("https://api.exchangerate-api.com/v4/latest/USD", { next: { revalidate: 0 } });
+    const res = await fetch("https://api.exchangerate-api.com/v4/latest/USD", { 
+      next: { revalidate: 0 },
+      cache: 'no-store'
+    });
+    if (!res.ok) return null;
     const data = await res.json();
     return data.rates as Record<string, number>;
   } catch (e) {
@@ -28,20 +37,35 @@ async function fetchCurrencies() {
 }
 
 async function upsertIndicator(label: string, group: string, value: string, numericValue: number, trend: string, extra?: string) {
-  const existing = await prisma.marketIndicator.findFirst({ where: { label } });
+  // Search for existing by label AND group to avoid mismatches
+  const existing = await prisma.marketIndicator.findFirst({ 
+    where: { 
+      OR: [
+        { label, group },
+        { label: label.trim() } // Fallback for slightly different labels
+      ]
+    } 
+  });
+  
   const dateLabel = new Date().toLocaleDateString("fr-FR");
 
   if (existing) {
     await prisma.marketIndicator.update({
       where: { id: existing.id },
-      data: { value, trend, extraText: extra || existing.extraText, dateLabel }
+      data: { 
+        value, 
+        trend, 
+        extraText: extra || existing.extraText, 
+        dateLabel,
+        group // Ensure group is correct
+      }
     });
 
     // Record history (max one per day)
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
     const existingHistory = await prisma.marketHistory.findFirst({
-      where: { indicatorId: existing.id, date: { gte: today } }
+      where: { indicatorId: existing.id, date: { gte: todayStart } }
     });
     if (!existingHistory) {
       await prisma.marketHistory.create({
@@ -66,7 +90,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ success: false, error: "Non autorisé" }, { status: 401 });
     }
 
-    const [gold, silver, cocoa, coffee, brent, wti, naturalGas, cotton, zinc, rates] = await Promise.all([
+    const [gold, silver, cocoa, coffee, brent, wti, naturalGas, cotton, zinc, aluminium, rates] = await Promise.all([
       fetchYahoo("GC=F"),  // Or
       fetchYahoo("SI=F"),  // Argent
       fetchYahoo("CC=F"),  // Cacao Bourse
@@ -76,6 +100,7 @@ export async function GET(request: Request) {
       fetchYahoo("NG=F"),  // Gaz Naturel
       fetchYahoo("CT=F"),  // Coton
       fetchYahoo("ZN=F"),  // Zinc
+      fetchYahoo("ALI=F"), // Aluminium
       fetchCurrencies()
     ]);
 
@@ -100,6 +125,13 @@ export async function GET(request: Request) {
       await upsertIndicator("Zinc", "METAUX1", `${zinc.price.toFixed(2)} $`, zinc.price, trend, `${varPct}%`);
     }
 
+    // MÉTAUX: ALUMINIUM
+    if (aluminium) {
+      const trend = aluminium.price > aluminium.prev ? "UP" : aluminium.price < aluminium.prev ? "DOWN" : "FLAT";
+      const varPct = ((aluminium.price - aluminium.prev) / aluminium.prev * 100).toFixed(2);
+      await upsertIndicator("Aluminium", "METAUX2", `${aluminium.price.toFixed(2)} $`, aluminium.price, trend, `${varPct}%`);
+    }
+
     // CACAO
     if (cocoa) {
       const trend = cocoa.price > cocoa.prev ? "UP" : cocoa.price < cocoa.prev ? "DOWN" : "FLAT";
@@ -114,7 +146,7 @@ export async function GET(request: Request) {
       await upsertIndicator("Café (Bourse)", "CACAO", `${coffee.price.toFixed(2)} $`, coffee.price, trend, `${varPct}%`);
     }
 
-    // COTON (Groupe ANACARDE/COTON par convention du projet)
+    // COTON
     if (cotton) {
       const trend = cotton.price > cotton.prev ? "UP" : cotton.price < cotton.prev ? "DOWN" : "FLAT";
       const varPct = ((cotton.price - cotton.prev) / cotton.prev * 100).toFixed(2);
@@ -149,9 +181,18 @@ export async function GET(request: Request) {
       await upsertIndicator("EUR / XOF", "MONNAIES", `655.957 FCFA`, 655.957, "FLAT");
     }
 
+    // --- NETTOYAGE DES ANCIENS LABELS (Optionnel mais recommandé pour éviter le désordre) ---
+    // Supprimer "Dollar $" et "Euro €" s'ils existent encore pour favoriser "USD / XOF" et "EUR / XOF"
+    await prisma.marketIndicator.deleteMany({
+      where: {
+        label: { in: ["Dollar $", "Euro €"] }
+      }
+    }).catch(() => {});
+
     return NextResponse.json({
       success: true,
-      message: "Marchés mis à jour : Or, Argent, Zinc, Cacao, Café, Coton, Énergie, Devises"
+      message: "Marchés mis à jour : Or, Argent, Zinc, Aluminium, Cacao, Café, Coton, Énergie, Devises",
+      timestamp: new Date().toISOString()
     });
   } catch (error: any) {
     console.error("[CRON ERROR]", error);
