@@ -86,7 +86,7 @@ export async function GET(request: Request) {
     // 1. Vérification de la clé secrète pour la sécurité
     const { searchParams } = new URL(request.url);
     const secret = searchParams.get('secret');
-    if (secret !== process.env.CRON_SECRET && process.env.NODE_ENV === 'production') {
+    if (process.env.CRON_SECRET && secret !== process.env.CRON_SECRET && process.env.NODE_ENV === 'production') {
       return NextResponse.json({ success: false, error: "Non autorisé" }, { status: 401 });
     }
 
