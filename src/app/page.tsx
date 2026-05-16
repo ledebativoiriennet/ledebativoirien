@@ -983,6 +983,36 @@ export default async function Home() {
       </div>
     )}
 
+    {/* FULL-WIDTH ÉCONOMIE & FINANCES */}
+    {economieItems && economieItems.length > 0 && (
+      <div className="container" style={{ marginTop: '3rem' }}>
+        <h2 className="portal-section-title" style={{ display: "flex", justifyContent: "space-between", borderBottom: '2px solid #0369a1', backgroundColor: '#f0f9ff' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#075985' }}>📈 Économie & Finances</span>
+          <Link href="/category/economie" style={{ fontSize: "0.8rem", color: "#0369a1", textDecoration: "none", fontWeight: "bold" }}>Voir tout</Link>
+        </h2>
+        <div style={{ padding: "1.5rem", backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderTop: "none", borderRadius: "0 0 var(--radius) var(--radius)" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1.5rem" }}>
+            {economieItems.map((article) => {
+              const imgUrl = getArticleImage(article);
+              return (
+                <Link href={`/article/${article.slug}`} key={`eco-fw-${article.id}`} style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                  <div style={{ height: "150px", backgroundColor: "#f0f9ff", overflow: "hidden", borderRadius: "8px", border: "1px solid #bae6fd" }}>
+                    {imgUrl ? <img src={imgUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" /> : null}
+                  </div>
+                  <div>
+                    <div style={{ fontSize: "0.7rem", color: "#0369a1", fontWeight: 800, textTransform: "uppercase", marginBottom: "0.3rem" }}>
+                      Économie
+                    </div>
+                    <h3 style={{ fontSize: "1rem", fontWeight: 800, lineHeight: 1.3 }}>{article.title}</h3>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    )}
+
     {/* FULL-WIDTH AFRIQUE DE L'OUEST */}
     {cedeauItems && cedeauItems.length > 0 && (
       <div className="container" style={{ marginTop: '3rem' }}>
