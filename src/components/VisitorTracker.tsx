@@ -14,6 +14,7 @@ export default function VisitorTracker() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         path: pathname,
+        referrer: document.referrer,
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       })
     }).catch(() => {}); // Erreur ignorée silencieusement

@@ -33,12 +33,14 @@ export default function AnalyticsChartsClient({
   browserData,
   deviceData,
   brandData,
+  sourceData,
   visitsData
 }: {
   countryData: { name: string, value: number }[],
   browserData: { name: string, value: number }[],
   deviceData: { name: string, value: number }[],
   brandData: { name: string, value: number }[],
+  sourceData: { name: string, value: number }[],
   visitsData: {
     day: { label: string, count: number }[],
     week: { label: string, count: number }[],
@@ -167,6 +169,22 @@ export default function AnalyticsChartsClient({
     maintainAspectRatio: false,
     plugins: { legend: { display: false } },
   };
+  
+  // Source Chart (Doughnut)
+  const sourceChartData = {
+    labels: sourceData.map(d => d.name),
+    datasets: [{
+      data: sourceData.map(d => d.value),
+      backgroundColor: backgroundColors.slice(0, sourceData.length),
+      borderWidth: 1,
+    }]
+  };
+
+  const sourceChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { position: 'right' as const } }
+  };
 
   return (
     <div style={{ marginTop: '3rem', marginBottom: '2rem' }}>
@@ -216,6 +234,13 @@ export default function AnalyticsChartsClient({
           <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#0f172a', marginBottom: '1rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>Origine Géographique</h3>
           <div style={{ height: '250px' }}>
             <Bar data={countryChartData} options={countryChartOptions} />
+          </div>
+        </div>
+
+        <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+          <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#0f172a', marginBottom: '1rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>Sources de Trafic</h3>
+          <div style={{ height: '250px' }}>
+            <Doughnut data={sourceChartData} options={sourceChartOptions} />
           </div>
         </div>
 

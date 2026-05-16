@@ -218,10 +218,13 @@ model Visitor {
   botName     String?
   botCategory String?
   path        String?
+  source      String?
+  referrer    String?
   visitedAt   DateTime @default(now())
 
   @@index([ipHash])
   @@index([isBot])
+  @@index([source])
 }
 
 model Advertisement {

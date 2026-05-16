@@ -24,7 +24,41 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json().catch(() => ({}));
     const path = body.path || "/";
+    const clientReferrer = body.referrer || "";
+    const headerReferrer = req.headers.get("referer") || "";
+    const finalReferrer = clientReferrer || headerReferrer || "";
 
+    // Determine Source
+    let source = "Direct";
+    const ref = finalReferrer.toLowerCase();
+
+    // 1. Check UTM Source in URL (if available in path or referer)
+    const urlObj = new URL(path, "https://ledebativoirien.net");
+    const utmSource = urlObj.searchParams.get("utm_source");
+    
+    if (utmSource) {
+      source = utmSource.charAt(0).toUpperCase() + utmSource.slice(1);
+    } else if (ref) {
+      if (ref.includes("google")) source = "Google";
+      else if (ref.includes("facebook") || ref.includes("fb.me")) source = "Facebook";
+      else if (ref.includes("twitter") || ref.includes("t.co") || ref.includes("x.com")) source = "Twitter / X";
+      else if (ref.includes("linkedin")) source = "LinkedIn";
+      else if (ref.includes("instagram")) source = "Instagram";
+      else if (ref.includes("whatsapp")) source = "WhatsApp";
+      else if (ref.includes("bing")) source = "Bing";
+      else if (ref.includes("yahoo")) source = "Yahoo";
+      else if (ref.includes("duckduckgo")) source = "DuckDuckGo";
+      else if (ref.includes("baidu")) source = "Baidu";
+      else if (ref.includes("t.me") || ref.includes("telegram")) source = "Telegram";
+      else {
+        try {
+          const domain = new URL(finalReferrer).hostname.replace("www.", "");
+          source = domain;
+        } catch (e) {
+          source = "Autre";
+        }
+      }
+    }
     // Appel optionnel API publique si pas sur Vercel
     if (!country && ip !== "unknown" && ip !== "::1" && ip !== "127.0.0.1") {
       try {
@@ -63,7 +97,9 @@ export async function POST(req: NextRequest) {
           isBot: botInfo.isBot,
           botName: botInfo.name,
           botCategory: botInfo.category,
-          path: path
+          path: path,
+          referrer: finalReferrer.substring(0, 500), // Limiter la taille
+          source: source
         }
       });
     }

@@ -50,6 +50,21 @@ const BAD_BOTS = [
   { pattern: /selenium/i, name: 'Selenium' },
   { pattern: /puppeteer/i, name: 'Puppeteer' },
   { pattern: /playwright/i, name: 'Playwright' },
+  { pattern: /screaming frog/i, name: 'Screaming Frog' },
+  { pattern: /siteaudit/i, name: 'SiteAuditBot' },
+  { pattern: /serpstatbot/i, name: 'SerpstatBot' },
+  { pattern: /spyonweb/i, name: 'SpyOnWeb' },
+  { pattern: /seoscanners/i, name: 'SEO Scanner' },
+  { pattern: /megaindex/i, name: 'MegaIndex' },
+  { pattern: /ltx71/i, name: 'LTX71 Scraper' },
+  { pattern: /trendictionbot/i, name: 'Trendiction' },
+  { pattern: /coccocbot/i, name: 'CocCoc Bot' },
+  { pattern: /yisouspider/i, name: 'YisouSpider' },
+  { pattern: /uambot/i, name: 'UAMBot' },
+  { pattern: /headless/i, name: 'Headless' },
+  { pattern: /scraper/i, name: 'Scraper' },
+  { pattern: /axios/i, name: 'Axios' },
+  { pattern: /postman/i, name: 'Postman' },
 ];
 
 export function detectBot(userAgent: string): BotInfo {
