@@ -140,7 +140,7 @@ export default function ArticleComments({ articleId }: { articleId: string }) {
             <p style={{ fontWeight: "bold", marginBottom: "0.5rem", color: "var(--foreground)" }}>
               Vous devez être connecté pour laisser un commentaire.
             </p>
-            <Link href="/auth/login" className="btn btn-primary" style={{ display: "inline-block", marginTop: "0.5rem" }}>
+            <Link href="/login" className="btn btn-primary" style={{ display: "inline-block", marginTop: "0.5rem" }}>
               Se connecter
             </Link>
           </div>
