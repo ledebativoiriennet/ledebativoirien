@@ -153,6 +153,19 @@ export async function GET(request: Request) {
       await upsertIndicator("Coton", "ANACARDE", `${cotton.price.toFixed(2)} $`, cotton.price, trend, `${varPct}%`);
     }
 
+    // ANACARDE (Prix de campagne fixé)
+    // Étant donné qu'il n'y a pas de ticker Yahoo pour l'anacarde (prix fixé par l'État/Conseil),
+    // on actualise simplement sa date pour indiquer que le prix est toujours en vigueur.
+    const anacardeStatic = await prisma.marketIndicator.findFirst({
+      where: { label: "ANACARDE", group: "ANACARDE" }
+    });
+    if (anacardeStatic) {
+      await prisma.marketIndicator.update({
+        where: { id: anacardeStatic.id },
+        data: { dateLabel: new Date().toLocaleDateString("fr-FR") }
+      });
+    }
+
     // ÉNERGIE: Pétrole Brent
     if (brent) {
       const trend = brent.price > brent.prev ? "UP" : brent.price < brent.prev ? "DOWN" : "FLAT";
