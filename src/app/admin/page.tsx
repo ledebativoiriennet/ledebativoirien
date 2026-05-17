@@ -518,12 +518,15 @@ export default async function AdminDashboard() {
               Pour afficher vos graphiques directement sur cette page, vous devez créer un rapport gratuit sur <a href="https://lookerstudio.google.com/" target="_blank" rel="noopener noreferrer" style={{ color: '#2563eb', textDecoration: 'underline' }}>Looker Studio</a> connecté à votre compte, puis intégrer l'URL (iframe) ici.</em>
             </p>
             
-            {/* Remplacer cette div par votre balise <iframe> fournie par Looker Studio */}
-            <div style={{ width: '100%', height: '400px', backgroundColor: '#f1f5f9', borderRadius: '8px', border: '2px dashed #cbd5e1', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', textAlign: 'center', padding: '2rem' }}>
-              <span style={{ fontSize: '2rem', marginBottom: '1rem' }}>📈</span>
-              <span style={{ fontWeight: 'bold' }}>Espace réservé pour votre tableau de bord Looker Studio</span>
-              <span style={{ fontSize: '0.85rem', marginTop: '0.5rem' }}>(Contactez le développeur pour insérer le code iframe d'intégration ici une fois généré)</span>
-            </div>
+            <iframe 
+              width="100%" 
+              height="700" 
+              src="https://datastudio.google.com/embed/reporting/cf4d21d9-b8dd-4e30-be3d-ef6242991e57/page/tYSyF" 
+              frameBorder="0" 
+              style={{ border: 0, borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }} 
+              allowFullScreen 
+              sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+            ></iframe>
           </div>
         </div>
       </div>
