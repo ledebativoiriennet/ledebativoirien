@@ -904,9 +904,9 @@ export default async function Home() {
             </div>
             <div style={{ width: "100%", overflow: "hidden", backgroundColor: "white" }}>
               <iframe 
-                src={`https://www.facebook.com/plugins/page.php?href=${encodeURIComponent(siteSettings.facebookUrl)}&tabs=timeline&width=340&height=350&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId`}
+                src={`https://www.facebook.com/plugins/page.php?href=${encodeURIComponent(siteSettings.facebookUrl)}&tabs=timeline&width=340&height=600&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId`}
                 width="100%" 
-                height="350" 
+                height="600" 
                 style={{ border: "none", overflow: "hidden" }} 
                 scrolling="no" 
                 frameBorder="0" 
