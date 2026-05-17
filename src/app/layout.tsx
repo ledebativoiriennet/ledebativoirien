@@ -151,6 +151,7 @@ export default async function RootLayout({
         )}
       </head>
       <body className={inter.variable}>
+        <GoogleAnalytics gaId="G-KS8F2KC63J" />
         {siteSettings?.headerCode && (
           <div dangerouslySetInnerHTML={{ __html: siteSettings.headerCode }} />
         )}
