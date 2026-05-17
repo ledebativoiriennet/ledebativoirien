@@ -23,6 +23,7 @@ import ReadingProgressBar from "@/components/ReadingProgressBar";
 import GoogleAdSlot from "@/components/GoogleAdSlot";
 import SafeImage from "@/components/SafeImage";
 import WhatsAppAd from "@/components/WhatsAppAd";
+import ArticleComments from "@/components/ArticleComments";
 
 export const revalidate = 60;
 
@@ -506,25 +507,7 @@ export default async function ArticlePage({ params }: Props) {
           </div>
         </div>
 
-        {/* Commentaires (Mock) */}
-        <div style={{ marginTop: "2rem", backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", padding: "1.5rem" }}>
-          <h2 className="portal-section-title" style={{ backgroundColor: "#334155", borderColor: "#1e293b" }}>Réactions (12)</h2>
-          <div style={{ marginTop: "1rem" }}>
-            <textarea placeholder="Partagez votre opinion sur cet article..." style={{ width: "100%", padding: "1rem", borderRadius: "4px", border: "1px solid var(--border)", minHeight: "100px", fontFamily: "inherit" }}></textarea>
-            <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "0.5rem" }}>
-              <button className="btn btn-primary">Publier</button>
-            </div>
-          </div>
-          <div style={{ marginTop: "2rem", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-            <div style={{ display: "flex", gap: "1rem" }}>
-              <div style={{ width: "40px", height: "40px", borderRadius: "50%", backgroundColor: "#e2e8f0", flexShrink: 0 }}></div>
-              <div>
-                <div style={{ fontWeight: "bold", fontSize: "0.9rem" }}>Kouassi M. <span style={{ fontWeight: "normal", color: "var(--muted)", fontSize: "0.75rem", marginLeft: "0.5rem" }}>Il y a 2 heures</span></div>
-                <p style={{ fontSize: "0.9rem", marginTop: "0.2rem", lineHeight: 1.4 }}>Excellente analyse de la situation actuelle. Il est temps que des mesures concrètes soient prises.</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ArticleComments articleId={article.id} />
       </div>
 
       {/* RIGHT COLUMN: Sidebar widgets */}

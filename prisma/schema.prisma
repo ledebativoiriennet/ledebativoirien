@@ -23,6 +23,7 @@ model User {
   pushSubscriptions PushSubscription[]
   readingHistory    ReadingHistory[]
   subscriptions     Subscription[]
+  comments          Comment[]
   company           Company?           @relation(fields: [companyId], references: [id])
 }
 
@@ -89,6 +90,7 @@ model Article {
   readingHistory   ReadingHistory[]
   categories       Category[]       @relation("ArticleToCategory")
   tags             Tag[]            @relation("ArticleToTag")
+  comments         Comment[]
 }
 
 model Poll {
@@ -472,4 +474,19 @@ model LiveStream {
   isActive  Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  articleId String
+  userId    String
+  isActive  Boolean  @default(true) // For moderation if needed later
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([articleId])
+  @@index([userId])
 }
