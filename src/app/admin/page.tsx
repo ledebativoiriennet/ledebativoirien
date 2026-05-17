@@ -489,6 +489,45 @@ export default async function AdminDashboard() {
         </div>
       </div>
 
+      {/* SECTION GOOGLE ANALYTICS */}
+      <div style={{ marginTop: '3rem', backgroundColor: 'white', padding: '1.5rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', borderTop: '4px solid #f59e0b' }}>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0f172a', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          📊 Google Analytics
+        </h2>
+        
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+            <div>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#0f172a' }}>LE DEBAT IVOIRIEN</h3>
+              <p style={{ fontSize: '0.85rem', color: '#64748b' }}>Propriété GA4 : <strong>249442439</strong></p>
+            </div>
+            <a 
+              href="https://analytics.google.com/analytics/web/?authuser=0#/a249442439p361832064/reports/intelligenthome?params=_u..nav%3Dmaui" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', backgroundColor: '#2563eb', color: 'white', padding: '0.75rem 1.5rem', borderRadius: '8px', fontWeight: 'bold', textDecoration: 'none' }}
+            >
+              Ouvrir Google Analytics ↗
+            </a>
+          </div>
+
+          <div>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#0f172a', marginBottom: '0.5rem' }}>Dashboard Intégré (Via Looker Studio)</h3>
+            <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '1rem', lineHeight: 1.5 }}>
+              <em>Note technique : Pour des raisons de sécurité, Google empêche l'intégration directe de son interface d'administration dans d'autres sites. 
+              Pour afficher vos graphiques directement sur cette page, vous devez créer un rapport gratuit sur <a href="https://lookerstudio.google.com/" target="_blank" rel="noopener noreferrer" style={{ color: '#2563eb', textDecoration: 'underline' }}>Looker Studio</a> connecté à votre compte, puis intégrer l'URL (iframe) ici.</em>
+            </p>
+            
+            {/* Remplacer cette div par votre balise <iframe> fournie par Looker Studio */}
+            <div style={{ width: '100%', height: '400px', backgroundColor: '#f1f5f9', borderRadius: '8px', border: '2px dashed #cbd5e1', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', textAlign: 'center', padding: '2rem' }}>
+              <span style={{ fontSize: '2rem', marginBottom: '1rem' }}>📈</span>
+              <span style={{ fontWeight: 'bold' }}>Espace réservé pour votre tableau de bord Looker Studio</span>
+              <span style={{ fontSize: '0.85rem', marginTop: '0.5rem' }}>(Contactez le développeur pour insérer le code iframe d'intégration ici une fois généré)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div style={{ marginTop: '2rem', padding: '1rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#475569', fontSize: '0.9rem' }}>
         <p><strong>Note Technique :</strong> Les revenus estimés sont calculés à partir de la base d'abonnements enregistrés. Les pages vues représentent le trafic global dédoublonné (une vue par article par jour par visiteur).</p>
       </div>
