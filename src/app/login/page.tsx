@@ -63,6 +63,13 @@ export default function LoginPage() {
             required 
           />
         </div>
+        
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginTop: '0.5rem', marginBottom: '0.5rem', textAlign: 'left' }}>
+          <input type="checkbox" id="consent_login" name="consent" required style={{ marginTop: '0.25rem', cursor: 'pointer' }} />
+          <label htmlFor="consent_login" style={{ fontSize: '0.8rem', color: 'var(--muted)', lineHeight: 1.4 }}>
+            J'accepte les <Link href="/cgu" style={{ color: 'var(--primary)', textDecoration: 'underline' }}>Conditions Générales</Link> et la <Link href="/confidentialite" style={{ color: 'var(--primary)', textDecoration: 'underline' }}>Politique de Confidentialité</Link>.
+          </label>
+        </div>
         <button type="submit" className="btn btn-primary" disabled={loading} style={{ width: '100%', marginTop: '0.5rem', padding: '0.75rem', fontWeight: 'bold', fontSize: '1rem', opacity: loading ? 0.7 : 1 }}>
             {loading ? "Connexion en cours..." : "Se connecter"}
           </button>

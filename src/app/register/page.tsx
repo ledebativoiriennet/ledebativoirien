@@ -67,6 +67,13 @@ export default function RegisterPage() {
             <ReCAPTCHA sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY} onChange={handleCaptchaChange} />
         */}
 
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginTop: '0.5rem', marginBottom: '0.5rem', textAlign: 'left' }}>
+          <input type="checkbox" id="consent_register" name="consent" required style={{ marginTop: '0.25rem', cursor: 'pointer' }} />
+          <label htmlFor="consent_register" style={{ fontSize: '0.8rem', color: 'var(--muted)', lineHeight: 1.4 }}>
+            J'accepte les <Link href="/cgu" style={{ color: 'var(--primary)', textDecoration: 'underline' }}>Conditions Générales</Link> et la <Link href="/confidentialite" style={{ color: 'var(--primary)', textDecoration: 'underline' }}>Politique de Confidentialité</Link>.
+          </label>
+        </div>
+
         <button type="submit" className="btn btn-primary" disabled={loading} style={{ width: '100%', marginTop: '1rem', opacity: loading ? 0.7 : 1 }}>
           {loading ? "Création en cours..." : "Créer mon compte"}
         </button>
