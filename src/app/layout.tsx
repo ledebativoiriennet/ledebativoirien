@@ -80,7 +80,7 @@ export default async function RootLayout({
   // Sort them to match the targetSlugs array order
   navCategories.sort((a, b) => targetSlugs.indexOf(a.slug) - targetSlugs.indexOf(b.slug));
 
-  const [indicators, siteSettings, skinAd] = await Promise.all([
+  const [indicators, siteSettings, skinAd, visitorCount] = await Promise.all([
     prisma.marketIndicator.findMany({ orderBy: { order: 'asc' } }),
     prisma.siteSettings.findUnique({ where: { id: "global" } }),
     prisma.advertisement.findFirst({
@@ -95,9 +95,9 @@ export default async function RootLayout({
           { OR: [{ endDate: null }, { endDate: { gte: new Date() } }] }
         ]
       }
-    })
+    }),
+    prisma.visitor.count()
   ]);
-
 
   const breakingNews = await prisma.breakingNews.findMany({
     where: { isActive: true },
@@ -421,9 +421,17 @@ export default async function RootLayout({
             </div>
           </div>
           <div className="container" style={{ textAlign: 'center', fontSize: '0.85rem', color: '#64748b', borderTop: '1px solid #334155', paddingTop: '2rem' }}>
+            <div style={{ marginBottom: '1rem' }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', backgroundColor: '#1e293b', padding: '0.3rem 0.8rem', borderRadius: '8px', border: '1px solid #334155' }}>
+                <span style={{ fontSize: '1.2rem' }}>👁️</span> 
+                <span style={{ fontWeight: 'bold', color: 'white' }}>{visitorCount.toLocaleString('fr-FR')}</span> 
+                <span>visiteurs</span>
+              </span>
+            </div>
             © {new Date().getFullYear()} Le Débat Ivoirien. Tous droits réservés. - Développée par <a href="https://www.cornerstoneros.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Cornerstoneros</a>
           </div>
         </footer>
+
         <PopupAd />
         {siteSettings?.footerCode && (
           <div dangerouslySetInnerHTML={{ __html: siteSettings.footerCode }} />
