@@ -382,6 +382,11 @@ export default async function RootLayout({
                   )}
                 </div>
               )}
+              <div style={{ marginTop: '1.5rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem', color: '#94a3b8', backgroundColor: 'rgba(255,255,255,0.05)', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>
+                <span style={{ fontSize: '0.85rem' }}>👁️</span> 
+                <span style={{ fontWeight: 'bold', color: 'white' }}>{visitorCount.toLocaleString('fr-FR')}</span> 
+                <span>visiteurs totaux</span>
+              </div>
             </div>
             <div>
               <h4 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '1rem', color: 'var(--primary)' }}>Rubriques</h4>
@@ -421,13 +426,6 @@ export default async function RootLayout({
             </div>
           </div>
           <div className="container" style={{ textAlign: 'center', fontSize: '0.85rem', color: '#64748b', borderTop: '1px solid #334155', paddingTop: '2rem' }}>
-            <div style={{ marginBottom: '1rem' }}>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', backgroundColor: '#1e293b', padding: '0.3rem 0.8rem', borderRadius: '8px', border: '1px solid #334155' }}>
-                <span style={{ fontSize: '1.2rem' }}>👁️</span> 
-                <span style={{ fontWeight: 'bold', color: 'white' }}>{visitorCount.toLocaleString('fr-FR')}</span> 
-                <span>visiteurs</span>
-              </span>
-            </div>
             © {new Date().getFullYear()} Le Débat Ivoirien. Tous droits réservés. - Développée par <a href="https://www.cornerstoneros.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Cornerstoneros</a>
           </div>
         </footer>
