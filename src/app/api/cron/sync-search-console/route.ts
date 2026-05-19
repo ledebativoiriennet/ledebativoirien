@@ -4,7 +4,9 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(req: NextRequest) {
   try {
-    const googleKey = process.env.GOOGLE_SERVICE_KEY;
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    const refreshToken = process.env.GOOGLE_REFRESH_TOKEN;
     const siteUrl = process.env.GOOGLE_SEARCH_CONSOLE_SITE_URL;
 
     // Protection par token optionnelle pour le Cron (sauf en dev)
@@ -14,51 +16,15 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ success: false, error: "Non autorisé" }, { status: 401 });
     }
 
-    if (!googleKey || !siteUrl) {
+    if (!clientId || !clientSecret || !refreshToken || !siteUrl) {
       return NextResponse.json({ 
         success: false, 
-        error: "Variables d'environnement GOOGLE_SERVICE_KEY ou GOOGLE_SEARCH_CONSOLE_SITE_URL manquantes." 
+        error: "Variables d'environnement GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN ou GOOGLE_SEARCH_CONSOLE_SITE_URL manquantes." 
       }, { status: 500 });
     }
 
-    let credentials;
-    try {
-      let keyString = googleKey.trim();
-      if (keyString.startsWith("'") && keyString.endsWith("'")) {
-        keyString = keyString.slice(1, -1);
-      }
-      if (keyString.startsWith('"') && keyString.endsWith('"')) {
-        keyString = keyString.slice(1, -1);
-      }
-      
-      // Unescape characters if they were escaped by the shell/environment loader
-      keyString = keyString.replace(/\\"/g, '"');
-      keyString = keyString.replace(/\\{/g, '{');
-      keyString = keyString.replace(/\\}/g, '}');
-      keyString = keyString.replace(/\\\[/g, '[');
-      keyString = keyString.replace(/\\\]/g, ']');
-      keyString = keyString.replace(/\\\//g, '/');
-      
-      // Fix \u when NOT followed by 4 hex digits (like \universe_domain)
-      keyString = keyString.replace(/\\u(?![0-9a-fA-F]{4})/g, 'u');
-      
-      // Remove any other backslash escaping normal letters (except valid JSON escapes: \n, \r, \t, \b, \f)
-      keyString = keyString.replace(/\\([^nrtbfu/"])/g, '$1');
-      
-      credentials = JSON.parse(keyString);
-    } catch (e: any) {
-      console.error("JSON parse error for GOOGLE_SERVICE_KEY:", e);
-      return NextResponse.json({ 
-        success: false, 
-        error: `GOOGLE_SERVICE_KEY n'est pas un JSON valide: ${e.message}. Valeur reçue (tronquée): ${googleKey.substring(0, 50)}...` 
-      }, { status: 500 });
-    }
-
-    const auth = new google.auth.JWT({
-      email: credentials.client_email,
-      key: credentials.private_key,
-      scopes: ["https://www.googleapis.com/auth/webmasters.readonly"]
-    });
+    const auth = new google.auth.OAuth2(clientId, clientSecret, 'http://localhost');
+    auth.setCredentials({ refresh_token: refreshToken });
 
     const searchconsole = google.searchconsole({ version: "v1", auth });
 
@@ -86,7 +52,7 @@ export async function GET(req: NextRequest) {
     } else {
       return NextResponse.json({
         success: false,
-        error: `Le compte de service '${credentials.client_email}' n'a accès à aucune propriété sur votre Google Search Console. Sites trouvés: []. Assurez-vous d'avoir ajouté cet email comme utilisateur sur Google Search Console.`,
+        error: `Le compte Google configuré n'a accès à aucune propriété sur votre Google Search Console. Sites trouvés: []. Assurez-vous que l'authentification a été faite avec le bon compte propriétaire.`,
       }, { status: 403 });
     }
 
