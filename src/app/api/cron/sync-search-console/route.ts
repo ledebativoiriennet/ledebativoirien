@@ -30,6 +30,18 @@ export async function GET(req: NextRequest) {
       if (keyString.startsWith('"') && keyString.endsWith('"')) {
         keyString = keyString.slice(1, -1);
       }
+      
+      // Unescape characters if they were escaped by the shell/environment loader
+      if (keyString.includes('\\"')) {
+        keyString = keyString.replace(/\\"/g, '"');
+      }
+      if (keyString.includes('\\{')) {
+        keyString = keyString.replace(/\\{/g, '{');
+      }
+      if (keyString.includes('\\}')) {
+        keyString = keyString.replace(/\\}/g, '}');
+      }
+      
       credentials = JSON.parse(keyString);
     } catch (e: any) {
       console.error("JSON parse error for GOOGLE_SERVICE_KEY:", e);
