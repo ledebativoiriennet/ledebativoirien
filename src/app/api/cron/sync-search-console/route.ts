@@ -7,9 +7,10 @@ export async function GET(req: NextRequest) {
     const googleKey = process.env.GOOGLE_SERVICE_KEY;
     const siteUrl = process.env.GOOGLE_SEARCH_CONSOLE_SITE_URL;
 
-    // Protection par token optionnelle pour le Cron
+    // Protection par token optionnelle pour le Cron (sauf en dev)
+    const isDev = process.env.NODE_ENV === "development";
     const authHeader = req.headers.get("authorization");
-    if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    if (!isDev && process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
       return NextResponse.json({ success: false, error: "Non autorisé" }, { status: 401 });
     }
 
@@ -22,9 +23,20 @@ export async function GET(req: NextRequest) {
 
     let credentials;
     try {
-      credentials = JSON.parse(googleKey);
-    } catch (e) {
-      return NextResponse.json({ success: false, error: "GOOGLE_SERVICE_KEY n'est pas un JSON valide" }, { status: 500 });
+      let keyString = googleKey.trim();
+      if (keyString.startsWith("'") && keyString.endsWith("'")) {
+        keyString = keyString.slice(1, -1);
+      }
+      if (keyString.startsWith('"') && keyString.endsWith('"')) {
+        keyString = keyString.slice(1, -1);
+      }
+      credentials = JSON.parse(keyString);
+    } catch (e: any) {
+      console.error("JSON parse error for GOOGLE_SERVICE_KEY:", e);
+      return NextResponse.json({ 
+        success: false, 
+        error: `GOOGLE_SERVICE_KEY n'est pas un JSON valide: ${e.message}. Valeur reçue (tronquée): ${googleKey.substring(0, 50)}...` 
+      }, { status: 500 });
     }
 
     const auth = new google.auth.JWT({
