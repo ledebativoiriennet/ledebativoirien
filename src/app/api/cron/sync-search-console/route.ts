@@ -32,15 +32,18 @@ export async function GET(req: NextRequest) {
       }
       
       // Unescape characters if they were escaped by the shell/environment loader
-      if (keyString.includes('\\"')) {
-        keyString = keyString.replace(/\\"/g, '"');
-      }
-      if (keyString.includes('\\{')) {
-        keyString = keyString.replace(/\\{/g, '{');
-      }
-      if (keyString.includes('\\}')) {
-        keyString = keyString.replace(/\\}/g, '}');
-      }
+      keyString = keyString.replace(/\\"/g, '"');
+      keyString = keyString.replace(/\\{/g, '{');
+      keyString = keyString.replace(/\\}/g, '}');
+      keyString = keyString.replace(/\\\[/g, '[');
+      keyString = keyString.replace(/\\\]/g, ']');
+      keyString = keyString.replace(/\\\//g, '/');
+      
+      // Fix \u when NOT followed by 4 hex digits (like \universe_domain)
+      keyString = keyString.replace(/\\u(?![0-9a-fA-F]{4})/g, 'u');
+      
+      // Remove any other backslash escaping normal letters (except valid JSON escapes: \n, \r, \t, \b, \f)
+      keyString = keyString.replace(/\\([^nrtbfu/"])/g, '$1');
       
       credentials = JSON.parse(keyString);
     } catch (e: any) {
