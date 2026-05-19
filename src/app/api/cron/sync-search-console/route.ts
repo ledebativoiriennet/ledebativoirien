@@ -62,6 +62,34 @@ export async function GET(req: NextRequest) {
 
     const searchconsole = google.searchconsole({ version: "v1", auth });
 
+    // Récupération des sites autorisés pour ce compte
+    let accessibleSites: string[] = [];
+    try {
+      const sitesRes = await searchconsole.sites.list();
+      accessibleSites = (sitesRes.data.siteEntry || []).map(s => s.siteUrl || "");
+    } catch (e: any) {
+      console.error("Error listing sites:", e);
+      return NextResponse.json({
+        success: false,
+        error: `Impossible de récupérer la liste des sites Google : ${e.message}`
+      }, { status: 500 });
+    }
+
+    let finalSiteUrl = siteUrl;
+    if (accessibleSites.length > 0) {
+      if (!accessibleSites.includes(siteUrl)) {
+        // Recherche d'un domaine correspondant dans les sites autorisés
+        const match = accessibleSites.find(s => s.includes("ledebativoirien.net"));
+        finalSiteUrl = match || accessibleSites[0];
+        console.log(`Auto-switching siteUrl from '${siteUrl}' to '${finalSiteUrl}' based on Search Console permissions.`);
+      }
+    } else {
+      return NextResponse.json({
+        success: false,
+        error: `Le compte de service '${credentials.client_email}' n'a accès à aucune propriété sur votre Google Search Console. Sites trouvés: []. Assurez-vous d'avoir ajouté cet email comme utilisateur sur Google Search Console.`,
+      }, { status: 403 });
+    }
+
     const today = new Date();
     // On recule de 3 jours car Google a généralement 2 à 3 jours de latence sur Search Console
     const endDate = new Date();
@@ -73,10 +101,10 @@ export async function GET(req: NextRequest) {
     const formattedStartDate = startDate.toISOString().split("T")[0];
     const formattedEndDate = endDate.toISOString().split("T")[0];
 
-    console.log(`Querying Search Console from ${formattedStartDate} to ${formattedEndDate} for site ${siteUrl}`);
+    console.log(`Querying Search Console from ${formattedStartDate} to ${formattedEndDate} for site ${finalSiteUrl}`);
 
     const response = await searchconsole.searchanalytics.query({
-      siteUrl: siteUrl,
+      siteUrl: finalSiteUrl,
       requestBody: {
         startDate: formattedStartDate,
         endDate: formattedEndDate,
