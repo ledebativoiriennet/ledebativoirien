@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
     if (!clientId || !clientSecret || !refreshToken || !siteUrl) {
       return NextResponse.json({ 
         success: false, 
-        error: "Variables d'environnement GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN ou GOOGLE_SEARCH_CONSOLE_SITE_URL manquantes." 
+        error: `Variables d'environnement manquantes. Statut : GOOGLE_CLIENT_ID: ${!!clientId}, GOOGLE_CLIENT_SECRET: ${!!clientSecret}, GOOGLE_REFRESH_TOKEN: ${!!refreshToken}, GOOGLE_SEARCH_CONSOLE_SITE_URL: ${!!siteUrl}` 
       }, { status: 500 });
     }
 
