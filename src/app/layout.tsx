@@ -352,9 +352,9 @@ export default async function RootLayout({
         
         <main style={{ minHeight: '60vh', width: '100%' }}>
           <div className="container">
-            <GoogleAdSlot adSlot="3353692131" width="728px" height="90px" />
+            <GoogleAdSlot adSlot="3353692131" format="horizontal" />
             {children}
-            <GoogleAdSlot adSlot="1597757330" width="728px" height="90px" />
+            <GoogleAdSlot adSlot="1597757330" format="horizontal" />
           </div>
         </main>
 
