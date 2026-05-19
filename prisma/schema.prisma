@@ -490,3 +490,14 @@ model Comment {
   @@index([articleId])
   @@index([userId])
 }
+
+model SearchEvent {
+  id              String    @id @default(cuid())
+  query           String
+  ipHash          String
+  clickedPosition Int?      // Position de l'article cliqué (1, 2, 3...)
+  createdAt       DateTime  @default(now())
+
+  @@index([createdAt])
+  @@index([query])
+}

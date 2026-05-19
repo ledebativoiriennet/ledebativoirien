@@ -1,7 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { getArticleImage } from "@/lib/utils";
 import { Metadata } from "next";
+import { headers } from "next/headers";
+import crypto from "crypto";
+import SearchResultList from "@/components/SearchResultList";
 
 export const metadata: Metadata = {
   title: "Résultats de recherche - Le Débat Ivoirien",
@@ -21,6 +23,31 @@ export default async function SearchPage({
         <p style={{ color: 'var(--muted)' }}>Veuillez saisir un mot-clé pour effectuer une recherche.</p>
       </div>
     );
+  }
+
+  // Enregistrer l'événement de recherche
+  let searchEventId = "";
+  try {
+    const headersList = await headers();
+    const ip = headersList.get("x-vercel-ip") || headersList.get("x-forwarded-for") || headersList.get("x-real-ip") || "unknown";
+    const todayStr = new Date().toISOString().split("T")[0];
+    const ipHash = crypto.createHash("sha256").update(`${ip}-${query}-${todayStr}`).digest("hex");
+
+    let searchEvent = await prisma.searchEvent.findFirst({
+      where: { ipHash }
+    });
+
+    if (!searchEvent) {
+      searchEvent = await prisma.searchEvent.create({
+        data: {
+          query,
+          ipHash,
+        }
+      });
+    }
+    searchEventId = searchEvent.id;
+  } catch (error) {
+    console.error("Failed to log search event:", error);
   }
 
   const articles = await prisma.article.findMany({
@@ -57,40 +84,7 @@ export default async function SearchPage({
           </Link>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
-          {articles.map((article) => {
-            const imgUrl = getArticleImage(article);
-            return (
-              <Link href={`/article/${article.slug}`} key={article.id}>
-                <div className="article-card" style={{ height: '100%' }}>
-                  <div className="article-card-image" style={{ height: '180px', position: 'relative' }}>
-                    {imgUrl ? (
-                      <img src={imgUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    ) : (
-                      <div style={{ background: 'var(--foreground)', color: 'white', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', fontWeight: 'bold' }}>LDI</div>
-                    )}
-                    {article.categories[0] && (
-                      <div style={{ position: 'absolute', top: '0.5rem', left: '0.5rem', backgroundColor: 'var(--primary)', color: 'white', fontSize: '0.6rem', fontWeight: 'bold', padding: '0.2rem 0.5rem', borderRadius: '2px', textTransform: 'uppercase' }}>
-                        {article.categories[0].name}
-                      </div>
-                    )}
-                  </div>
-                  <div className="article-card-content" style={{ padding: '1rem' }}>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--muted)', marginBottom: '0.5rem' }}>
-                      {new Date(article.publishedAt!).toLocaleDateString('fr-FR')}
-                    </div>
-                    <h2 style={{ fontSize: '1.1rem', fontWeight: 700, lineHeight: 1.3, marginBottom: '0.5rem' }}>{article.title}</h2>
-                    {article.excerpt && (
-                      <p style={{ fontSize: '0.85rem', color: 'var(--muted)', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                        {article.excerpt}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
+        <SearchResultList articles={articles} searchEventId={searchEventId} />
       )}
     </div>
   );

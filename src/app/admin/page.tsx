@@ -75,7 +75,11 @@ export default async function AdminDashboard() {
     rawWeekVisits,
     rawMonthVisits,
     rawYearVisits,
-    sourceStatsRaw
+    sourceStatsRaw,
+    seoImpressions,
+    seoClicks,
+    seoKeywordsGroup,
+    seoAvgPosRaw
   ] = await Promise.all([
     getTopArticles(startOfDay),
     getTopArticles(sevenDaysAgo),
@@ -117,8 +121,20 @@ export default async function AdminDashboard() {
     prisma.$queryRaw`SELECT strftime('%Y-%m', datetime(visitedAt / 1000, 'unixepoch')) as label, COUNT(*) as count FROM Visitor WHERE visitedAt >= ${now.getTime() - 365*86400000} AND isBot = 0 GROUP BY label ORDER BY label` as Promise<{label: string, count: number}[]>,
 
     // Traffic Sources
-    prisma.visitor.groupBy({ by: ['source'], _count: { _all: true } })
+    prisma.visitor.groupBy({ by: ['source'], _count: { _all: true } }),
+
+    // SEO / Search Stats from DB (last 30 days)
+    prisma.searchEvent.count({ where: { createdAt: { gte: startOfMonth } } }),
+    prisma.searchEvent.count({ where: { createdAt: { gte: startOfMonth }, clickedPosition: { not: null } } }),
+    prisma.searchEvent.groupBy({ by: ['query'], where: { createdAt: { gte: startOfMonth } } }),
+    prisma.searchEvent.aggregate({
+      where: { createdAt: { gte: startOfMonth }, clickedPosition: { not: null } },
+      _avg: { clickedPosition: true }
+    })
   ]);
+
+  const seoKeywordsCount = seoKeywordsGroup.length;
+  const seoAvgPosition = seoAvgPosRaw._avg.clickedPosition ? seoAvgPosRaw._avg.clickedPosition.toFixed(1) : "-";
 
   // Post-processing visit data to ensure all periods are represented
   const processVisitData = (raw: {label: string, count: number}[], type: 'day' | 'week' | 'month' | 'year') => {
@@ -487,6 +503,45 @@ export default async function AdminDashboard() {
             </ul>
           )}
         </div>
+      </div>
+
+      {/* SECTION SEO / SEARCH CONSOLE */}
+      <div style={{ marginTop: '3rem', backgroundColor: 'white', padding: '1.5rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', borderTop: '4px solid #8b5cf6' }}>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0f172a', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          🔍 Performances de Recherche Interne (30 derniers jours)
+        </h2>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
+          
+          <div style={{ backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <p style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '0.5rem', textAlign: 'center' }}>Total des impressions</p>
+            <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#8b5cf6' }}>{seoImpressions.toLocaleString('fr-FR')}</span>
+            <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem', textAlign: 'center' }}>Nombre total de recherches</p>
+          </div>
+
+          <div style={{ backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <p style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '0.5rem', textAlign: 'center' }}>Total de clics</p>
+            <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#3b82f6' }}>{seoClicks.toLocaleString('fr-FR')}</span>
+            <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem', textAlign: 'center' }}>Clics sur les articles suggérés</p>
+          </div>
+
+          <div style={{ backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <p style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '0.5rem', textAlign: 'center' }}>Total de mots-clés</p>
+            <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#10b981' }}>{seoKeywordsCount.toLocaleString('fr-FR')}</span>
+            <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem', textAlign: 'center' }}>Requêtes de recherche uniques</p>
+          </div>
+
+          <div style={{ backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <p style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '0.5rem', textAlign: 'center' }}>Position moyenne</p>
+            <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#f59e0b' }}>{seoAvgPosition}</span>
+            <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem', textAlign: 'center' }}>Position moyenne des clics</p>
+          </div>
+
+        </div>
+
+        <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '1.5rem', lineHeight: 1.5 }}>
+          <em>Note : Ces données proviennent du suivi des recherches internes enregistré directement en base de données locale (pour les 30 derniers jours).</em>
+        </p>
       </div>
 
       {/* SECTION GOOGLE ANALYTICS */}
