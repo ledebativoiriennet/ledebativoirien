@@ -501,3 +501,16 @@ model SearchEvent {
   @@index([createdAt])
   @@index([query])
 }
+
+model GoogleSearchStat {
+  id          String   @id @default(cuid())
+  date        DateTime
+  query       String
+  clicks      Int
+  impressions Int
+  position    Float
+  ctr         Float
+  createdAt   DateTime @default(now())
+
+  @@unique([date, query])
+}
