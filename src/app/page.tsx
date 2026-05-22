@@ -144,8 +144,10 @@ export default async function Home() {
   const politiqueItems = getUnique(politiqueArticles, 4);
   const economieItems = getUnique(economieArticles, 4);
   const faitsDiversItems = getUnique(faitsDiversArticles, 4);
-  const actualiteSidebar = getUnique([...actualiteArticles, ...recentArticles], 4)
-    .sort((a, b) => new Date(b.publishedAt || 0).getTime() - new Date(a.publishedAt || 0).getTime());
+  // Sidebar Actualité: bypass deduplication to always show the 4 latest from the category
+  const actualiteSidebar = [...actualiteArticles]
+    .sort((a, b) => new Date(b.publishedAt || 0).getTime() - new Date(a.publishedAt || 0).getTime())
+    .slice(0, 4);
   const societeItems = getUnique(societeArticles, 5);
   const chroniqueItems = getUnique(chroniqueArticles, 5);
 
