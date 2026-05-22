@@ -144,7 +144,7 @@ export default async function Home() {
   const politiqueItems = getUnique(politiqueArticles, 4);
   const economieItems = getUnique(economieArticles, 4);
   const faitsDiversItems = getUnique(faitsDiversArticles, 4);
-  const flashInfo = getUnique([...actualiteArticles, ...recentArticles], 15)
+  const actualiteSidebar = getUnique([...actualiteArticles, ...recentArticles], 7)
     .sort((a, b) => new Date(b.publishedAt || 0).getTime() - new Date(a.publishedAt || 0).getTime());
   const societeItems = getUnique(societeArticles, 5);
   const chroniqueItems = getUnique(chroniqueArticles, 5);
@@ -202,7 +202,7 @@ export default async function Home() {
           <h2 className="portal-section-title" style={{ backgroundColor: "var(--primary)" }}>Actualités</h2>
           <div style={{ padding: "1rem" }}>
             <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
-              {flashInfo.slice(0, 7).map((article) => {
+              {actualiteSidebar.map((article) => {
                 const imgUrl = getArticleImage(article);
                 return (
                   <li key={article.id} style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start" }}>
