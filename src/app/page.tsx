@@ -201,7 +201,7 @@ export default async function Home() {
           <h2 className="portal-section-title" style={{ backgroundColor: "var(--primary)" }}>Actualités</h2>
           <div style={{ padding: "1rem" }}>
             <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
-              {flashInfo.slice(0, 6).map((article) => {
+              {flashInfo.slice(0, 7).map((article) => {
                 const imgUrl = getArticleImage(article);
                 return (
                   <li key={article.id} style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start" }}>
