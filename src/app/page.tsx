@@ -144,7 +144,7 @@ export default async function Home() {
   const politiqueItems = getUnique(politiqueArticles, 4);
   const economieItems = getUnique(economieArticles, 4);
   const faitsDiversItems = getUnique(faitsDiversArticles, 4);
-  const actualiteSidebar = getUnique([...actualiteArticles, ...recentArticles], 7)
+  const actualiteSidebar = getUnique([...actualiteArticles, ...recentArticles], 4)
     .sort((a, b) => new Date(b.publishedAt || 0).getTime() - new Date(a.publishedAt || 0).getTime());
   const societeItems = getUnique(societeArticles, 5);
   const chroniqueItems = getUnique(chroniqueArticles, 5);
