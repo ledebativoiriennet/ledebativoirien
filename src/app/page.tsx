@@ -196,6 +196,31 @@ export default async function Home() {
       {/* LEFT COLUMN: Titrologie & Services */}
       <aside className="portal-col-left">
 
+        {/* Section Actualités */}
+        <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "1.5rem" }}>
+          <h2 className="portal-section-title" style={{ backgroundColor: "var(--primary)" }}>Actualités</h2>
+          <div style={{ padding: "1rem" }}>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
+              {flashInfo.slice(0, 6).map((article) => {
+                const imgUrl = getArticleImage(article);
+                return (
+                  <li key={article.id} style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start" }}>
+                    <div className="image-watermark-container" style={{ width: "50px", height: "50px", backgroundColor: "var(--muted)", flexShrink: 0, borderRadius: "4px", overflow: "hidden" }}>
+                      {imgUrl && <SafeImage src={imgUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                    </div>
+                    <Link href={`/article/${article.slug}`} style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--foreground)", lineHeight: 1.2, flex: 1 }}>
+                      {article.title}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+            <Link href="/category/actualite" style={{ display: 'block', textAlign: 'center', fontSize: '0.8rem', marginTop: '1rem', color: 'var(--primary)', fontWeight: 'bold' }}>
+              Voir toute l'actualité
+            </Link>
+          </div>
+        </div>
+
         <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden" }}>
           <h2 className="portal-section-title dark">Titrologie</h2>
           <div style={{ padding: "1rem" }}>
