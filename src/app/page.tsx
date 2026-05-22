@@ -144,7 +144,7 @@ export default async function Home() {
   const politiqueItems = getUnique(politiqueArticles, 4);
   const economieItems = getUnique(economieArticles, 4);
   const faitsDiversItems = getUnique(faitsDiversArticles, 4);
-  const flashInfo = getUnique(actualiteArticles.length > 0 ? actualiteArticles : recentArticles, 15);
+  const flashInfo = getUnique([...actualiteArticles, ...recentArticles], 15);
   const societeItems = getUnique(societeArticles, 5);
   const chroniqueItems = getUnique(chroniqueArticles, 5);
 
