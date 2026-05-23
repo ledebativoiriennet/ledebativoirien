@@ -230,19 +230,35 @@ model Visitor {
 }
 
 model Advertisement {
-  id          String    @id @default(cuid())
+  id          String     @id @default(cuid())
   title       String
   company     String
   imageUrl    String
   linkUrl     String?
   slot        String
-  status      String    @default("PENDING")
+  status      String     @default("PENDING")
   startDate   DateTime?
   endDate     DateTime?
-  clicks      Int       @default(0)
-  impressions Int       @default(0)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  clicks      Int        @default(0)
+  impressions Int        @default(0)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  events      AdEvent[]
+}
+
+model AdEvent {
+  id        String        @id @default(cuid())
+  adId      String
+  type      String        // "IMPRESSION" | "CLICK"
+  path      String?
+  ipHash    String?
+  userAgent String?
+  createdAt DateTime      @default(now())
+  ad        Advertisement @relation(fields: [adId], references: [id], onDelete: Cascade)
+
+  @@index([adId])
+  @@index([type])
+  @@index([createdAt])
 }
 
 model WeatherReport {

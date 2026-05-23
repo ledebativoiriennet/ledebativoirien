@@ -6,11 +6,9 @@ export async function GET(req: NextRequest) {
   const id = req.nextUrl.searchParams.get("id");
 
   if (id) {
-    // @ts-ignore
-    await prisma.advertisement.update({
-      where: { id },
-      data: { clicks: { increment: 1 } }
-    }).catch(() => {});
+    const { recordAdEvent } = require("@/lib/ad-tracking");
+    // recordAdEvent handles both the increment and the detailed log
+    await recordAdEvent(id, "CLICK").catch(console.error);
   }
 
   if (url) {

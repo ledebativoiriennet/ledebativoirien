@@ -6,9 +6,10 @@ export default async function PopupAd() {
   const startOfDay = new Date();
   startOfDay.setUTCHours(0, 0, 0, 0);
 
+  let ad;
   try {
     // @ts-ignore
-    const ad = await prisma.advertisement.findFirst({
+    ad = await prisma.advertisement.findFirst({
       where: {
         slot: "GLOBAL_POPUP",
         status: "ACTIVE",
@@ -21,26 +22,29 @@ export default async function PopupAd() {
       },
       orderBy: { createdAt: 'desc' }
     });
-
-    if (!ad) return null;
-
-    const targetUrl = ad.linkUrl ? `/api/ad-click?id=${ad.id}&url=${encodeURIComponent(ad.linkUrl)}` : null;
-
-    return (
-      <GlobalAdPopup>
-        <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-          {targetUrl ? (
-            <a href={targetUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'block', maxWidth: '100%' }}>
-              <img src={ad.imageUrl} alt={ad.title} style={{ maxWidth: '100%', maxHeight: '85vh', height: 'auto', borderRadius: '8px', display: 'block', objectFit: 'contain' }} />
-            </a>
-          ) : (
-            <img src={ad.imageUrl} alt={ad.title} style={{ maxWidth: '100%', maxHeight: '85vh', height: 'auto', borderRadius: '8px', display: 'block', objectFit: 'contain' }} />
-          )}
-        </div>
-      </GlobalAdPopup>
-    );
   } catch (error) {
     console.error("Failed to load popup ad:", error);
     return null;
   }
+
+  if (!ad) return null;
+
+  const { recordAdEvent } = require("@/lib/ad-tracking");
+  recordAdEvent(ad.id, "IMPRESSION").catch(console.error);
+
+  const targetUrl = ad.linkUrl ? `/api/ad-click?id=${ad.id}&url=${encodeURIComponent(ad.linkUrl)}` : null;
+
+  return (
+    <GlobalAdPopup>
+      <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+        {targetUrl ? (
+          <a href={targetUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'block', maxWidth: '100%' }}>
+            <img src={ad.imageUrl} alt={ad.title} style={{ maxWidth: '100%', maxHeight: '85vh', height: 'auto', borderRadius: '8px', display: 'block', objectFit: 'contain' }} />
+          </a>
+        ) : (
+          <img src={ad.imageUrl} alt={ad.title} style={{ maxWidth: '100%', maxHeight: '85vh', height: 'auto', borderRadius: '8px', display: 'block', objectFit: 'contain' }} />
+        )}
+      </div>
+    </GlobalAdPopup>
+  );
 }

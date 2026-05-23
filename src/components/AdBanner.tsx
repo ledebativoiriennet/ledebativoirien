@@ -22,6 +22,11 @@ export default async function AdBanner({ slot }: { slot: string }) {
 
   if (!ad) return null;
 
+  // Track impression if we're in a request context
+  const { recordAdEvent } = require("@/lib/ad-tracking");
+  // We don't await this to avoid blocking the render
+  recordAdEvent(ad.id, "IMPRESSION").catch(console.error);
+
   const targetUrl = ad.linkUrl ? `/api/ad-click?id=${ad.id}&url=${encodeURIComponent(ad.linkUrl)}` : null;
 
   return (

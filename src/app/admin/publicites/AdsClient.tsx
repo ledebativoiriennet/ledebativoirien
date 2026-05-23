@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { createAd, updateAdStatus, deleteAd } from "@/app/actions/ads";
 
 export default function AdsClient({ initialAds }: { initialAds: any[] }) {
@@ -42,7 +43,12 @@ export default function AdsClient({ initialAds }: { initialAds: any[] }) {
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2rem' }}>
       {/* Formulaire d'ajout */}
       <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', alignSelf: 'start' }}>
-        <h2 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '1.5rem', color: '#0f172a' }}>Nouvelle Publicité</h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+          <h2 style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#0f172a', margin: 0 }}>Nouvelle Publicité</h2>
+          <Link href="/admin/publicites/stats" style={{ fontSize: '0.8rem', color: '#3b82f6', textDecoration: 'none', fontWeight: 'bold', padding: '0.4rem 0.8rem', border: '1px solid #3b82f6', borderRadius: '4px' }}>
+            📊 Voir Statistiques & Traçabilité
+          </Link>
+        </div>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div>
             <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Titre de la campagne *</label>
@@ -121,7 +127,7 @@ export default function AdsClient({ initialAds }: { initialAds: any[] }) {
         ))}
         {initialAds.length === 0 && (
           <div style={{ backgroundColor: 'white', padding: '2rem', textAlign: 'center', borderRadius: '8px', color: '#64748b' }}>
-            Aucune publicité n'a été ajoutée pour le moment.
+            Aucune publicité n&apos;a été ajoutée pour le moment.
           </div>
         )}
       </div>
