@@ -109,10 +109,10 @@ export default async function ArticlePage({ params }: Props) {
   if (!article) return notFound();
 
   const session = await getServerSession(authOptions);
+  const dbUser = session?.user?.email ? await prisma.user.findUnique({ where: { email: session.user.email }, select: { role: true } }) : null;
 
   // Sécurité : Empêcher l'accès public à un article en attente (brouillon)
   if (!article.publishedAt) {
-    const dbUser = session?.user?.email ? await prisma.user.findUnique({ where: { email: session.user.email }, select: { role: true } }) : null;
     if (dbUser?.role !== "ADMIN" && dbUser?.role !== "EDITOR" && dbUser?.role !== "CONTRIBUTOR") {
       return notFound(); // Simule que la page n'existe pas pour les utilisateurs normaux
     }
@@ -243,9 +243,34 @@ export default async function ArticlePage({ params }: Props) {
             ))}
           </div>
           
-          <h1 style={{ fontSize: 'clamp(1.8rem, 5vw, 3rem)', fontWeight: 900, marginBottom: '1rem', lineHeight: 1.2 }}>
-            {article.title}
-          </h1>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1rem' }}>
+            <h1 style={{ fontSize: 'clamp(1.8rem, 5vw, 3rem)', fontWeight: 900, flex: 1, lineHeight: 1.2, margin: 0 }}>
+              {article.title}
+            </h1>
+            {(dbUser?.role === "ADMIN" || dbUser?.role === "EDITOR") && (
+              <Link 
+                href={`/admin/articles/${article.id}/edit`}
+                style={{
+                  backgroundColor: 'var(--primary)',
+                  color: 'white',
+                  padding: '0.6rem 1.2rem',
+                  borderRadius: '4px',
+                  fontWeight: 'bold',
+                  fontSize: '0.9rem',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  transition: 'all 0.2s ease',
+                  border: 'none',
+                  whiteSpace: 'nowrap'
+                }}
+                className="hover-primary"
+              >
+                ✏️ Modifier
+              </Link>
+            )}
+          </div>
           
           <div className="article-meta-info" style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "1.5rem", fontSize: "0.85rem", color: "#64748b" }}>
             <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>📅 {new Date(article.publishedAt || new Date()).toLocaleDateString("fr-FR", { year: 'numeric', month: 'long', day: 'numeric' })}</span>

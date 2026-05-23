@@ -5,15 +5,21 @@ import TogglePremiumButton from "./TogglePremiumButton";
 import ToggleFeaturedButton from "./ToggleFeaturedButton";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import AdminArticleSearch from "./AdminArticleSearch";
 
-export default async function AdminArticles({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
-  const { page } = await searchParams;
+export default async function AdminArticles({ searchParams }: { searchParams: Promise<{ page?: string; q?: string }> }) {
+  const { page, q } = await searchParams;
   const currentPage = Number(page) || 1;
   const perPage = 20;
 
+  const whereClause = q 
+    ? { title: { contains: q } } // SQLite (default for development here maybe?) or Prisma doesn't always support 'mode' for all providers, let's keep it simple first or check prisma provider
+    : {};
+
   const [totalArticles, articles] = await Promise.all([
-    prisma.article.count(),
+    prisma.article.count({ where: whereClause }),
     prisma.article.findMany({
+      where: whereClause,
       skip: (currentPage - 1) * perPage,
       take: perPage,
       orderBy: { createdAt: 'desc' }, // Order by creation date to see drafts easily
@@ -32,12 +38,14 @@ export default async function AdminArticles({ searchParams }: { searchParams: Pr
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
         <h1 style={{ fontSize: '2rem', fontWeight: 900, color: '#0f172a' }}>Articles ({totalArticles})</h1>
         <Link href="/admin/articles/create" style={{ backgroundColor: 'var(--primary)', color: 'white', padding: '0.75rem 1.5rem', borderRadius: '4px', textDecoration: 'none', fontWeight: 'bold' }}>
           + Nouvel Article
         </Link>
       </div>
+
+      <AdminArticleSearch />
 
       <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
