@@ -1,7 +1,6 @@
 import { prisma } from "./prisma";
 import { headers } from "next/headers";
-import iconv from 'iconv-lite';
-import { crypto } from "crypto";
+import crypto from "crypto";
 
 export async function recordAdEvent(adId: string, type: "IMPRESSION" | "CLICK", path?: string) {
   try {
@@ -11,8 +10,6 @@ export async function recordAdEvent(adId: string, type: "IMPRESSION" | "CLICK", 
     const ip = forwarded ? forwarded.split(",")[0] : "127.0.0.1";
     
     // Hash IP for privacy
-    // Note: crypto is available in Node.js environment
-    const crypto = require('crypto');
     const ipHash = crypto.createHash('sha256').update(ip + (process.env.IP_SALT || 'ldi-salt')).digest('hex').substring(0, 16);
 
     // Update aggregate counts
