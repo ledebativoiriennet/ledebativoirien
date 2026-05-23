@@ -325,6 +325,14 @@ model BreakingNews {
   updatedAt DateTime @updatedAt
 }
 
+model Caricature {
+  id        String   @id @default(cuid())
+  title     String
+  imageUrl  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Titrologie {
   id            String   @id @default(cuid())
   newspaperName String

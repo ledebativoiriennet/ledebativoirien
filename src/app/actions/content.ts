@@ -110,6 +110,53 @@ export async function deleteTitrologie(id: string) {
   return { success: true };
 }
 
+// --- CARICATURES ---
+export async function uploadCaricature(formData: FormData) {
+  await checkAdminOrEditor();
+  
+  const title = formData.get("title") as string;
+  const imageFile = formData.get("image") as File | null;
+
+  if (!title || !imageFile || imageFile.size === 0) {
+    return { success: false, error: "Le titre et l'image sont obligatoires." };
+  }
+
+  try {
+    const imageUrl = await saveUpload(imageFile);
+
+    await prisma.caricature.create({
+      data: {
+        title,
+        imageUrl
+      }
+    });
+
+    await logActivity({
+      action: "UPLOAD_CARICATURE",
+      resource: title,
+      details: "Nouvelle caricature ajoutée"
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Erreur Caricature:", error);
+    return { success: false, error: "Erreur lors de l'enregistrement de la caricature." };
+  }
+}
+
+export async function deleteCaricature(id: string) {
+  await checkAdminOrEditor();
+  const item = await prisma.caricature.findUnique({ where: { id } });
+  await prisma.caricature.delete({ where: { id } });
+
+  await logActivity({
+    action: "DELETE_CARICATURE",
+    resource: item?.title || `ID: ${id}`
+  });
+
+  return { success: true };
+}
+
 // --- SONDAGES ---
 export async function createPoll(question: string, options: string[]) {
   try {
