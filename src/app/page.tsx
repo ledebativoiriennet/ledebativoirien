@@ -54,7 +54,8 @@ export default async function Home() {
     confidentielArticles,
     dossiersArticles,
     cultureArticlesFetched,
-    footballArticles
+    footballArticles,
+    caricatureArticles
   ] = await Promise.all([
     prisma.article.findMany({
       where: { publishedAt: { not: null } },
@@ -103,7 +104,8 @@ export default async function Home() {
     prisma.article.findMany({ where: { isConfidentiel: true, publishedAt: { not: null } }, take: 8, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'dossiers' } } }, take: 5, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['art-culture', 'culture'] } } } }, take: 5, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'football' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } })
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'football' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['dessin-de-presse', 'caricature', 'humour'] } } } }, take: 1, orderBy: { publishedAt: 'desc' }, include: { categories: true } })
   ]);
 
   if (!recentArticles || recentArticles.length === 0) {
@@ -152,6 +154,7 @@ export default async function Home() {
   const chroniqueItems = getUnique(chroniqueArticles, 5);
 
   const brvmGrp = brvmIndicators;
+  const mainCaricature = caricatureArticles && caricatureArticles.length > 0 ? caricatureArticles[0] : null;
 
   const plusDeNews = getUnique(recentArticles, 8); // For the bottom section
 
@@ -264,11 +267,33 @@ export default async function Home() {
         {/* Humour / Caricature */}
         <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginTop: "1.5rem" }}>
           <h2 className="portal-section-title" style={{ backgroundColor: "#ea580c", borderColor: "#c2410c" }}>Le Dessin de Presse</h2>
-          <div style={{ padding: "1rem" }}>
-            <div style={{ aspectRatio: "1/1", backgroundColor: "#e2e8f0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem", color: "var(--muted)", borderRadius: "4px" }}>
-              🎨
-            </div>
-            <p style={{ textAlign: 'center', fontSize: '0.75rem', fontWeight: 'bold', marginTop: '0.5rem' }}>La caricature du jour</p>
+          <div style={{ padding: "0" }}>
+            {mainCaricature ? (
+              <Link href={`/article/${mainCaricature.slug}`} style={{ display: 'block', textDecoration: 'none' }}>
+                <div className="image-watermark-container" style={{ aspectRatio: "16/10", backgroundColor: "#e2e8f0", overflow: "hidden" }}>
+                  {getArticleImage(mainCaricature) ? (
+                    <SafeImage src={getArticleImage(mainCaricature) as string} alt={mainCaricature.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}>🎨</div>
+                  )}
+                </div>
+                <div style={{ padding: '0.75rem 1rem' }}>
+                  <p style={{ textAlign: 'center', fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--foreground)', lineHeight: 1.3, margin: 0 }}>
+                    {mainCaricature.title}
+                  </p>
+                </div>
+              </Link>
+            ) : (
+              <div style={{ padding: '1rem' }}>
+                <div style={{ aspectRatio: "1/1", backgroundColor: "#e2e8f0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem", color: "var(--muted)", borderRadius: "4px" }}>
+                  🎨
+                </div>
+                <p style={{ textAlign: 'center', fontSize: '0.75rem', fontWeight: 'bold', marginTop: '0.5rem' }}>La caricature du jour arrive bientôt</p>
+              </div>
+            )}
+            <Link href="/category/dessin-de-presse" style={{ display: 'block', textAlign: 'center', fontSize: '0.75rem', padding: '0.5rem', backgroundColor: '#fff7ed', color: '#ea580c', fontWeight: 'bold', borderTop: '1px solid var(--border)', textDecoration: 'none' }}>
+              Voir toutes les caricatures
+            </Link>
           </div>
         </div>
 
