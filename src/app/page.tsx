@@ -269,16 +269,20 @@ export default async function Home() {
           <h2 className="portal-section-title" style={{ backgroundColor: "#ea580c", borderColor: "#c2410c" }}>Le Dessin de Presse</h2>
           <div style={{ padding: "0" }}>
             {mainCaricature ? (
-              <div style={{ display: 'block' }}>
-                <div className="image-watermark-container" style={{ aspectRatio: "16/10", backgroundColor: "#e2e8f0", overflow: "hidden" }}>
-                  <SafeImage src={mainCaricature.imageUrl} alt={mainCaricature.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <Link href="/caricatures" style={{ display: 'block', textDecoration: 'none' }}>
+                <div style={{ backgroundColor: "#f8fafc", padding: '0.5rem', overflow: "hidden" }}>
+                  <img 
+                    src={mainCaricature.imageUrl} 
+                    alt={mainCaricature.title} 
+                    style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
+                  />
                 </div>
                 <div style={{ padding: '0.75rem 1rem' }}>
                   <p style={{ textAlign: 'center', fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--foreground)', lineHeight: 1.3, margin: 0 }}>
                     {mainCaricature.title}
                   </p>
                 </div>
-              </div>
+              </Link>
             ) : (
               <div style={{ padding: '1rem' }}>
                 <div style={{ aspectRatio: "1/1", backgroundColor: "#e2e8f0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem", color: "var(--muted)", borderRadius: "4px" }}>
