@@ -85,6 +85,7 @@ model Article {
   videoCaption     String?
   seoTitle         String?
   seoDescription   String?
+  isAudioAvailable Boolean          @default(false)
   author           Author?          @relation(fields: [authorId], references: [id])
   likes            ArticleLike[]
   views            ArticleView[]
