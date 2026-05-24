@@ -52,7 +52,7 @@ export default async function SearchPage({
 
   const articles = await prisma.article.findMany({
     where: {
-      publishedAt: { not: null },
+      publishedAt: { not: null, lte: new Date() },
       OR: [
         { title: { contains: query } },
         { content: { contains: query } },

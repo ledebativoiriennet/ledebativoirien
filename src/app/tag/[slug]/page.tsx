@@ -45,7 +45,7 @@ export default async function TagPage({ params }: Props) {
   const articles = await prisma.article.findMany({
     where: { 
       tags: { some: { id: tag.id } },
-      publishedAt: { not: null }
+      publishedAt: { not: null, lte: new Date() }
     },
     orderBy: { publishedAt: "desc" },
     take: 30,

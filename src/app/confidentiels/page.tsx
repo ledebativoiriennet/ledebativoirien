@@ -14,7 +14,7 @@ export default async function ConfidentielsPage() {
   const articles = await prisma.article.findMany({
     where: { 
       isConfidentiel: true,
-      publishedAt: { not: null }
+      publishedAt: { not: null, lte: new Date() }
     },
     orderBy: { publishedAt: "desc" },
     take: 50,

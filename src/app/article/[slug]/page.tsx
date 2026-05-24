@@ -54,7 +54,7 @@ type Props = {
 
 export async function generateMetadata(
   { params }: Props,
-  parent: ResolvingMetadata
+  _parent: ResolvingMetadata
 ): Promise<Metadata> {
   const { slug } = await params;
   const article = await prisma.article.findUnique({
@@ -71,10 +71,11 @@ export async function generateMetadata(
     articleImg = `${baseUrl}${articleImg.startsWith('/') ? '' : '/'}${articleImg}`;
   }
   
-  const description = article.excerpt || article.content.replace(/<[^>]*>?/gm, '').substring(0, 160) + '...';
+  const description = article.seoDescription || article.excerpt || article.content.replace(/<[^>]*>?/gm, '').substring(0, 160) + '...';
+  const metaTitle = article.seoTitle || `${article.title} - Le Débat Ivoirien`;
 
   return {
-    title: `${article.title} - Le Débat Ivoirien`,
+    title: metaTitle,
     description: description,
     alternates: {
       canonical: `${baseUrl}/article/${article.slug}`,
@@ -104,7 +105,7 @@ export default async function ArticlePage({ params }: Props) {
   
   const article = await prisma.article.findUnique({
     where: { slug },
-    include: { author: true, categories: true, tags: true },
+    include: { author: true, categories: true, tags: true, relatedArticles: true },
   });
 
   if (!article) return notFound();
@@ -112,20 +113,20 @@ export default async function ArticlePage({ params }: Props) {
   const session = await getServerSession(authOptions);
   const dbUser = session?.user?.email ? await prisma.user.findUnique({ where: { email: session.user.email }, select: { role: true } }) : null;
 
-  // Sécurité : Empêcher l'accès public à un article en attente (brouillon)
-  if (!article.publishedAt) {
+  // Sécurité : Empêcher l'accès public à un article en attente (brouillon) ou planifié dans le futur
+  if (!article.publishedAt || (article.publishedAt > new Date())) {
     if (dbUser?.role !== "ADMIN" && dbUser?.role !== "EDITOR" && dbUser?.role !== "CONTRIBUTOR") {
       return notFound(); // Simule que la page n'existe pas pour les utilisateurs normaux
     }
   }
 
   // Fetch side content and settings
-  const [popularArticles, relatedArticles, flashNewsItems, siteSettings] = await Promise.all([
-    prisma.article.findMany({ where: { publishedAt: { not: null } }, take: 5, orderBy: { publishedAt: 'desc' }, include: { categories: true } }), // Mock popular
+  const [popularArticles, automatedRelatedArticles, flashNewsItems, siteSettings] = await Promise.all([
+    prisma.article.findMany({ where: { publishedAt: { not: null, lte: new Date() } }, take: 5, orderBy: { publishedAt: 'desc' }, include: { categories: true } }), // Mock popular
     prisma.article.findMany({
       where: { 
         id: { not: article.id },
-        publishedAt: { not: null },
+        publishedAt: { not: null, lte: new Date() },
         categories: { some: { id: article.categories[0]?.id } }
       },
       take: 4,
@@ -134,6 +135,11 @@ export default async function ArticlePage({ params }: Props) {
     prisma.flashNews.findMany({ take: 5, orderBy: { createdAt: 'desc' } }),
     prisma.siteSettings.findUnique({ where: { id: "global" } })
   ]);
+
+  // Merge manual related articles with automated ones
+  const finalRelatedArticles = [...article.relatedArticles, ...automatedRelatedArticles]
+    .filter((v, i, a) => a.findIndex(t => t.id === v.id) === i) // Remove duplicates
+    .slice(0, 4);
 
   // session est déjà déclaré plus haut
   // Stats for the article
@@ -188,7 +194,7 @@ export default async function ArticlePage({ params }: Props) {
     where: {
       id: { not: article.id },
       categories: { some: { id: article.categories[0]?.id } },
-      publishedAt: { not: null }
+      publishedAt: { not: null, lte: new Date() }
     },
     orderBy: { publishedAt: 'desc' },
     select: { slug: true, title: true, categories: { select: { name: true } } }
@@ -517,7 +523,7 @@ export default async function ArticlePage({ params }: Props) {
         <div style={{ marginTop: "2rem" }}>
           <h2 className="portal-section-title dark" style={{ borderBottom: "2px solid var(--primary)" }}>À lire également</h2>
           <div className="grid-responsive-2col" style={{ marginTop: "1rem" }}>
-            {relatedArticles.map(rel => {
+            {finalRelatedArticles.map(rel => {
               const relImg = getArticleImage(rel);
               return (
                 <Link href={`/article/${rel.slug}`} key={rel.id} style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", display: "flex", flexDirection: "column" }}>

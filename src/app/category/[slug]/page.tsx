@@ -46,7 +46,7 @@ export default async function CategoryPage({ params }: Props) {
   const articles = await prisma.article.findMany({
     where: { 
       categories: { some: { id: category.id } },
-      publishedAt: { not: null }
+      publishedAt: { not: null, lte: new Date() }
     },
     orderBy: { publishedAt: "desc" },
     take: 30,

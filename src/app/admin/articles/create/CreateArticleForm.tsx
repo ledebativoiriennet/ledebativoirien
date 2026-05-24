@@ -2,8 +2,9 @@
 
 import { useState, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { publishArticle } from "@/app/actions/admin";
+import { publishArticle, searchArticlesForSelection } from "@/app/actions/admin";
 import { createCategory } from "@/app/actions/category";
+import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
 import Link from "next/link";
@@ -27,6 +28,93 @@ export default function CreateArticleForm({ categories }: { categories: Category
   const [showNewCat, setShowNewCat] = useState(false);
   const [newCatName, setNewCatName] = useState("");
   const [creatingCat, setCreatingCat] = useState(false);
+
+  // SEO & Related Articles State
+  const [selectedRelated, setSelectedRelated] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  // Auto-save logic
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const data = {
+        title: (document.getElementsByName("title")[0] as any)?.value,
+        excerpt: (document.getElementsByName("excerpt")[0] as any)?.value,
+        content,
+        seoTitle: (document.getElementsByName("seoTitle")[0] as any)?.value,
+        seoDescription: (document.getElementsByName("seoDescription")[0] as any)?.value,
+        timestamp: Date.now()
+      };
+      localStorage.setItem("article-draft-new", JSON.stringify(data));
+      console.log("Draft auto-saved");
+    }, 30000);
+    return () => clearInterval(timer);
+  }, [content]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("article-draft-new");
+    if (saved) {
+      const data = JSON.parse(saved);
+      if (window.confirm(`Un brouillon non publié du ${new Date(data.timestamp).toLocaleString()} a été trouvé. Voulez-vous le restaurer ?`)) {
+        // Use a slight delay or ref to avoid cascading render warning on mount
+        const restore = () => {
+          setContent(data.content);
+          if (data.title) {
+            const el = document.getElementsByName("title")[0] as any;
+            if (el) el.value = data.title;
+          }
+          if (data.excerpt) {
+            const el = document.getElementsByName("excerpt")[0] as any;
+            if (el) el.value = data.excerpt;
+          }
+          if (data.seoTitle) {
+            const el = document.getElementsByName("seoTitle")[0] as any;
+            if (el) el.value = data.seoTitle;
+          }
+          if (data.seoDescription) {
+            const el = document.getElementsByName("seoDescription")[0] as any;
+            if (el) el.value = data.seoDescription;
+          }
+        };
+        restore();
+      }
+    }
+  }, []);
+
+  const handleSearchArticles = async (query: string) => {
+    setSearchQuery(query);
+    if (query.length < 3) {
+      setSearchResults([]);
+      return;
+    }
+    setIsSearching(true);
+    const results = await searchArticlesForSelection(query);
+    setSearchResults(results.filter(r => !selectedRelated.find(sr => sr.id === r.id)));
+    setIsSearching(false);
+  };
+
+  const addRelated = (art: any) => {
+    setSelectedRelated([...selectedRelated, art]);
+    setSearchResults([]);
+    setSearchQuery("");
+  };
+
+  const removeRelated = (id: string) => {
+    setSelectedRelated(selectedRelated.filter(r => r.id !== id));
+  };
+
+  const handlePreview = () => {
+    const data = {
+      title: (document.getElementsByName("title")[0] as any)?.value,
+      excerpt: (document.getElementsByName("excerpt")[0] as any)?.value,
+      content,
+      imageUrl: "", // Can't easily preview uploaded file without temporary storage, but fine for text
+      categories: []
+    };
+    localStorage.setItem("article-preview", JSON.stringify(data));
+    window.open("/admin/articles/preview", "_blank");
+  };
 
   const handleCreateCategory = async () => {
     if (!newCatName.trim()) return;
@@ -161,15 +249,48 @@ export default function CreateArticleForm({ categories }: { categories: Category
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         
-        <div>
-          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Titre de l'article</label>
-          <input 
-            type="text" 
-            name="title" 
-            required 
-            style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '1rem', fontFamily: 'inherit' }}
-            placeholder="Ex: Le prix du Cacao en hausse..."
-          />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+          <div>
+            <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Lien personnalisé (Slug)</label>
+            <input 
+              type="text" 
+              name="slug" 
+              placeholder="votre-titre-personnalise"
+              style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '1rem', fontFamily: 'inherit' }}
+            />
+            <p style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem' }}>Laissez vide pour générer automatiquement à partir du titre.</p>
+          </div>
+          <div>
+            <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Titre de l&apos;article</label>
+            <input 
+              type="text" 
+              name="title" 
+              required 
+              style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '1rem', fontFamily: 'inherit' }}
+              placeholder="Ex: Le prix du Cacao en hausse..."
+            />
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+          <div>
+            <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Date de publication (Planning)</label>
+            <input 
+              type="datetime-local" 
+              name="publishedAt" 
+              style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '1rem', fontFamily: 'inherit' }}
+            />
+            <p style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem' }}>Laissez vide pour publier maintenant.</p>
+          </div>
+          <div>
+             <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Date de création</label>
+            <input 
+              type="datetime-local" 
+              name="createdAt" 
+              style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '1rem', fontFamily: 'inherit' }}
+            />
+             <p style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem' }}>Date affichée sur l'article.</p>
+          </div>
         </div>
 
         <div>
@@ -223,7 +344,80 @@ export default function CreateArticleForm({ categories }: { categories: Category
             placeholder="Ex: Cacao, Economie, Exportation..."
             style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '1rem', fontFamily: 'inherit' }}
           />
-          <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.25rem' }}>Les tags s'afficheront en #tendances sur la page d'accueil.</p>
+          <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.25rem' }}>Les tags s&apos;afficheront en #tendances sur la page d&apos;accueil.</p>
+        </div>
+
+        <div style={{ backgroundColor: '#f0f9ff', padding: '1.5rem', borderRadius: '8px', border: '1px solid #bae6fd' }}>
+          <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.1rem', color: '#0369a1', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            🔍 Optimisation SEO
+          </h3>
+          <div style={{ display: 'grid', gap: '1rem' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>Titre SEO (Meta Title)</label>
+              <input 
+                type="text" 
+                name="seoTitle" 
+                placeholder="Titre apparaissant dans Google..."
+                style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>Description SEO (Meta Description)</label>
+              <textarea 
+                name="seoDescription" 
+                rows={2}
+                placeholder="Court résumé pour les moteurs de recherche..."
+                style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '0.9rem' }}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div style={{ backgroundColor: '#fcfafa', padding: '1.5rem', borderRadius: '8px', border: '1px solid #fce7f3' }}>
+          <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.1rem', color: '#be185d', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            🔗 Articles Liés (Manuels)
+          </h3>
+          <div style={{ marginBottom: '1rem' }}>
+            <input 
+              type="text" 
+              value={searchQuery}
+              onChange={(e) => handleSearchArticles(e.target.value)}
+              placeholder="Rechercher un article à lier..."
+              style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
+            />
+            {isSearching && <p style={{ fontSize: '0.8rem', color: '#64748b' }}>Recherche...</p>}
+            {searchResults.length > 0 && (
+              <div style={{ position: 'relative' }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, backgroundColor: 'white', border: '1px solid #cbd5e1', borderRadius: '4px', zIndex: 10, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
+                  {searchResults.map(art => (
+                    <div 
+                      key={art.id} 
+                      onClick={() => addRelated(art)}
+                      style={{ padding: '0.5rem 1rem', cursor: 'pointer', borderBottom: '1px solid #f1f5f9' }}
+                    >
+                      {art.title} <span style={{ fontSize: '0.7rem', color: '#94a3b8' }}>({art.publishedAt ? new Date(art.publishedAt).toLocaleDateString() : 'Brouillon'})</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+            {selectedRelated.map(art => (
+              <div key={art.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', backgroundColor: '#fdf2f8', color: '#9d174d', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.85rem', border: '1px solid #fbcfe8' }}>
+                {art.title}
+                <button 
+                  type="button" 
+                  onClick={() => removeRelated(art.id)}
+                  style={{ border: 'none', background: 'none', color: '#be185d', cursor: 'pointer', fontWeight: 'bold' }}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+          <input type="hidden" name="relatedArticleIds" value={selectedRelated.map(r => r.id).join(',')} />
         </div>
 
         <div>
@@ -390,6 +584,13 @@ export default function CreateArticleForm({ categories }: { categories: Category
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>
+          <button 
+            type="button"
+            onClick={handlePreview}
+            style={{ padding: '0.75rem 1.5rem', borderRadius: '4px', border: '1px solid #6366f1', backgroundColor: '#eef2ff', color: '#4338ca', fontWeight: 'bold', cursor: 'pointer' }}
+          >
+            Aperçu en direct
+          </button>
           <button 
             type="button"
             onClick={() => router.back()}

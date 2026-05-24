@@ -71,7 +71,7 @@ export async function getFilteredArticles(filters: ArchiveFilters) {
             lt: new Date(`${filters.year + 1}-01-01`),
           },
         }
-      : { publishedAt: { not: null } };
+      : { publishedAt: { not: null, lte: new Date() } };
 
   const searchFilter = filters.query
     ? {

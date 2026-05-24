@@ -11,7 +11,7 @@ export const revalidate = 60;
 
 export default async function EnContinuPage() {
   const recentArticles = await prisma.article.findMany({
-    where: { publishedAt: { not: null } },
+    where: { publishedAt: { not: null, lte: new Date() } },
     orderBy: { publishedAt: 'desc' },
     take: 50,
     include: { categories: true }

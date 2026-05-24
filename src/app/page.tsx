@@ -59,39 +59,39 @@ export default async function Home() {
     caricatures
   ] = await Promise.all([
     prisma.article.findMany({
-      where: { publishedAt: { not: null } },
+      where: { publishedAt: { not: null, lte: new Date() } },
       take: 150, // Increase pool for deduplication
       orderBy: { publishedAt: "desc" },
       include: { categories: true },
     }),
     prisma.poll.findFirst({ where: { isActive: true }, include: { options: true }, orderBy: { createdAt: 'desc' } }),
     prisma.obituary.findMany({ take: 5, orderBy: { createdAt: 'desc' } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['politique', 'politiques'] } } } }, take: 15, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null, lte: new Date() }, categories: { some: { slug: { in: ['politique', 'politiques'] } } } }, take: 15, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.video.findMany({ take: 100, orderBy: { createdAt: 'desc' } }),
     prisma.activity.findMany({ take: 3, orderBy: { createdAt: 'desc' } }),
     prisma.flashNews.findMany({ take: 6, orderBy: { createdAt: 'desc' } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['culture', 'arts'] } } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null, lte: new Date() }, categories: { some: { slug: { in: ['culture', 'arts'] } } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.jobOffer.findMany({ take: 4, orderBy: { createdAt: 'desc' }, where: { isActive: true } }),
     prisma.weatherReport.findFirst({ orderBy: { date: 'desc' } }),
     prisma.breakingNews.findMany({ where: { isActive: true }, orderBy: { createdAt: 'desc' } }),
     prisma.titrologie.findMany({ orderBy: { date: 'desc' }, take: 4 }),
     prisma.siteSettings.findUnique({ where: { id: "global" } }),
     prisma.quote.findFirst({ where: { isActive: true } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['faits-divers', 'faits_divers', 'societe'] } } } }, take: 15, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['economie', 'economie-finances', 'finances'] } } } }, take: 15, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null, lte: new Date() }, categories: { some: { slug: { in: ['faits-divers', 'faits_divers', 'societe'] } } } }, take: 15, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null, lte: new Date() }, categories: { some: { slug: { in: ['economie', 'economie-finances', 'finances'] } } } }, take: 15, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.pressRelease.findMany({ take: 5, orderBy: { createdAt: 'desc' } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'publie-reportage' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
-    prisma.article.findMany({ where: { isAudioAvailable: true, publishedAt: { not: null } }, take: 100, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['international', 'internationale', 'diplomatie'] } } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['afrique-occidentale', 'cedeau', 'afrique', 'benin', 'togo', 'mali', 'burkina-faso', 'senegal', 'guinee'] } } } }, take: 10, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'a-la-une' } } }, take: 5, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'actualite' } } }, take: 15, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null, lte: new Date() }, categories: { some: { slug: 'publie-reportage' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { isAudioAvailable: true, publishedAt: { not: null, lte: new Date() } }, take: 100, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null, lte: new Date() }, categories: { some: { slug: { in: ['international', 'internationale', 'diplomatie'] } } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null, lte: new Date() }, categories: { some: { slug: { in: ['afrique-occidentale', 'cedeau', 'afrique', 'benin', 'togo', 'mali', 'burkina-faso', 'senegal', 'guinee'] } } } }, take: 10, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null, lte: new Date() }, categories: { some: { slug: 'a-la-une' } } }, take: 5, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null, lte: new Date() }, categories: { some: { slug: 'actualite' } } }, take: 15, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.marketIndicator.findMany({ where: { group: 'BRVM' }, take: 3, orderBy: { order: 'asc' } }),
     prisma.tag.findMany({ 
-      where: { articles: { some: { publishedAt: { not: null } } } },
+      where: { articles: { some: { publishedAt: { not: null, lte: new Date() } } } },
       include: {
         articles: {
-          where: { publishedAt: { not: null } },
+          where: { publishedAt: { not: null, lte: new Date() } },
           select: {
             _count: {
               select: { views: true }
@@ -100,12 +100,12 @@ export default async function Home() {
         }
       }
     }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'societe' } } }, take: 10, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'chronique' } } }, take: 10, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
-    prisma.article.findMany({ where: { isConfidentiel: true, publishedAt: { not: null } }, take: 8, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'dossiers' } } }, take: 5, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: { in: ['art-culture', 'culture'] } } } }, take: 5, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
-    prisma.article.findMany({ where: { publishedAt: { not: null }, categories: { some: { slug: 'football' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null, lte: new Date() }, categories: { some: { slug: 'societe' } } }, take: 10, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null, lte: new Date() }, categories: { some: { slug: 'chronique' } } }, take: 10, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { isConfidentiel: true, publishedAt: { not: null, lte: new Date() } }, take: 8, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null, lte: new Date() }, categories: { some: { slug: 'dossiers' } } }, take: 5, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null, lte: new Date() }, categories: { some: { slug: { in: ['art-culture', 'culture'] } } } }, take: 5, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
+    prisma.article.findMany({ where: { publishedAt: { not: null, lte: new Date() }, categories: { some: { slug: 'football' } } }, take: 4, orderBy: { publishedAt: 'desc' }, include: { categories: true } }),
     prisma.caricature.findMany({ take: 1, orderBy: { createdAt: 'desc' } })
   ]);
 

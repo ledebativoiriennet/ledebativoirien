@@ -83,7 +83,8 @@ model Article {
   videoUrl         String?
   videoFile        String?
   videoCaption     String?
-  isAudioAvailable Boolean          @default(false)
+  seoTitle         String?
+  seoDescription   String?
   author           Author?          @relation(fields: [authorId], references: [id])
   likes            ArticleLike[]
   views            ArticleView[]
@@ -91,6 +92,8 @@ model Article {
   categories       Category[]       @relation("ArticleToCategory")
   tags             Tag[]            @relation("ArticleToTag")
   comments         Comment[]
+  relatedArticles  Article[]        @relation("RelatedArticles")
+  referencedIn     Article[]        @relation("RelatedArticles")
 }
 
 model Poll {
