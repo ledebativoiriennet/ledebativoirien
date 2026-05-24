@@ -54,7 +54,7 @@ type Props = {
 
 export async function generateMetadata(
   { params }: Props,
-  _parent: ResolvingMetadata
+  parent: ResolvingMetadata
 ): Promise<Metadata> {
   const { slug } = await params;
   const article = await prisma.article.findUnique({
