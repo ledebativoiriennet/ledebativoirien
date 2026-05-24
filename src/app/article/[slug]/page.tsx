@@ -24,6 +24,7 @@ import GoogleAdSlot from "@/components/GoogleAdSlot";
 import SafeImage from "@/components/SafeImage";
 import WhatsAppAd from "@/components/WhatsAppAd";
 import ArticleComments from "@/components/ArticleComments";
+import PromoLucarne from "@/components/promo/PromoLucarne";
 
 export const revalidate = 60;
 
@@ -567,6 +568,8 @@ export default async function ArticlePage({ params }: Props) {
         <div style={{ marginBottom: "1.5rem" }}>
           <AdSlot format="skyscraper" />
         </div>
+
+        <PromoLucarne />
 
         {/* Dépêches Widget */}
         <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: "1.5rem" }}>

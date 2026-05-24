@@ -18,6 +18,7 @@ import SafeImage from "@/components/SafeImage";
 import WhatsAppAd from "@/components/WhatsAppAd";
 import SubscriptionBanner from "@/components/SubscriptionBanner";
 import WebTVModule from "@/components/WebTVModule";
+import PromoLucarne from "@/components/promo/PromoLucarne";
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -252,6 +253,8 @@ export default async function Home() {
         </div>
 
         <WhatsAppAd />
+
+        <PromoLucarne />
 
         <AdBanner slot="HOME_SIDEBAR" />
 
