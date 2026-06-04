@@ -1,79 +1,92 @@
 'use client';
 import { useState } from 'react';
+import { subscribeNewsletter } from '@/app/actions/newsletter';
+import Honeypot from '../Honeypot';
 
 export default function NewsletterPromo() {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!email) return;
     
     setStatus('loading');
+    setErrorMsg('');
     try {
-      const res = await fetch('/api/newsletter/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
+      const formData = new FormData(e.currentTarget);
+      const res = await subscribeNewsletter(formData);
       
-      if (res.ok) setStatus('success');
-      else setStatus('error');
+      if (res.success) {
+        setStatus('success');
+      } else {
+        setStatus('error');
+        setErrorMsg(res.error || 'Erreur lors de l\'inscription');
+      }
     } catch (err) {
       setStatus('error');
+      setErrorMsg('Une erreur est survenue.');
     }
   };
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #fff 0%, #f1f5f9 100%)',
+      background: 'linear-gradient(rgba(17, 17, 17, 0.8), rgba(17, 17, 17, 0.95)), url("/promo-newsletter-square.png") center/cover no-repeat',
       borderRadius: 'var(--radius)',
-      padding: '1.5rem',
-      color: 'var(--foreground)',
+      padding: '2rem 1.5rem',
+      color: '#ffffff',
       position: 'relative',
       overflow: 'hidden',
-      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-      border: '1px solid var(--border)'
+      boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+      border: '1px solid rgba(255, 255, 255, 0.1)',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      minHeight: '280px'
     }}>
       <div style={{ position: 'relative', zIndex: 1 }}>
         <div style={{ 
           display: 'inline-block', 
-          backgroundColor: '#0ea5e9', 
+          backgroundColor: '#e60000', 
           color: 'white', 
-          padding: '0.2rem 0.6rem', 
+          padding: '0.25rem 0.75rem', 
           borderRadius: '4px', 
-          fontSize: '0.65rem', 
-          fontWeight: 900, 
+          fontSize: '0.7rem', 
+          fontWeight: 800, 
           textTransform: 'uppercase',
-          marginBottom: '0.75rem'
+          marginBottom: '1rem',
+          letterSpacing: '0.05em'
         }}>
           Newsletter
         </div>
         
         <h3 style={{ 
-          fontSize: '1.2rem', 
+          fontSize: '1.4rem', 
           fontWeight: 900, 
-          lineHeight: 1.2, 
-          marginBottom: '0.5rem',
-          letterSpacing: '-0.02em'
+          lineHeight: 1.3, 
+          marginBottom: '0.75rem',
+          letterSpacing: '-0.02em',
+          color: '#ffffff'
         }}>
-          L'essentiel chaque soir
+          Restez connecté à l'essentiel
         </h3>
         
         <p style={{ 
           fontSize: '0.85rem', 
-          color: 'var(--muted)', 
-          lineHeight: 1.5, 
-          marginBottom: '1rem' 
+          color: '#94a3b8', 
+          lineHeight: 1.6, 
+          marginBottom: '1.5rem' 
         }}>
-          Recevez le récapitulatif des infos clés directement dans votre boîte mail.
+          Recevez nos décryptages et actualités directement dans votre boîte mail.
         </p>
         
         {status === 'success' ? (
           <div style={{ 
-            padding: '0.75rem', 
-            backgroundColor: '#dcfce7', 
-            color: '#166534', 
+            padding: '1rem', 
+            backgroundColor: 'rgba(22, 101, 52, 0.2)', 
+            border: '1px solid #166534',
+            color: '#4ade80', 
             borderRadius: '8px', 
             fontSize: '0.85rem', 
             fontWeight: 600,
@@ -83,44 +96,49 @@ export default function NewsletterPromo() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <Honeypot />
             <input 
               type="email" 
-              placeholder="Votre email..."
+              name="email"
+              placeholder="Votre adresse email..."
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
               style={{
                 width: '100%',
-                padding: '0.6rem 0.8rem',
+                padding: '0.75rem 1rem',
                 borderRadius: '8px',
-                border: '1px solid var(--border)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                color: '#ffffff',
                 fontSize: '0.9rem',
-                outline: 'none'
+                outline: 'none',
               }}
             />
+            {status === 'error' && (
+              <p style={{ fontSize: '0.75rem', color: '#f87171', textAlign: 'center', margin: 0, fontWeight: 'bold' }}>
+                {errorMsg}
+              </p>
+            )}
             <button 
               type="submit"
               disabled={status === 'loading'}
               style={{ 
                 width: '100%',
-                backgroundColor: 'var(--foreground)',
-                color: 'var(--background)',
-                padding: '0.6rem',
+                backgroundColor: '#e60000',
+                color: '#ffffff',
+                padding: '0.75rem',
                 borderRadius: '8px',
-                fontSize: '0.85rem',
+                fontSize: '0.9rem',
                 fontWeight: 'bold',
                 border: 'none',
                 cursor: status === 'loading' ? 'not-allowed' : 'pointer',
+                transition: 'background-color 0.2s',
                 opacity: status === 'loading' ? 0.7 : 1
               }}
             >
-              🚀 {status === 'loading' ? 'Inscription...' : "S'abonner gratuitement"}
+              {status === 'loading' ? 'Inscription...' : "S'abonner gratuitement"}
             </button>
-            {status === 'error' && (
-              <p style={{ fontSize: '0.75rem', color: 'var(--primary)', textAlign: 'center', margin: 0 }}>
-                Une erreur est survenue. Réessayez.
-              </p>
-            )}
           </form>
         )}
       </div>
