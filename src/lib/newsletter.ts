@@ -25,41 +25,47 @@ export async function sendNewArticleNotification(articleId: string) {
       <head>
         <meta charset="utf-8">
         <style>
-          body { font-family: Helvetica, Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
-          .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; }
-          .header { background-color: #111111; padding: 30px 20px; text-align: center; }
-          .header h1 { color: #ffffff; margin: 0; font-size: 28px; letter-spacing: -1px; }
-          .header h1 span { color: #e60000; font-family: Impact, sans-serif; }
-          .content { padding: 30px 20px; }
-          .footer { background-color: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #888888; border-top: 1px solid #eeeeee; }
+          body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+          .container { max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+          .header { background-color: #111111; padding: 40px 20px; text-align: center; border-bottom: 4px solid #e60000; }
+          .header img { max-height: 60px; width: auto; }
+          .content { padding: 40px 30px; }
+          .category { font-size: 12px; font-weight: 800; color: #e60000; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.05em; }
+          .title { font-size: 22px; font-weight: 800; color: #111111; margin-top: 0; margin-bottom: 20px; line-height: 1.3; }
+          .title a { color: #111111; text-decoration: none; }
+          .article-image { width: 100%; height: auto; border-radius: 8px; margin-bottom: 25px; }
+          .excerpt { font-size: 16px; color: #475569; line-height: 1.7; margin-bottom: 30px; }
+          .btn-container { text-align: center; margin-bottom: 20px; }
+          .btn { display: inline-block; background-color: #e60000; color: #ffffff; text-decoration: none; padding: 12px 28px; border-radius: 6px; font-weight: bold; font-size: 15px; }
+          .footer { background-color: #f8fafc; padding: 25px 20px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; }
+          .footer a { color: #64748b; text-decoration: underline; }
         </style>
       </head>
       <body>
         <div class="container">
           <div class="header">
-            <h1>LeDébat<span>IVOIRIEN</span></h1>
+            <img src="https://ledebativoirien.net/logo.png" alt="Le Débat Ivoirien">
           </div>
           <div class="content">
-            <h2 style="font-size: 16px; color: #e60000; text-transform: uppercase; margin-bottom: 5px;">Nouvel Article Publié</h2>
-            <h1 style="font-size: 24px; color: #111111; margin-top: 0; margin-bottom: 20px;">
-              <a href="https://ledebativoirien.net/article/${article.slug}" style="color: #111111; text-decoration: none;">${article.title}</a>
+            <div class="category">Flash Info - Nouvel Article</div>
+            <h1 class="title">
+              <a href="https://ledebativoirien.net/article/${article.slug}">${article.title}</a>
             </h1>
             
-            ${article.imageUrl ? `<img src="https://ledebativoirien.net${article.imageUrl}" style="width: 100%; height: auto; border-radius: 8px; margin-bottom: 20px;" alt="Image">` : ''}
+            ${article.imageUrl ? `<img src="https://ledebativoirien.net${article.imageUrl}" class="article-image" alt="${article.title}">` : ''}
             
-            <p style="font-size: 16px; color: #444444; line-height: 1.6; margin-bottom: 30px;">
+            <p class="excerpt">
               ${article.excerpt || article.content.substring(0, 200) + '...'}
             </p>
             
-            <div style="text-align: center;">
-              <a href="https://ledebativoirien.net/article/${article.slug}" style="display: inline-block; background-color: #e60000; color: #ffffff; text-decoration: none; padding: 12px 25px; border-radius: 4px; font-weight: bold; font-size: 16px;">
-                Lire l'article complet
-              </a>
+            <div class="btn-container">
+              <a href="https://ledebativoirien.net/article/${article.slug}" class="btn" style="color: #ffffff;">Lire l'article complet</a>
             </div>
           </div>
           <div class="footer">
+            © ${new Date().getFullYear()} Le Débat Ivoirien. Tous droits réservés.<br>
             Vous recevez cet email car vous êtes inscrit aux alertes de Le Débat Ivoirien.<br>
-            © ${new Date().getFullYear()} Le Débat Ivoirien. Tous droits réservés.
+            <a href="https://ledebativoirien.net/unsubscribe">Se désabonner</a>
           </div>
         </div>
       </body>
