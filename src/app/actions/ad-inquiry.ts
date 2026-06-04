@@ -1,7 +1,7 @@
 "use server"
 
 import { prisma } from "@/lib/prisma"
-import nodemailer from "nodemailer"
+import { sendEmail } from "@/lib/resend"
 
 export async function submitAdInquiry(formData: FormData) {
   try {
@@ -27,45 +27,34 @@ export async function submitAdInquiry(formData: FormData) {
       }
     })
 
-    // Configuration de l'envoi d'email
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || "smtp.gmail.com",
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: process.env.SMTP_SECURE === "true",
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    })
-
-    const mailOptions = {
-      from: `"Le Débat Ivoirien" <${process.env.SMTP_USER}>`,
-      to: "info@sillon-technologies.com, marius.gnampa@sillon-technologies.com",
-      subject: `🚨 Demande Annonceur - ${company}`,
-      html: `
-        <h2>Nouvelle Demande de Devis Publicitaire</h2>
-        <p>Une nouvelle entreprise a soumis une demande depuis l'Espace Annonceurs.</p>
-        <table border="1" cellpadding="10" cellspacing="0" style="border-collapse: collapse; border-color: #ddd;">
-          <tr><td style="background:#f4f4f4"><strong>Entreprise</strong></td><td>${company}</td></tr>
-          <tr><td style="background:#f4f4f4"><strong>Contact</strong></td><td>${name}</td></tr>
-          <tr><td style="background:#f4f4f4"><strong>Email</strong></td><td>${email}</td></tr>
-          <tr><td style="background:#f4f4f4"><strong>Téléphone</strong></td><td>${phone || "Non renseigné"}</td></tr>
-          <tr><td style="background:#f4f4f4"><strong>Format Souhaité</strong></td><td>${format || "Non spécifié"}</td></tr>
-        </table>
-        <h3>Détails de la campagne :</h3>
-        <p>${message || "Aucun détail supplémentaire."}</p>
-      `,
-    }
+    const htmlContent = `
+      <h2>Nouvelle Demande de Devis Publicitaire</h2>
+      <p>Une nouvelle entreprise a soumis une demande depuis l'Espace Annonceurs.</p>
+      <table border="1" cellpadding="10" cellspacing="0" style="border-collapse: collapse; border-color: #ddd;">
+        <tr><td style="background:#f4f4f4"><strong>Entreprise</strong></td><td>${company}</td></tr>
+        <tr><td style="background:#f4f4f4"><strong>Contact</strong></td><td>${name}</td></tr>
+        <tr><td style="background:#f4f4f4"><strong>Email</strong></td><td>${email}</td></tr>
+        <tr><td style="background:#f4f4f4"><strong>Téléphone</strong></td><td>${phone || "Non renseigné"}</td></tr>
+        <tr><td style="background:#f4f4f4"><strong>Format Souhaité</strong></td><td>${format || "Non spécifié"}</td></tr>
+      </table>
+      <h3>Détails de la campagne :</h3>
+      <p>${message || "Aucun détail supplémentaire."}</p>
+    `
 
     try {
-      if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-        await transporter.sendMail(mailOptions)
-        console.log(`Email envoyé pour la demande de ${company}`)
+      const { error } = await sendEmail({
+        to: ["info@sillon-technologies.com", "marius.gnampa@sillon-technologies.com"],
+        subject: `🚨 Demande Annonceur - ${company}`,
+        html: htmlContent,
+      })
+      
+      if (error) {
+        console.error("Erreur lors de l'envoi de l'email annonceur :", error)
       } else {
-        console.log("Email non envoyé : Configuration SMTP manquante dans .env")
+        console.log(`Email envoyé via Resend pour la demande de ${company}`)
       }
     } catch (mailError) {
-      console.error("Erreur SMTP :", mailError)
+      console.error("Erreur lors de l'envoi d'email annonceur :", mailError)
     }
 
     return { success: true }

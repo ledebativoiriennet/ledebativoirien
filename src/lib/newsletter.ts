@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import nodemailer from "nodemailer";
+import { sendEmail } from "@/lib/resend";
 
 export async function sendNewArticleNotification(articleId: string) {
   try {
@@ -18,24 +18,6 @@ export async function sendNewArticleNotification(articleId: string) {
     if (subscribers.length === 0) return;
 
     const emails = subscribers.map(s => s.email);
-
-    if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
-      console.warn("⚠️ SMTP non configuré. Simulation d'envoi pour le nouvel article :", article.title);
-      return;
-    }
-
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT) || 465,
-      secure: true,
-      connectionTimeout: 5000,
-      greetingTimeout: 5000,
-      socketTimeout: 5000,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
 
     const htmlTemplate = `
       <!DOCTYPE html>
@@ -84,12 +66,15 @@ export async function sendNewArticleNotification(articleId: string) {
       </html>
     `;
 
-    await transporter.sendMail({
-      from: `"Le Débat Ivoirien" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+    const { error } = await sendEmail({
       bcc: emails,
       subject: `🚨 Nouveau : ${article.title}`,
       html: htmlTemplate,
     });
+
+    if (error) {
+      throw error;
+    }
     
     console.log(`Notification envoyée à ${emails.length} abonnés pour l'article ${articleId}`);
 

@@ -45,11 +45,21 @@ export default async function NewsletterAdminPage() {
       </div>
 
       <div style={{ marginTop: '2rem', backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-        <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>ℹ️ Envoi automatique</h3>
-        <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: 1.5 }}>
-          La newsletter est configurée pour s'envoyer automatiquement tous les jours à 20h00 via la route CRON <code>/api/cron/newsletter</code>. 
-          Elle récupère tous les articles publiés dans la journée et envoie un beau résumé HTML à tous les abonnés actifs ci-dessus.
+        <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem' }}>ℹ️ Envois automatiques (CRON)</h3>
+        <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: 1.6, marginBottom: '1rem' }}>
+          Trois newsletters automatiques sont configurées via des tâches CRON pour tenir vos abonnés informés :
         </p>
+        <ul style={{ fontSize: '0.9rem', color: '#475569', lineHeight: 1.8, paddingLeft: '1.5rem', margin: 0 }}>
+          <li>
+            <strong>Chaque Soir (20h00)</strong> : Envoi du résumé des articles de la journée via la route <code>/api/cron/newsletter</code>.
+          </li>
+          <li>
+            <strong>Chaque Semaine</strong> : Sélection des 5 articles les plus lus de la semaine écoulée via la route <code>/api/cron/weekly-digest</code>.
+          </li>
+          <li>
+            <strong>Chaque Mois</strong> : Compilation "Best-Of" reprenant le meilleur article de chacune des 4 semaines passées via la route <code>/api/cron/monthly-digest</code>.
+          </li>
+        </ul>
       </div>
     </div>
   );

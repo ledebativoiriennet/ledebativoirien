@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import nodemailer from "nodemailer";
+import { sendEmail } from "@/lib/resend";
 
 /**
  * Finds the top article for a specific date range based on view count.
@@ -31,6 +31,138 @@ async function getTopArticleInRange(start: Date, end: Date) {
     where: { id: topViewed[0].articleId },
     include: { categories: true },
   });
+}
+
+/**
+ * Compiles the weekly digest by getting the top 5 articles of the last 7 days based on views.
+ */
+export async function getWeeklyDigestData() {
+  const now = new Date();
+  const start = new Date();
+  start.setDate(now.getDate() - 7);
+
+  // Group by articleId within the last 7 days to get view counts
+  const topViewed = await prisma.articleView.groupBy({
+    by: ['articleId'],
+    where: {
+      viewedAt: {
+        gte: start,
+        lt: now,
+      }
+    },
+    _count: {
+      articleId: true,
+    },
+    orderBy: {
+      _count: {
+        articleId: 'desc',
+      },
+    },
+    take: 5,
+  });
+
+  if (topViewed.length === 0) {
+    // Si pas de vues enregistrées, on prend simplement les 5 derniers articles publiés cette semaine
+    return await prisma.article.findMany({
+      where: {
+        publishedAt: {
+          gte: start,
+          lt: now,
+        }
+      },
+      orderBy: { publishedAt: 'desc' },
+      take: 5,
+    });
+  }
+
+  const articleIds = topViewed.map(item => item.articleId);
+  const articles = await prisma.article.findMany({
+    where: {
+      id: { in: articleIds }
+    },
+    include: { categories: true },
+  });
+
+  // Conserver l'ordre décroissant du nombre de vues
+  return articleIds
+    .map(id => articles.find(article => article.id === id))
+    .filter((a): a is NonNullable<typeof a> => !!a);
+}
+
+/**
+ * Sends the weekly digest email to all active subscribers.
+ */
+export async function sendWeeklyDigest() {
+  try {
+    const articles = await getWeeklyDigestData();
+    if (articles.length === 0) return { message: "Aucun article trouvé pour le digest hebdomadaire." };
+
+    const subscribers = await prisma.newsletterSubscriber.findMany({
+      where: { isActive: true },
+      select: { email: true }
+    });
+
+    if (subscribers.length === 0) return { message: "Aucun abonné actif." };
+
+    const emails = subscribers.map(s => s.email);
+
+    const articlesHtml = articles.map((article, index) => `
+      <div style="margin-bottom: 25px; padding-bottom: 25px; border-bottom: 1px solid #eeeeee;">
+        <div style="font-size: 11px; font-weight: 800; color: #e60000; text-transform: uppercase; margin-bottom: 5px;">TOP ${index + 1} DE LA SEMAINE</div>
+        <h2 style="font-size: 20px; margin: 0 0 10px 0; color: #111111;">
+          <a href="https://ledebativoirien.net/article/${article.slug}" style="color: #111111; text-decoration: none;">${article.title}</a>
+        </h2>
+        ${article.imageUrl ? `<img src="https://ledebativoirien.net${article.imageUrl}" style="width: 100%; max-width: 600px; height: auto; border-radius: 8px; margin-bottom: 15px;" alt="Image">` : ''}
+        <p style="font-size: 15px; color: #475569; line-height: 1.5; margin: 0 0 15px 0;">
+          ${article.excerpt || article.content.substring(0, 150) + '...'}
+        </p>
+        <a href="https://ledebativoirien.net/article/${article.slug}" style="display: inline-block; background-color: #e60000; color: #ffffff; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; font-size: 14px;">Lire la suite</a>
+      </div>
+    `).join('');
+
+    const htmlTemplate = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+      </head>
+      <body style="font-family: Helvetica, Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+          <div style="background-color: #111111; padding: 40px 20px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 32px; letter-spacing: -1px;">LeDébat<span style="color: #e60000; font-family: Impact, sans-serif;">IVOIRIEN</span></h1>
+            <p style="color: #94a3b8; margin: 10px 0 0 0; text-transform: uppercase; font-weight: bold; font-size: 14px; letter-spacing: 0.1em;">L'Hebdo de l'Actualité</p>
+          </div>
+          <div style="padding: 30px 20px;">
+            <p style="font-size: 16px; color: #444444; line-height: 1.6; margin-bottom: 30px;">
+              Bonjour, voici votre sélection hebdomadaire des articles les plus marquants et les plus lus de la semaine passée sur Le Débat Ivoirien.
+            </p>
+            ${articlesHtml}
+          </div>
+          <div style="background-color: #f8f9fa; padding: 30px 20px; text-align: center; font-size: 12px; color: #888888; border-top: 1px solid #eeeeee;">
+            © ${new Date().getFullYear()} Le Débat Ivoirien. Tous droits réservés.<br>
+            Vous recevez cet email car vous êtes inscrit à la newsletter.<br>
+            <a href="https://ledebativoirien.net/unsubscribe" style="color: #888888; text-decoration: underline;">Se désabonner</a>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const { error } = await sendEmail({
+      bcc: emails,
+      subject: `🗞️ Votre Digest Hebdomadaire : Le meilleur de la semaine`,
+      html: htmlTemplate,
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    return { message: "Digest hebdomadaire envoyé avec succès", count: emails.length };
+  } catch (error) {
+    console.error("Erreur Digest Hebdomadaire:", error);
+    throw error;
+  }
 }
 
 /**
@@ -75,21 +207,6 @@ export async function sendMonthlyDigest() {
     if (subscribers.length === 0) return { message: "Aucun abonné." };
 
     const emails = subscribers.map(s => s.email);
-
-    if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
-      console.warn("⚠️ SMTP non configuré. Digest compilé mais non envoyé.");
-      return { message: "Simulation : Digest compilé", count: digestData.length };
-    }
-
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT) || 465,
-      secure: true,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
 
     const articlesHtml = digestData.map(({ weekLabel, article }) => `
       <div style="margin-bottom: 30px; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #f8fafc;">
@@ -137,12 +254,15 @@ export async function sendMonthlyDigest() {
       </html>
     `;
 
-    await transporter.sendMail({
-      from: `"Le Débat Ivoirien" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+    const { error } = await sendEmail({
       bcc: emails,
       subject: `🗞️ Votre Digest Mensuel : Le meilleur du Débat Ivoirien`,
       html: htmlTemplate,
     });
+
+    if (error) {
+      throw error;
+    }
 
     return { message: "Digest envoyé avec succès", count: emails.length };
   } catch (error) {

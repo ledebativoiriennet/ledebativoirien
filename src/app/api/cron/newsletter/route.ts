@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import nodemailer from 'nodemailer';
+import { sendEmail } from '@/lib/resend';
 
 export async function GET(request: Request) {
   // Optionnel : vérifier un header ou token pour la sécurité du CRON
@@ -87,31 +87,18 @@ export async function GET(request: Request) {
       </html>
     `;
 
-    // 4. Configurer le transporteur d'emails
-    if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
-      console.warn("⚠️ Configuration SMTP manquante, simulation de l'envoi.");
-      return NextResponse.json({ message: 'Succès (Mode simulation : SMTP non configuré)', count: subscribers.length });
-    }
-
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT) || 465,
-      secure: true,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
-
-    // Envoyer via BCC pour ne pas exposer les emails
+    // 4. Envoyer via BCC pour ne pas exposer les emails
     const emails = subscribers.map(s => s.email);
 
-    await transporter.sendMail({
-      from: `"Le Débat Ivoirien" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+    const { error } = await sendEmail({
       bcc: emails,
       subject: `L'essentiel de l'actualité - ${new Date().toLocaleDateString('fr-FR')}`,
       html: htmlTemplate,
     });
+
+    if (error) {
+      throw error;
+    }
 
     return NextResponse.json({ message: 'Newsletter envoyée avec succès !', count: emails.length });
   } catch (error) {
