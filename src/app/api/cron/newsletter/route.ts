@@ -90,9 +90,11 @@ export async function GET(request: Request) {
     // 4. Envoyer via BCC pour ne pas exposer les emails
     const emails = subscribers.map(s => s.email);
 
+    const subjectText = `L'essentiel de l'actualité - ${new Date().toLocaleDateString('fr-FR')}`;
+
     const { error } = await sendEmail({
       bcc: emails,
-      subject: `L'essentiel de l'actualité - ${new Date().toLocaleDateString('fr-FR')}`,
+      subject: subjectText,
       html: htmlTemplate,
     });
 
@@ -100,9 +102,39 @@ export async function GET(request: Request) {
       throw error;
     }
 
+    // Log successful daily campaign send
+    // @ts-ignore
+    await prisma.newsletterLog.create({
+      data: {
+        campaignType: "DAILY",
+        subject: subjectText,
+        recipientCount: emails.length,
+        status: "SUCCESS"
+      }
+    });
+
     return NextResponse.json({ message: 'Newsletter envoyée avec succès !', count: emails.length });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Erreur CRON Newsletter:', error);
+    
+    // Log failed daily campaign send
+    try {
+      const subCount = await prisma.newsletterSubscriber.count({ where: { isActive: true } }).catch(() => 0);
+      // @ts-ignore
+      await prisma.newsletterLog.create({
+        data: {
+          campaignType: "DAILY",
+          subject: `L'essentiel de l'actualité - ${new Date().toLocaleDateString('fr-FR')}`,
+          recipientCount: subCount,
+          status: "FAILED",
+          errorMessage: error?.message || String(error)
+        }
+      });
+    } catch (logErr) {
+      console.error("Could not write failed NewsletterLog:", logErr);
+    }
+
     return NextResponse.json({ error: 'Erreur lors de l\'envoi de la newsletter' }, { status: 500 });
   }
+
 }

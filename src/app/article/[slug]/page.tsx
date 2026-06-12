@@ -189,6 +189,18 @@ export default async function ArticlePage({ params }: Props) {
     contentToShow = truncateHtmlToFirstParagraph(article.content);
   }
 
+  // Rewrite all old Wordpress domain URLs to point to the new production domain
+  contentToShow = contentToShow.replace(/http:\/\/ledebativoirien\.africanewsquick\.net/g, "https://ledebativoirien.net");
+  contentToShow = contentToShow.replace(/https:\/\/ledebativoirien\.africanewsquick\.net/g, "https://ledebativoirien.net");
+
+  let cleanImageUrl = article.imageUrl;
+  if (cleanImageUrl && cleanImageUrl.includes("ledebativoirien.africanewsquick.net")) {
+    cleanImageUrl = cleanImageUrl
+      .replace("http://ledebativoirien.africanewsquick.net", "https://ledebativoirien.net")
+      .replace("https://ledebativoirien.africanewsquick.net", "https://ledebativoirien.net");
+  }
+
+
   // Récupérer un article recommandé pour l'injection au milieu du texte
   const relatedArticle = await prisma.article.findFirst({
     where: {
@@ -299,7 +311,7 @@ export default async function ArticlePage({ params }: Props) {
                 articleTitle={article.title}
                 articleContent={article.content}
                 articleDate={new Date(article.publishedAt || new Date()).toLocaleDateString("fr-FR", { year: 'numeric', month: 'long', day: 'numeric' })}
-                articleImage={article.imageUrl || mainImageUrl || undefined}
+                articleImage={cleanImageUrl || mainImageUrl || undefined}
                 authorName={article.author?.name || undefined}
                 isPremium={article.isPremium}
                 userHasAccess={!showPaywall}
@@ -311,10 +323,10 @@ export default async function ArticlePage({ params }: Props) {
           <AdBanner slot="ARTICLE_TOP" />
 
           {/* Image de couverture (Nouveaux articles) */}
-          {article.imageUrl && (
+          {cleanImageUrl && (
             <div style={{ marginBottom: "2rem", borderRadius: "8px", overflow: "hidden" }}>
               <div className="image-watermark-container">
-                <SafeImage src={article.imageUrl} alt={article.title} style={{ width: "100%", height: "auto", display: "block" }} />
+                <SafeImage src={cleanImageUrl} alt={article.title} style={{ width: "100%", height: "auto", display: "block" }} />
               </div>
               {(article as any).imageCaption && (
                 <p style={{ fontSize: "0.75rem", color: "#64748b", fontStyle: "italic", textAlign: "center", padding: "0.4rem 0.75rem", backgroundColor: "#f8fafc", margin: 0, borderTop: "1px solid #e2e8f0" }}>

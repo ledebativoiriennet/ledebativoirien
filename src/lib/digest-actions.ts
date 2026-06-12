@@ -148,9 +148,11 @@ export async function sendWeeklyDigest() {
       </html>
     `;
 
+    const subjectText = `🗞️ Votre Digest Hebdomadaire : Le meilleur de la semaine`;
+
     const { error } = await sendEmail({
       bcc: emails,
-      subject: `🗞️ Votre Digest Hebdomadaire : Le meilleur de la semaine`,
+      subject: subjectText,
       html: htmlTemplate,
     });
 
@@ -158,9 +160,38 @@ export async function sendWeeklyDigest() {
       throw error;
     }
 
+    // Log successful weekly digest
+    // @ts-ignore
+    await prisma.newsletterLog.create({
+      data: {
+        campaignType: "WEEKLY",
+        subject: subjectText,
+        recipientCount: emails.length,
+        status: "SUCCESS"
+      }
+    });
+
     return { message: "Digest hebdomadaire envoyé avec succès", count: emails.length };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Erreur Digest Hebdomadaire:", error);
+    
+    // Log failed weekly digest
+    try {
+      const subCount = await prisma.newsletterSubscriber.count({ where: { isActive: true } }).catch(() => 0);
+      // @ts-ignore
+      await prisma.newsletterLog.create({
+        data: {
+          campaignType: "WEEKLY",
+          subject: `🗞️ Votre Digest Hebdomadaire : Le meilleur de la semaine`,
+          recipientCount: subCount,
+          status: "FAILED",
+          errorMessage: error?.message || String(error)
+        }
+      });
+    } catch (logErr) {
+      console.error("Failed to write weekly digest log:", logErr);
+    }
+    
     throw error;
   }
 }
@@ -254,9 +285,11 @@ export async function sendMonthlyDigest() {
       </html>
     `;
 
+    const subjectText = `🗞️ Votre Digest Mensuel : Le meilleur du Débat Ivoirien`;
+
     const { error } = await sendEmail({
       bcc: emails,
-      subject: `🗞️ Votre Digest Mensuel : Le meilleur du Débat Ivoirien`,
+      subject: subjectText,
       html: htmlTemplate,
     });
 
@@ -264,9 +297,38 @@ export async function sendMonthlyDigest() {
       throw error;
     }
 
+    // Log successful monthly digest
+    // @ts-ignore
+    await prisma.newsletterLog.create({
+      data: {
+        campaignType: "MONTHLY",
+        subject: subjectText,
+        recipientCount: emails.length,
+        status: "SUCCESS"
+      }
+    });
+
     return { message: "Digest envoyé avec succès", count: emails.length };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Erreur Digest Mensuel:", error);
+    
+    // Log failed monthly digest
+    try {
+      const subCount = await prisma.newsletterSubscriber.count({ where: { isActive: true } }).catch(() => 0);
+      // @ts-ignore
+      await prisma.newsletterLog.create({
+        data: {
+          campaignType: "MONTHLY",
+          subject: `🗞️ Votre Digest Mensuel : Le meilleur du Débat Ivoirien`,
+          recipientCount: subCount,
+          status: "FAILED",
+          errorMessage: error?.message || String(error)
+        }
+      });
+    } catch (logErr) {
+      console.error("Failed to write monthly digest log:", logErr);
+    }
+    
     throw error;
   }
 }

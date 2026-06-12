@@ -544,3 +544,14 @@ model GoogleSearchStat {
 
   @@unique([date, query])
 }
+
+model NewsletterLog {
+  id             String   @id @default(cuid())
+  campaignType   String   // "DAILY" | "WEEKLY" | "MONTHLY"
+  subject        String
+  recipientCount Int
+  status         String   // "SUCCESS" | "FAILED"
+  errorMessage   String?
+  sentAt         DateTime @default(now())
+}
+
