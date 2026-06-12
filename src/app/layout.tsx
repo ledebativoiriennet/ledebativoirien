@@ -17,6 +17,8 @@ import WhatsAppPopup from "@/components/WhatsAppPopup";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import GoogleAdSlot from "@/components/GoogleAdSlot";
+import WorldCupTicker from "@/components/WorldCupTicker";
+
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -80,7 +82,11 @@ export default async function RootLayout({
   // Sort them to match the targetSlugs array order
   navCategories.sort((a, b) => targetSlugs.indexOf(a.slug) - targetSlugs.indexOf(b.slug));
 
-  const [indicators, siteSettings, skinAd, visitorCount] = await Promise.all([
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+  const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+
+  const [indicators, siteSettings, skinAd, visitorCount, initialWcMatches] = await Promise.all([
     prisma.marketIndicator.findMany({ orderBy: { order: 'asc' } }),
     prisma.siteSettings.findUnique({ where: { id: "global" } }),
     prisma.advertisement.findFirst({
@@ -96,8 +102,30 @@ export default async function RootLayout({
         ]
       }
     }),
-    prisma.visitor.count()
+    prisma.visitor.count(),
+    // @ts-ignore
+    prisma.footballMatch.findMany({
+      where: {
+        sport: "Football",
+        matchDate: {
+          gte: startOfToday,
+          lte: endOfToday,
+        },
+      },
+      orderBy: { matchDate: "asc" },
+    })
   ]);
+
+  let wcMatches = initialWcMatches;
+  if (wcMatches.length === 0) {
+    // @ts-ignore
+    wcMatches = await prisma.footballMatch.findMany({
+      where: { sport: "Football" },
+      orderBy: { matchDate: "asc" },
+      take: 10
+    });
+  }
+
 
   const breakingNews = await prisma.breakingNews.findMany({
     where: { isActive: true },
@@ -349,6 +377,9 @@ export default async function RootLayout({
               </Link>
             </div>
           </div>
+
+          {/* World Cup Daily Matches Ticker */}
+          <WorldCupTicker initialMatches={wcMatches} />
         
         <main style={{ minHeight: '60vh', width: '100%' }}>
           <div className="container">
