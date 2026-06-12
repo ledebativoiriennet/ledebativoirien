@@ -332,6 +332,7 @@ model FootballMatch {
   phase     String?
   score     String?
   status    String   @default("UPCOMING")
+  matchTime String?
   sport     String   @default("Football")
   sportIcon String?  @default("⚽")
   createdAt DateTime @default(now())

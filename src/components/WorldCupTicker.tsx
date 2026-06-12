@@ -15,6 +15,7 @@ interface Match {
   status: string;
   sport: string;
   sportIcon: string | null;
+  matchTime?: string | null;
 }
 
 function getTickerFlagElement(countryCode: string | null) {
@@ -119,7 +120,7 @@ export default function WorldCupTicker({ initialMatches }: { initialMatches: Mat
                 {isLive && (
                   <span className="worldcup-live-indicator">
                     <span className="wc-pulse-dot"></span>
-                    <span className="wc-live-text">DIRECT</span>
+                    <span className="wc-live-text">DIRECT {match.matchTime ? `• ${match.matchTime}` : ""}</span>
                   </span>
                 )}
               </div>
@@ -159,7 +160,7 @@ export default function WorldCupTicker({ initialMatches }: { initialMatches: Mat
                 {isLive && (
                   <span className="worldcup-live-indicator">
                     <span className="wc-pulse-dot"></span>
-                    <span className="wc-live-text">DIRECT</span>
+                    <span className="wc-live-text">DIRECT {match.matchTime ? `• ${match.matchTime}` : ""}</span>
                   </span>
                 )}
               </div>

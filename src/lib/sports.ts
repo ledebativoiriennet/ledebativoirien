@@ -134,6 +134,7 @@ export async function getMatchesAndSync() {
         }
 
         const phase = competition.notes?.[0]?.headline || data.leagues?.[0]?.name || "Coupe du Monde";
+        const matchTimeVal = competition.status?.type?.detail || null;
 
         // Find match in DB
         const windowStart = new Date(matchDate.getTime() - 2 * 60 * 60 * 1000);
@@ -158,6 +159,7 @@ export async function getMatchesAndSync() {
             existing.status !== status ||
             existing.score !== score ||
             existing.phase !== phase ||
+            existing.matchTime !== matchTimeVal ||
             existing.team1Flag !== team1Flag ||
             existing.team2Flag !== team2Flag ||
             existing.team1 !== team1 ||
@@ -170,6 +172,7 @@ export async function getMatchesAndSync() {
                 status,
                 phase,
                 matchDate,
+                matchTime: matchTimeVal,
                 team1Flag,
                 team2Flag,
                 team1,
@@ -189,6 +192,7 @@ export async function getMatchesAndSync() {
               score,
               status,
               phase,
+              matchTime: matchTimeVal,
               sport: "Football",
               sportIcon: "⚽"
             }
