@@ -18,6 +18,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import GoogleAdSlot from "@/components/GoogleAdSlot";
 import WorldCupTicker from "@/components/WorldCupTicker";
+import { getMatchesAndSync } from "@/lib/sports";
+
 
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -86,7 +88,7 @@ export default async function RootLayout({
   const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
   const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
 
-  const [indicators, siteSettings, skinAd, visitorCount, initialWcMatches] = await Promise.all([
+  const [indicators, siteSettings, skinAd, visitorCount, wcMatches] = await Promise.all([
     prisma.marketIndicator.findMany({ orderBy: { order: 'asc' } }),
     prisma.siteSettings.findUnique({ where: { id: "global" } }),
     prisma.advertisement.findFirst({
@@ -103,28 +105,9 @@ export default async function RootLayout({
       }
     }),
     prisma.visitor.count(),
-    // @ts-ignore
-    prisma.footballMatch.findMany({
-      where: {
-        sport: "Football",
-        matchDate: {
-          gte: startOfToday,
-          lte: endOfToday,
-        },
-      },
-      orderBy: { matchDate: "asc" },
-    })
+    getMatchesAndSync()
   ]);
 
-  let wcMatches = initialWcMatches;
-  if (wcMatches.length === 0) {
-    // @ts-ignore
-    wcMatches = await prisma.footballMatch.findMany({
-      where: { sport: "Football" },
-      orderBy: { matchDate: "asc" },
-      take: 10
-    });
-  }
 
 
   const breakingNews = await prisma.breakingNews.findMany({

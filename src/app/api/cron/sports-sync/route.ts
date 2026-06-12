@@ -1,94 +1,7 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { getMatchesAndSync } from "@/lib/sports";
 
 export const revalidate = 0; // Always dynamic
-
-// Dictionary to map common football teams / 3-letter abbreviations to 2-letter FlagCDN ISO codes
-const countryToIso: Record<string, string> = {
-  // Major World Cup & international teams
-  "argentina": "ar", "arg": "ar",
-  "australia": "au", "aus": "au",
-  "austria": "at", "aut": "at",
-  "belgium": "be", "bel": "be",
-  "brazil": "br", "bra": "br",
-  "cameroon": "cm", "cmr": "cm",
-  "canada": "ca", "can": "ca",
-  "chile": "cl", "chi": "cl",
-  "colombia": "co", "col": "co",
-  "costa rica": "cr", "crc": "cr",
-  "croatia": "hr", "cro": "hr",
-  "czechia": "cz", "cze": "cz", "czech republic": "cz",
-  "denmark": "dk", "den": "dk",
-  "ecuador": "ec", "ecu": "ec",
-  "egypt": "eg", "egy": "eg",
-  "england": "gb-eng", "eng": "gb-eng",
-  "france": "fr", "fra": "fr",
-  "germany": "de", "ger": "de",
-  "ghana": "gh", "gha": "gh",
-  "greece": "gr", "gre": "gr",
-  "hungary": "hu", "hun": "hu",
-  "iran": "ir", "irn": "ir",
-  "italy": "it", "ita": "it",
-  "japan": "jp", "jpn": "jp",
-  "mexico": "mx", "mex": "mx",
-  "morocco": "ma", "mar": "ma",
-  "netherlands": "nl", "ned": "nl",
-  "new zealand": "nz", "nzl": "nz",
-  "nigeria": "ng", "nga": "ng",
-  "cote d'ivoire": "ci", "civ": "ci", "ivory coast": "ci", "côte d'ivoire": "ci",
-  "poland": "pl", "pol": "pl",
-  "portugal": "pt", "por": "pt",
-  "qatar": "qa", "qat": "qa",
-  "romania": "ro", "rou": "ro",
-  "saudi arabia": "sa", "ksa": "sa", "sau": "sa",
-  "scotland": "gb-sct", "sco": "gb-sct",
-  "senegal": "sn", "sen": "sn",
-  "serbia": "rs", "srb": "rs",
-  "slovakia": "sk", "svk": "sk",
-  "slovenia": "si", "svn": "si",
-  "south africa": "za", "rsa": "za",
-  "south korea": "kr", "kor": "kr", "korea": "kr",
-  "spain": "es", "esp": "es",
-  "sweden": "se", "swe": "se",
-  "switzerland": "ch", "sui": "ch",
-  "tunisia": "tn", "tun": "tn",
-  "turkey": "tr", "tur": "tr",
-  "ukraine": "ua", "ukr": "ua",
-  "united states": "us", "usa": "us", "usa.1": "us",
-  "uruguay": "uy", "uru": "uy",
-  "wales": "gb-wls", "wal": "gb-wls",
-  "algeria": "dz", "alg": "dz",
-  "venezuela": "ve", "ven": "ve",
-  "peru": "pe", "per": "pe",
-};
-
-function getIsoCode(teamName: string, abbrev: string): string {
-  const nameLower = teamName.toLowerCase().trim();
-  const abbrevLower = abbrev.toLowerCase().trim();
-  
-  if (countryToIso[abbrevLower]) return countryToIso[abbrevLower].toUpperCase();
-  if (countryToIso[nameLower]) return countryToIso[nameLower].toUpperCase();
-  
-  // If abbreviation is already 2 letters, it's likely a valid ISO country code
-  if (abbrev.length === 2) return abbrev.toUpperCase();
-  
-  // Fuzzy match: check if key is in name
-  for (const [key, val] of Object.entries(countryToIso)) {
-    // For short keys (<= 4 chars), use word boundaries to avoid false positives (like matching "chi" in "Czechia")
-    if (key.length <= 4) {
-      const regex = new RegExp(`\\b${key}\\b`, "i");
-      if (regex.test(nameLower) || regex.test(abbrevLower)) {
-        return val.toUpperCase();
-      }
-    } else {
-      if (nameLower.includes(key) || key.includes(nameLower)) {
-        return val.toUpperCase();
-      }
-    }
-  }
-  
-  return abbrev.toUpperCase(); // Fallback to abbreviation itself
-}
 
 export async function GET(request: Request) {
   try {
@@ -99,117 +12,12 @@ export async function GET(request: Request) {
       return NextResponse.json({ success: false, error: "Non autorisé" }, { status: 401 });
     }
 
-    // 2. Fetch live data from the ESPN World Cup Scoreboard
-    const espnRes = await fetch("https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard", {
-      next: { revalidate: 0 },
-      cache: "no-store",
-    });
-
-    if (!espnRes.ok) {
-      throw new Error(`ESPN API returned status ${espnRes.status}`);
-    }
-
-    const data = await espnRes.json();
-    const events = data.events || [];
-    let createdCount = 0;
-    let updatedCount = 0;
-
-    // 3. Process each match event
-    for (const event of events) {
-      const competition = event.competitions?.[0];
-      if (!competition) continue;
-
-      const competitors = competition.competitors || [];
-      const homeCompetitor = competitors.find((c: any) => c.homeAway === "home");
-      const awayCompetitor = competitors.find((c: any) => c.homeAway === "away");
-
-      if (!homeCompetitor || !awayCompetitor) continue;
-
-      const team1 = homeCompetitor.team?.displayName || "Home Team";
-      const team2 = awayCompetitor.team?.displayName || "Away Team";
-
-      const team1Flag = getIsoCode(team1, homeCompetitor.team?.abbreviation || "");
-      const team2Flag = getIsoCode(team2, awayCompetitor.team?.abbreviation || "");
-
-      const matchDate = new Date(event.date);
-
-      // Determine match status mapping
-      const espnState = competition.status?.type?.state; // 'pre' (upcoming), 'in' (live), 'post' (finished)
-      let status = "UPCOMING";
-      if (espnState === "in") {
-        status = "LIVE";
-      } else if (espnState === "post") {
-        status = "FINISHED";
-      }
-
-      // Determine score mapping
-      let score = "VS";
-      if (status === "LIVE" || status === "FINISHED") {
-        const score1 = homeCompetitor.score || "0";
-        const score2 = awayCompetitor.score || "0";
-        score = `${score1} - ${score2}`;
-      }
-
-      // Determine phase/competition label
-      const phase = competition.notes?.[0]?.headline || data.leagues?.[0]?.name || "Coupe du Monde";
-
-      // 4. Look for an existing match in the database to avoid duplication
-      // We look within a 2-hour window before/after the match time
-      const windowStart = new Date(matchDate.getTime() - 2 * 60 * 60 * 1000);
-      const windowEnd = new Date(matchDate.getTime() + 2 * 60 * 60 * 1000);
-
-      const existing = await prisma.footballMatch.findFirst({
-        where: {
-          OR: [
-            { team1, team2 },
-            { team1: team2, team2: team1 }
-          ],
-          matchDate: {
-            gte: windowStart,
-            lte: windowEnd
-          }
-        }
-      });
-
-      if (existing) {
-        // Update scores and status
-        await prisma.footballMatch.update({
-          where: { id: existing.id },
-          data: {
-            score,
-            status,
-            phase,
-            matchDate, // align with ESPN's time
-            team1Flag,
-            team2Flag,
-            team1,
-            team2
-          }
-        });
-        updatedCount++;
-      } else {
-        // Create new match entry
-        await prisma.footballMatch.create({
-          data: {
-            team1,
-            team2,
-            team1Flag,
-            team2Flag,
-            matchDate,
-            score,
-            status,
-            phase,
-            sport: "Football",
-            sportIcon: "⚽"
-          }
-        });
-        createdCount++;
-      }
-    }
+    // Run the sync
+    await getMatchesAndSync();
 
     return NextResponse.json({
       success: true,
-      message: `Synchronisation réussie. Matches créés: ${createdCount}, Matches mis à jour: ${updatedCount}`,
+      message: "Synchronisation réussie.",
       timestamp: new Date().toISOString()
     });
   } catch (error: any) {
@@ -217,3 +25,4 @@ export async function GET(request: Request) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
+
