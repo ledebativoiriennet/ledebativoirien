@@ -1,12 +1,28 @@
 import { google } from 'googleapis';
 import path from 'path';
+import fs from 'fs';
 
 export async function getGA4Stats() {
   try {
-    const auth = new google.auth.GoogleAuth({
-      keyFile: path.join(process.cwd(), 'google-credentials.json'),
-      scopes: ['https://www.googleapis.com/auth/analytics.readonly'],
-    });
+    let auth;
+    const credsPath = path.join(process.cwd(), 'google-credentials.json');
+    
+    if (process.env.GOOGLE_CREDENTIALS) {
+      // Use environment variable if available
+      const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
+      auth = new google.auth.GoogleAuth({
+        credentials,
+        scopes: ['https://www.googleapis.com/auth/analytics.readonly'],
+      });
+    } else if (fs.existsSync(credsPath)) {
+      auth = new google.auth.GoogleAuth({
+        keyFile: credsPath,
+        scopes: ['https://www.googleapis.com/auth/analytics.readonly'],
+      });
+    } else {
+      console.warn("No Google credentials found. Please set GOOGLE_CREDENTIALS env variable or provide google-credentials.json");
+      return { activeUsers: 0, pageViews: 0, avgSessionDuration: 0, bounceRate: 0 };
+    }
 
     const analyticsdata = google.analyticsdata({
       version: 'v1beta',
