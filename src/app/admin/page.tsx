@@ -3,6 +3,8 @@ import AnalyticsChartsClient from "./AnalyticsChartsClient";
 import { getGA4Stats } from "@/lib/ga4";
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
 
 export default async function AdminDashboard() {
   const now = new Date();
