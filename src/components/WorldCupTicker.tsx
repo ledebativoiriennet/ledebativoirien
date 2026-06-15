@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 interface Match {
   id: string;
@@ -18,15 +19,13 @@ interface Match {
   matchTime?: string | null;
 }
 
-function getTickerFlagElement(countryCode: string | null) {
-  if (!countryCode) return <span style={{ fontSize: "1rem" }}>🌍</span>;
+function getFlagElement(countryCode: string | null) {
+  if (!countryCode) return <span style={{ fontSize: "1.2rem" }}>🌍</span>;
   
-  // If it's already an emoji (longer unicode character), return it
   if (/[\u0080-\uFFFF]/.test(countryCode)) {
-    return <span style={{ fontSize: "1.2rem", lineHeight: 1 }}>{countryCode}</span>;
+    return <span style={{ fontSize: "1.5rem", lineHeight: 1 }}>{countryCode}</span>;
   }
   
-  // If it's a 2-letter ISO code, load the flag from FlagCDN
   if (countryCode.length === 2) {
     const code = countryCode.toLowerCase();
     return (
@@ -34,19 +33,18 @@ function getTickerFlagElement(countryCode: string | null) {
         src={`https://flagcdn.com/w40/${code}.png`}
         alt={countryCode}
         style={{
-          width: "22px",
-          height: "15px",
+          width: "28px",
+          height: "20px",
           objectFit: "cover",
           borderRadius: "2px",
           boxShadow: "0 1px 2px rgba(0,0,0,0.2)",
           display: "inline-block",
-          verticalAlign: "middle"
         }}
       />
     );
   }
   
-  return <span style={{ fontSize: "0.8rem", fontWeight: "bold" }}>{countryCode}</span>;
+  return <span style={{ fontSize: "0.9rem", fontWeight: "bold" }}>{countryCode}</span>;
 }
 
 export default function WorldCupTicker({ initialMatches }: { initialMatches: Match[] }) {
@@ -67,7 +65,7 @@ export default function WorldCupTicker({ initialMatches }: { initialMatches: Mat
           }
         }
       } catch (err) {
-        console.error("Failed to update ticker scores:", err);
+        console.error("Failed to update matches:", err);
       }
     };
 
@@ -80,93 +78,100 @@ export default function WorldCupTicker({ initialMatches }: { initialMatches: Mat
   if (!matches || matches.length === 0) return null;
 
   return (
-    <div className="worldcup-ticker-container">
-      <div className="worldcup-ticker-label">
-        <span className="worldcup-ticker-trophy">🏆</span>
-        <span className="worldcup-ticker-label-text">MONDIAL 2026</span>
-      </div>
-      <div className="worldcup-ticker-scroll-area">
-        <div className="worldcup-ticker-wrapper">
-          {/* Render matches list */}
-          {matches.map((match) => {
+    <div style={{ backgroundColor: '#0f172a', padding: '1.5rem 0', borderBottom: '1px solid #1e293b' }}>
+      <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <span style={{ fontSize: '1.5rem' }}>🏆</span>
+            <div>
+              <div style={{ fontSize: '1.1rem', fontWeight: 900, color: 'white', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1.1 }}>Mondial 2026</div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 'bold' }}>Matchs du jour</div>
+            </div>
+          </div>
+          
+          <Link href="/sports/coupe-du-monde" style={{ 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            gap: '0.5rem', 
+            backgroundColor: '#dc2626', 
+            color: 'white', 
+            padding: '0.4rem 0.8rem', 
+            borderRadius: '4px', 
+            fontSize: '0.75rem', 
+            fontWeight: 'bold', 
+            textDecoration: 'none',
+            textTransform: 'uppercase',
+            transition: 'background-color 0.2s'
+          }}>
+            Tous les matchs & scores →
+          </Link>
+        </div>
+
+        {/* Modules Grid */}
+        <div style={{ display: 'flex', gap: '1rem', overflowX: 'auto', paddingBottom: '0.5rem', scrollbarWidth: 'thin', scrollbarColor: '#334155 #0f172a' }}>
+          {matches.map(match => {
             const matchTime = new Date(match.matchDate).toLocaleTimeString("fr-FR", {
               hour: "2-digit",
               minute: "2-digit",
             });
             const isLive = match.status === "LIVE";
+            const isFinished = match.status === "FINISHED";
 
             return (
-              <div key={match.id} className="worldcup-match-card">
-                <span className="worldcup-match-phase">{match.phase || "Match"}</span>
-                <div className="worldcup-match-teams">
-                  <span className="worldcup-team">
-                    {getTickerFlagElement(match.team1Flag)}
-                    <span className="worldcup-team-name">{match.team1}</span>
-                  </span>
-                  <span className="worldcup-score-badge">
-                    {isLive ? (
-                      <span className="worldcup-score-live">{match.score || "0-0"}</span>
-                    ) : match.status === "FINISHED" ? (
-                      <span className="worldcup-score-finished">{match.score || "0-0"}</span>
-                    ) : (
-                      <span className="worldcup-score-upcoming">{matchTime}</span>
-                    )}
-                  </span>
-                  <span className="worldcup-team">
-                    <span className="worldcup-team-name">{match.team2}</span>
-                    {getTickerFlagElement(match.team2Flag)}
-                  </span>
+              <div key={match.id} style={{ 
+                flexShrink: 0, 
+                width: '280px', 
+                backgroundColor: '#1e293b', 
+                borderRadius: '8px', 
+                padding: '1rem',
+                border: '1px solid #334155',
+                position: 'relative',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.75rem'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.7rem', color: '#94a3b8', fontWeight: 'bold', textTransform: 'uppercase' }}>
+                  <span>{match.phase || "Phase de groupes"}</span>
+                  {isLive ? (
+                    <span style={{ color: '#ef4444', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#ef4444', animation: 'pulse 1.5s infinite' }}></span>
+                      DIRECT {match.matchTime ? `(${match.matchTime})` : ""}
+                    </span>
+                  ) : isFinished ? (
+                    <span>Terminé</span>
+                  ) : (
+                    <span style={{ color: '#cbd5e1' }}>{matchTime}</span>
+                  )}
                 </div>
-                {isLive && (
-                  <span className="worldcup-live-indicator">
-                    <span className="wc-pulse-dot"></span>
-                    <span className="wc-live-text">DIRECT {match.matchTime ? `• ${match.matchTime}` : ""}</span>
-                  </span>
-                )}
-              </div>
-            );
-          })}
 
-          {/* Duplicate matches list for infinite seamless marquee loop */}
-          {matches.map((match) => {
-            const matchTime = new Date(match.matchDate).toLocaleTimeString("fr-FR", {
-              hour: "2-digit",
-              minute: "2-digit",
-            });
-            const isLive = match.status === "LIVE";
-
-            return (
-              <div key={`${match.id}-dup`} className="worldcup-match-card">
-                <span className="worldcup-match-phase">{match.phase || "Match"}</span>
-                <div className="worldcup-match-teams">
-                  <span className="worldcup-team">
-                    {getTickerFlagElement(match.team1Flag)}
-                    <span className="worldcup-team-name">{match.team1}</span>
-                  </span>
-                  <span className="worldcup-score-badge">
-                    {isLive ? (
-                      <span className="worldcup-score-live">{match.score || "0-0"}</span>
-                    ) : match.status === "FINISHED" ? (
-                      <span className="worldcup-score-finished">{match.score || "0-0"}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem', width: '40%' }}>
+                    {getFlagElement(match.team1Flag)}
+                    <span style={{ color: 'white', fontWeight: 800, fontSize: '0.85rem', textAlign: 'center', lineHeight: 1.2 }}>{match.team1}</span>
+                  </div>
+                  
+                  <div style={{ width: '20%', display: 'flex', justifyContent: 'center' }}>
+                    {isLive || isFinished ? (
+                      <span style={{ fontSize: '1.2rem', fontWeight: 900, color: isLive ? '#fef08a' : 'white', fontFamily: 'monospace' }}>
+                        {match.score}
+                      </span>
                     ) : (
-                      <span className="worldcup-score-upcoming">{matchTime}</span>
+                      <span style={{ fontSize: '0.9rem', fontWeight: 900, color: '#64748b' }}>VS</span>
                     )}
-                  </span>
-                  <span className="worldcup-team">
-                    <span className="worldcup-team-name">{match.team2}</span>
-                    {getTickerFlagElement(match.team2Flag)}
-                  </span>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem', width: '40%' }}>
+                    {getFlagElement(match.team2Flag)}
+                    <span style={{ color: 'white', fontWeight: 800, fontSize: '0.85rem', textAlign: 'center', lineHeight: 1.2 }}>{match.team2}</span>
+                  </div>
                 </div>
-                {isLive && (
-                  <span className="worldcup-live-indicator">
-                    <span className="wc-pulse-dot"></span>
-                    <span className="wc-live-text">DIRECT {match.matchTime ? `• ${match.matchTime}` : ""}</span>
-                  </span>
-                )}
               </div>
             );
           })}
         </div>
+        
       </div>
     </div>
   );
