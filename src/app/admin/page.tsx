@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import AnalyticsChartsClient from "./AnalyticsChartsClient";
 import { getGA4Stats } from "@/lib/ga4";
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminDashboard() {
   const now = new Date();
   const sevenDaysAgo = new Date();
