@@ -19,8 +19,7 @@ import { authOptions } from "@/lib/auth";
 import GoogleAdSlot from "@/components/GoogleAdSlot";
 import WorldCupTicker from "@/components/WorldCupTicker";
 import { getMatchesAndSync } from "@/lib/sports";
-
-
+import ScrollProgressBar from "@/components/ScrollProgressBar";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -162,6 +161,7 @@ export default async function RootLayout({
         )}
       </head>
       <body className={inter.variable}>
+        <ScrollProgressBar />
         <GoogleAnalytics gaId="G-KS8F2KC63J" />
         {siteSettings?.headerCode && (
           <div dangerouslySetInnerHTML={{ __html: siteSettings.headerCode }} />
