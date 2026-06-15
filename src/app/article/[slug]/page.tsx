@@ -25,6 +25,7 @@ import SafeImage from "@/components/SafeImage";
 import WhatsAppAd from "@/components/WhatsAppAd";
 import ArticleComments from "@/components/ArticleComments";
 import PromoLucarne from "@/components/promo/PromoLucarne";
+import ArticleSummary from "@/components/ArticleSummary";
 
 export const revalidate = 60;
 
@@ -401,6 +402,9 @@ export default async function ArticlePage({ params }: Props) {
               {article.excerpt}
             </div>
           )}
+
+          {/* Résumé automatique des points clés */}
+          <ArticleSummary content={article.content} />
 
           <div style={{ position: "relative" }}>
             <div 
