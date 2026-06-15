@@ -196,8 +196,10 @@ export default function CreateArticleForm({ categories }: { categories: Category
       const result = await publishArticle(formData);
 
       if (result.success) {
-        alert("✅ Article publié avec succès !");
-        router.push("/admin/articles");
+        setIsSuccess(true);
+        setLoading(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        localStorage.removeItem("article-draft-new");
         router.refresh();
       } else {
         setError(result.error || "Une erreur est survenue côté serveur");
