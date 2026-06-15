@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import AnalyticsChartsClient from "./AnalyticsChartsClient";
+import { getGA4Stats } from "@/lib/ga4";
 
 export default async function AdminDashboard() {
   const now = new Date();
@@ -78,7 +79,8 @@ export default async function AdminDashboard() {
     sourceStatsRaw,
     seoStatsRaw,
     seoKeywordsGroup,
-    seoEventsRaw
+    seoEventsRaw,
+    ga4Stats
   ] = await Promise.all([
     getTopArticles(startOfDay),
     getTopArticles(sevenDaysAgo),
@@ -134,7 +136,8 @@ export default async function AdminDashboard() {
     prisma.googleSearchStat.findMany({
       where: { date: { gte: startOfMonth } },
       select: { impressions: true, position: true }
-    })
+    }),
+    getGA4Stats()
   ]);
 
   const seoImpressions = seoStatsRaw._sum.impressions || 0;
@@ -567,7 +570,7 @@ export default async function AdminDashboard() {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
             <div>
               <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#0f172a' }}>LE DEBAT IVOIRIEN</h3>
-              <p style={{ fontSize: '0.85rem', color: '#64748b' }}>Propriété GA4 : <strong>249442439</strong></p>
+              <p style={{ fontSize: '0.85rem', color: '#64748b' }}>Propriété GA4 : <strong>361832064</strong></p>
             </div>
             <a 
               href="https://analytics.google.com/analytics/web/?authuser=0#/a249442439p361832064/reports/intelligenthome?params=_u..nav%3Dmaui" 
@@ -579,22 +582,27 @@ export default async function AdminDashboard() {
             </a>
           </div>
 
-          <div>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#0f172a', marginBottom: '0.5rem' }}>Dashboard Intégré (Via Looker Studio)</h3>
-            <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '1rem', lineHeight: 1.5 }}>
-              <em>Note technique : Pour des raisons de sécurité, Google empêche l'intégration directe de son interface d'administration dans d'autres sites. 
-              Pour afficher vos graphiques directement sur cette page, vous devez créer un rapport gratuit sur <a href="https://lookerstudio.google.com/" target="_blank" rel="noopener noreferrer" style={{ color: '#2563eb', textDecoration: 'underline' }}>Looker Studio</a> connecté à votre compte, puis intégrer l'URL (iframe) ici.</em>
-            </p>
-            
-            <iframe 
-              width="100%" 
-              height="700" 
-              src="https://datastudio.google.com/embed/reporting/cf4d21d9-b8dd-4e30-be3d-ef6242991e57/page/tYSyF" 
-              frameBorder="0" 
-              style={{ border: 0, borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }} 
-              allowFullScreen 
-              sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
-            ></iframe>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
+            <div style={{ backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+              <p style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '0.5rem', textAlign: 'center' }}>Utilisateurs Actifs</p>
+              <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#f59e0b' }}>{ga4Stats.activeUsers.toLocaleString('fr-FR')}</span>
+              <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem', textAlign: 'center' }}>30 derniers jours</p>
+            </div>
+            <div style={{ backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+              <p style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '0.5rem', textAlign: 'center' }}>Vues de pages</p>
+              <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#10b981' }}>{ga4Stats.pageViews.toLocaleString('fr-FR')}</span>
+              <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem', textAlign: 'center' }}>30 derniers jours</p>
+            </div>
+            <div style={{ backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+              <p style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '0.5rem', textAlign: 'center' }}>Taux de rebond</p>
+              <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#ef4444' }}>{(ga4Stats.bounceRate * 100).toFixed(1)}%</span>
+              <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem', textAlign: 'center' }}>Moyenne sur 30 jours</p>
+            </div>
+            <div style={{ backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+              <p style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '0.5rem', textAlign: 'center' }}>Engagement</p>
+              <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#3b82f6' }}>{Math.floor(ga4Stats.avgSessionDuration / 60)}m {Math.floor(ga4Stats.avgSessionDuration % 60)}s</span>
+              <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem', textAlign: 'center' }}>Durée moyenne par session</p>
+            </div>
           </div>
         </div>
       </div>
