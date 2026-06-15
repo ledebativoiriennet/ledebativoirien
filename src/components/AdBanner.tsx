@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
+import { AdSlot } from "@/components/AdSlot";
 
-export default async function AdBanner({ slot }: { slot: string }) {
+export default async function AdBanner({ slot, format = 'rectangle' }: { slot: string, format?: 'rectangle' | 'leaderboard' | 'skyscraper' }) {
   const now = new Date();
   const startOfDay = new Date();
   startOfDay.setUTCHours(0, 0, 0, 0);
@@ -20,7 +21,7 @@ export default async function AdBanner({ slot }: { slot: string }) {
     orderBy: { createdAt: 'desc' }
   });
 
-  if (!ad) return null;
+  if (!ad) return <AdSlot format={format} />;
 
   // Track impression if we're in a request context
   const { recordAdEvent } = require("@/lib/ad-tracking");

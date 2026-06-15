@@ -165,7 +165,7 @@ export default async function Home() {
   return (
     <>
     <div>
-      <AdBanner slot="HOME_TOP" />
+      <AdBanner slot="HOME_TOP" format="leaderboard" />
 
       {/* Trending Tags (Hashtags) */}
       {processedTrendingTags && processedTrendingTags.length > 0 && (
@@ -256,13 +256,13 @@ export default async function Home() {
 
         <PromoLucarne />
 
-        <AdBanner slot="HOME_SIDEBAR" />
+        <AdBanner slot="HOME_SIDEBAR" format="rectangle" />
 
 
 
         {/* Ad Placeholder Vertical */}
         <div style={{ marginTop: "1.5rem" }}>
-          <AdSlot format="skyscraper" />
+          <AdBanner slot="HOME_SKYSCRAPER" format="skyscraper" />
         </div>
 
         <SportsModule />
@@ -599,7 +599,7 @@ export default async function Home() {
         )}
 
         {/* Publicité Milieu de page */}
-        <AdBanner slot="HOME_MIDDLE" />
+        <AdBanner slot="HOME_MIDDLE" format="leaderboard" />
 
 
         {/* Thematic Blocks */}
