@@ -228,25 +228,7 @@ export default async function Home() {
           </div>
         </div>
 
-        <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden" }}>
-          <h2 className="portal-section-title dark">Titrologie</h2>
-          <div style={{ padding: "1rem" }}>
-            <div className="grid-responsive-titrologie">
-              {titrologieItems && titrologieItems.length > 0 ? (
-                titrologieItems.map(item => (
-                  <div key={item.id} className="image-watermark-container" style={{ height: '180px', backgroundColor: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
-                    <SafeImage src={item.imageUrl} alt={item.newspaperName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  </div>
-                ))
-              ) : (
-                <div style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#64748b', padding: '1rem', fontSize: '0.8rem' }}>Les unes de journaux du jour ne sont pas encore disponibles.</div>
-              )}
-            </div>
-            <Link href="/titrologie" style={{ display: 'block', textAlign: 'center', fontSize: '0.8rem', marginTop: '1rem', color: 'var(--primary)', fontWeight: 'bold' }}>
-              Voir toute la titrologie
-            </Link>
-          </div>
-        </div>
+
 
         <div style={{ marginTop: "1.5rem" }}>
           <PersonalizedFeed />
@@ -370,35 +352,7 @@ export default async function Home() {
           </div>
         )}
 
-        {/* Faits Divers - DÉPLACÉ ICI (colonne gauche) */}
-        {faitsDiversItems && faitsDiversItems.length > 0 && (
-          <div style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginTop: "1.5rem" }}>
-            <h2 className="portal-section-title" style={{ backgroundColor: "#b91c1c", borderColor: "#991b1b", display: "flex", justifyContent: "space-between" }}>
-              <span>Faits Divers</span>
-              <Link href="/category/faits-divers" style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.8)", textDecoration: "none", fontWeight: "normal" }}>Voir tout</Link>
-            </h2>
-            <div style={{ padding: "0" }}>
-              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                {faitsDiversItems.map((article) => {
-                  const imgUrl = getArticleImage(article);
-                  return (
-                    <li key={article.id} style={{ borderBottom: "1px solid var(--border)", padding: "0.75rem 1rem" }}>
-                      <Link href={`/article/${article.slug}`} style={{ display: "flex", gap: "0.75rem" }}>
-                        <div className="image-watermark-container" style={{ width: "60px", height: "60px", backgroundColor: "var(--muted)", flexShrink: 0, borderRadius: "4px", overflow: "hidden" }}>
-                          {imgUrl && <SafeImage src={imgUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
-                        </div>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: "0.65rem", color: "#b91c1c", fontWeight: "bold", textTransform: "uppercase", marginBottom: "0.2rem" }}>Faits Divers</div>
-                          <h3 style={{ fontSize: "0.8rem", fontWeight: 700, lineHeight: 1.3 }}>{article.title}</h3>
-                        </div>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          </div>
-        )}
+
       </aside>
 
       {/* CENTER COLUMN: Thematic Hub */}
