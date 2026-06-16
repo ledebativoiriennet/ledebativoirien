@@ -241,6 +241,9 @@ export default async function RootLayout({
                     🔍
                   </button>
                 </form>
+                <Link href="/jeux/sudoku" style={{ textDecoration: 'none', fontSize: '1.2rem', padding: '0.2rem' }} title="Sudoku">
+                  🧩
+                </Link>
                 <ThemeToggle />
                 <UserMenu />
               </div>

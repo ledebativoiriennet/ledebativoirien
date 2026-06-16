@@ -55,9 +55,6 @@ export default function MainNavigation({ categories }: MainNavigationProps) {
         <Link href="/confidentiels" className="nav-link" style={{ fontWeight: 'bold', borderBottom: '2px solid #7f1d1d' }} onMouseEnter={() => setActiveCategory(null)}>
           🔒 Confidentiels
         </Link>
-        <Link href="/jeux/sudoku" className="nav-link" style={{ fontWeight: 'bold', color: '#fbbf24' }} onMouseEnter={() => setActiveCategory(null)}>
-          🧩 Jeux
-        </Link>
 
         <div onMouseEnter={() => setActiveCategory(null)} style={{ display: 'flex', alignItems: 'center' }}>
           <LiveStreamBadge />
