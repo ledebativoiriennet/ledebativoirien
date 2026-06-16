@@ -1,31 +1,40 @@
 import React from 'react';
 
 /**
+ * Nettoie le HTML et gère les entités basiques pour une bonne extraction.
+ */
+function cleanHtmlText(html: string) {
+  // 1. Enlever les scripts et styles
+  let text = html.replace(/<(script|style)[^>]*>[\s\S]*?<\/\1>/gi, '');
+  // 2. Remplacer les balises par un espace
+  text = text.replace(/<[^>]*>?/gm, ' ');
+  // 3. Remplacer les multiples espaces par un seul
+  text = text.replace(/\s+/g, ' ').trim();
+  return text;
+}
+
+/**
  * Extrait automatiquement les points clés d'un contenu HTML.
- * Utilise une heuristique simple basée sur la structure des paragraphes.
  */
 function extractKeyPoints(htmlContent: string): string[] {
   if (!htmlContent) return [];
 
-  // 1. Extraire le texte des paragraphes pour éviter les titres, scripts, etc.
-  const paragraphMatches = htmlContent.match(/<p[^>]*>(.*?)<\/p>/gi);
+  // Match des paragraphes avec [\s\S]*? pour inclure les sauts de ligne
+  const paragraphMatches = htmlContent.match(/<p[^>]*>([\s\S]*?)<\/p>/gi);
   if (!paragraphMatches) {
-    // Fallback si pas de <p> : on nettoie tout le HTML
-    const text = htmlContent.replace(/<[^>]*>?/gm, ' ');
+    const text = cleanHtmlText(htmlContent);
     const sentences = text.match(/[^.!?]+[.!?]+/g)?.map(s => s.trim()) || [];
-    const validSentences = sentences.filter(s => s.length > 50 && s.length < 200);
+    const validSentences = sentences.filter(s => s.length > 50 && s.length < 300);
     return Array.from(new Set(validSentences)).slice(0, 3);
   }
 
-  // 2. Nettoyer les paragraphes et extraire les premières phrases significatives
   const points: string[] = [];
   const seen = new Set<string>();
 
   for (let i = 0; i < paragraphMatches.length; i++) {
-    const pText = paragraphMatches[i].replace(/<[^>]*>?/gm, ' ').trim();
-    if (pText.length < 50) continue; // Ignorer les paragraphes trop courts
+    const pText = cleanHtmlText(paragraphMatches[i]);
+    if (pText.length < 50) continue;
 
-    // Prendre la première phrase du paragraphe
     const firstSentenceMatch = pText.match(/^[^.!?]+[.!?]+/);
     if (firstSentenceMatch) {
       const sentence = firstSentenceMatch[0].trim();
@@ -35,7 +44,7 @@ function extractKeyPoints(htmlContent: string): string[] {
       }
     }
 
-    if (points.length >= 3) break; // 3 points clés maximum
+    if (points.length >= 3) break;
   }
 
   return points;
@@ -77,9 +86,11 @@ export default function ArticleSummary({ content }: { content: string }) {
         color: '#334155'
       }}>
         {points.map((point, idx) => (
-          <li key={idx} style={{ lineHeight: 1.5, fontSize: '0.95rem', fontWeight: 500 }}>
-            {point}
-          </li>
+          <li 
+            key={idx} 
+            style={{ lineHeight: 1.5, fontSize: '0.95rem', fontWeight: 500 }}
+            dangerouslySetInnerHTML={{ __html: point }}
+          />
         ))}
       </ul>
     </div>
