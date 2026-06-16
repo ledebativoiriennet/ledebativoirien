@@ -88,6 +88,8 @@ export default function ArticleSummary({ content }: { content: string }) {
         color: '#334155'
       }}>
         {points.map((point, idx) => (
+          <li 
+            key={idx}
             style={{ 
               lineHeight: 1.5, 
               fontSize: '0.95rem', 
