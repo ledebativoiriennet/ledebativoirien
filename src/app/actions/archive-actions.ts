@@ -20,6 +20,9 @@ export interface ArchiveFilterOptions {
 }
 
 export async function getArchiveFilterOptions(): Promise<ArchiveFilterOptions> {
+  const oneYearAgo = new Date();
+  oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
   const [categories, tags, earliestArticle] = await Promise.all([
     prisma.category.findMany({
       orderBy: { name: "asc" },
@@ -29,19 +32,19 @@ export async function getArchiveFilterOptions(): Promise<ArchiveFilterOptions> {
       take: 100,
     }),
     prisma.article.findFirst({
-      where: { publishedAt: { not: null } },
+      where: { publishedAt: { not: null, lte: oneYearAgo } },
       orderBy: { publishedAt: "asc" },
       select: { publishedAt: true },
     }),
   ]);
 
-  const currentYear = new Date().getFullYear();
+  const maxArchiveYear = oneYearAgo.getFullYear();
   const earliestYear = earliestArticle?.publishedAt
     ? new Date(earliestArticle.publishedAt).getFullYear()
-    : currentYear;
+    : maxArchiveYear;
 
   const years: number[] = [];
-  for (let y = currentYear; y >= earliestYear; y--) {
+  for (let y = maxArchiveYear; y >= earliestYear; y--) {
     years.push(y);
   }
 
@@ -63,15 +66,23 @@ export async function getFilteredArticles(filters: ArchiveFilters) {
     ? { tags: { some: { slug: filters.tagSlug } } }
     : {};
 
-  const yearFilter =
-    filters.year
-      ? {
-          publishedAt: {
-            gte: new Date(`${filters.year}-01-01`),
-            lt: new Date(`${filters.year + 1}-01-01`),
-          },
-        }
-      : { publishedAt: { not: null, lte: new Date() } };
+  const oneYearAgo = new Date();
+  oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+  let yearFilter: any = { publishedAt: { not: null, lte: oneYearAgo } };
+
+  if (filters.year) {
+    const yearStart = new Date(`${filters.year}-01-01`);
+    const yearEnd = new Date(`${filters.year + 1}-01-01`);
+    const effectiveEnd = yearEnd < oneYearAgo ? yearEnd : oneYearAgo;
+
+    yearFilter = {
+      publishedAt: {
+        gte: yearStart,
+        lt: effectiveEnd,
+      },
+    };
+  }
 
   const searchFilter = filters.query
     ? {
