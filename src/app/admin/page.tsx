@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma";
 import AnalyticsChartsClient from "./AnalyticsChartsClient";
-import { getGA4Stats } from "@/lib/ga4";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -80,11 +79,7 @@ export default async function AdminDashboard() {
     rawWeekVisits,
     rawMonthVisits,
     rawYearVisits,
-    sourceStatsRaw,
-    seoStatsRaw,
-    seoKeywordsGroup,
-    seoEventsRaw,
-    ga4Stats
+    sourceStatsRaw
   ] = await Promise.all([
     getTopArticles(startOfDay),
     getTopArticles(sevenDaysAgo),
@@ -125,36 +120,9 @@ export default async function AdminDashboard() {
     // Year (Last 12 months, grouped by month)
     prisma.$queryRaw`SELECT strftime('%Y-%m', datetime(visitedAt / 1000, 'unixepoch')) as label, COUNT(*) as count FROM Visitor WHERE visitedAt >= ${now.getTime() - 365*86400000} AND isBot = 0 GROUP BY label ORDER BY label` as Promise<{label: string, count: number}[]>,
 
-    // Traffic Sources
-    prisma.visitor.groupBy({ by: ['source'], _count: { _all: true } }),
-
-    // SEO / Google Search Console Stats from DB (last 30 days)
-    prisma.googleSearchStat.aggregate({
-      where: { date: { gte: startOfMonth } },
-      _sum: { clicks: true, impressions: true }
-    }),
-    prisma.googleSearchStat.groupBy({
-      by: ['query'],
-      where: { date: { gte: startOfMonth } }
-    }),
-    prisma.googleSearchStat.findMany({
-      where: { date: { gte: startOfMonth } },
-      select: { impressions: true, position: true }
-    }),
-    getGA4Stats()
+    prisma.visitor.groupBy({ by: ['source'], _count: { _all: true } })
   ]);
 
-  const seoImpressions = seoStatsRaw._sum.impressions || 0;
-  const seoClicks = seoStatsRaw._sum.clicks || 0;
-  const seoKeywordsCount = seoKeywordsGroup.length;
-
-  let weightedPositionSum = 0;
-  let totalImpressionsForPos = 0;
-  for (const event of seoEventsRaw) {
-    weightedPositionSum += event.position * event.impressions;
-    totalImpressionsForPos += event.impressions;
-  }
-  const seoAvgPosition = totalImpressionsForPos > 0 ? (weightedPositionSum / totalImpressionsForPos).toFixed(1) : "-";
 
   // Post-processing visit data to ensure all periods are represented
   const processVisitData = (raw: {label: string, count: number}[], type: 'day' | 'week' | 'month' | 'year') => {
@@ -525,91 +493,7 @@ export default async function AdminDashboard() {
         </div>
       </div>
 
-      {/* SECTION SEO / SEARCH CONSOLE */}
-      <div style={{ marginTop: '3rem', backgroundColor: 'white', padding: '1.5rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', borderTop: '4px solid #8b5cf6' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0f172a', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          🔍 Performances Google Search Console (30 derniers jours)
-        </h2>
-        
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
-          
-          <div style={{ backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <p style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '0.5rem', textAlign: 'center' }}>Total des impressions</p>
-            <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#8b5cf6' }}>{seoImpressions.toLocaleString('fr-FR')}</span>
-            <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem', textAlign: 'center' }}>Affichages dans Google Search</p>
-          </div>
 
-          <div style={{ backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <p style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '0.5rem', textAlign: 'center' }}>Total de clics</p>
-            <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#3b82f6' }}>{seoClicks.toLocaleString('fr-FR')}</span>
-            <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem', textAlign: 'center' }}>Clics depuis Google Search</p>
-          </div>
-
-          <div style={{ backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <p style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '0.5rem', textAlign: 'center' }}>Total de mots-clés</p>
-            <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#10b981' }}>{seoKeywordsCount.toLocaleString('fr-FR')}</span>
-            <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem', textAlign: 'center' }}>Requêtes de recherche uniques</p>
-          </div>
-
-          <div style={{ backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <p style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '0.5rem', textAlign: 'center' }}>Position moyenne</p>
-            <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#f59e0b' }}>{seoAvgPosition}</span>
-            <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem', textAlign: 'center' }}>Classement moyen dans les résultats</p>
-          </div>
-
-        </div>
-
-        <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '1.5rem', lineHeight: 1.5 }}>
-          <em>Note : Ces données proviennent de l'API Google Search Console et sont synchronisées régulièrement en base de données locale.</em>
-        </p>
-      </div>
-
-      {/* SECTION GOOGLE ANALYTICS */}
-      <div style={{ marginTop: '3rem', backgroundColor: 'white', padding: '1.5rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', borderTop: '4px solid #f59e0b' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0f172a', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          📊 Google Analytics
-        </h2>
-        
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-            <div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#0f172a' }}>LE DEBAT IVOIRIEN</h3>
-              <p style={{ fontSize: '0.85rem', color: '#64748b' }}>Propriété GA4 : <strong>361832064</strong></p>
-            </div>
-            <a 
-              href="https://analytics.google.com/analytics/web/?authuser=0#/a249442439p361832064/reports/intelligenthome?params=_u..nav%3Dmaui" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', backgroundColor: '#2563eb', color: 'white', padding: '0.75rem 1.5rem', borderRadius: '8px', fontWeight: 'bold', textDecoration: 'none' }}
-            >
-              Ouvrir Google Analytics ↗
-            </a>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
-            <div style={{ backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-              <p style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '0.5rem', textAlign: 'center' }}>Utilisateurs Actifs</p>
-              <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#f59e0b' }}>{ga4Stats.activeUsers.toLocaleString('fr-FR')}</span>
-              <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem', textAlign: 'center' }}>30 derniers jours</p>
-            </div>
-            <div style={{ backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-              <p style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '0.5rem', textAlign: 'center' }}>Vues de pages</p>
-              <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#10b981' }}>{ga4Stats.pageViews.toLocaleString('fr-FR')}</span>
-              <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem', textAlign: 'center' }}>30 derniers jours</p>
-            </div>
-            <div style={{ backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-              <p style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '0.5rem', textAlign: 'center' }}>Taux de rebond</p>
-              <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#ef4444' }}>{(ga4Stats.bounceRate * 100).toFixed(1)}%</span>
-              <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem', textAlign: 'center' }}>Moyenne sur 30 jours</p>
-            </div>
-            <div style={{ backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-              <p style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '0.5rem', textAlign: 'center' }}>Engagement</p>
-              <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#3b82f6' }}>{Math.floor(ga4Stats.avgSessionDuration / 60)}m {Math.floor(ga4Stats.avgSessionDuration % 60)}s</span>
-              <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem', textAlign: 'center' }}>Durée moyenne par session</p>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <div style={{ marginTop: '2rem', padding: '1rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#475569', fontSize: '0.9rem' }}>
         <p><strong>Note Technique :</strong> Les revenus estimés sont calculés à partir de la base d'abonnements enregistrés. Les pages vues représentent le trafic global dédoublonné (une vue par article par jour par visiteur).</p>
