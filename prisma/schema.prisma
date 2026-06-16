@@ -104,6 +104,7 @@ model Article {
   bookmarks        Bookmark[]
   giftLinks        GiftLink[]
   highlights       Highlight[]
+  quiz              ArticleQuiz?
   polls            Poll[]
   relatedArticles  Article[]        @relation("RelatedArticles")
   referencedIn     Article[]        @relation("RelatedArticles")
@@ -622,3 +623,19 @@ model TagSubscriber {
   @@unique([userId, tagId])
 }
 
+model ArticleQuiz {
+  id        String   @id @default(cuid())
+  articleId String   @unique
+  questions QuizQuestion[]
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model QuizQuestion {
+  id        String   @id @default(cuid())
+  quizId    String
+  question  String
+  options   String   // JSON stringified array of strings
+  answer    Int      // Index of the correct option
+  quiz      ArticleQuiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+}

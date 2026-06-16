@@ -19,6 +19,10 @@ import ArticlePollWidget from "@/components/ArticlePollWidget";
 import AdBanner from "@/components/AdBanner";
 import ArticleAudioPlayer from "@/components/ArticleAudioPlayer";
 import TextSizeAdjuster from "@/components/TextSizeAdjuster";
+import ZenModeToggle from "@/components/ZenModeToggle";
+import ScrollProgressSaver from "@/components/ScrollProgressSaver";
+import ArticleQuizWidget from "@/components/ArticleQuizWidget";
+import OfflineSaveButton from "@/components/OfflineSaveButton";
 import TableOfContents from "@/components/TableOfContents";
 import InlineArticleRecommendation from "@/components/InlineArticleRecommendation";
 import { Metadata, ResolvingMetadata } from "next";
@@ -122,6 +126,9 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
         where: { isActive: true },
         include: { options: true },
         take: 1
+      },
+      quiz: {
+        include: { questions: true }
       }
     },
   });
@@ -290,6 +297,10 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
             }}
           />
 
+        <main className="portal-col-center">
+          <ScrollProgressSaver articleId={article.id} />
+          <div className="article-main-container">
+
           <div className="article-meta" style={{ marginBottom: "1rem" }}>
             {article.categories.map((c) => (
               <span key={c.id} style={{ color: "var(--secondary)", fontWeight: "bold", textTransform: "uppercase", fontSize: "0.8rem" }}>{c.name}</span>
@@ -338,6 +349,15 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
             <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
               <ArticleAudioPlayer title={article.title} content={contentToShow} />
               <TextSizeAdjuster />
+              <ZenModeToggle />
+              <OfflineSaveButton article={{
+                id: article.id,
+                slug: article.slug,
+                title: article.title,
+                content: contentToShow,
+                imageUrl: mainImageUrl,
+                excerpt: article.excerpt || ""
+              }} />
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
               <BookmarkButton articleId={article.id} />
@@ -602,6 +622,11 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
             })}
           </div>
         </div>
+
+        {/* Section Quiz (Gamification) */}
+        {article.quiz && (
+          <ArticleQuizWidget quiz={article.quiz} />
+        )}
 
         <ArticleComments articleId={article.id} />
       </div>

@@ -747,6 +747,36 @@ a:hover {
   font-weight: bold;
 }
 
+/* =========================================
+   ZEN MODE (DISTRACTION-FREE READING)
+   ========================================= */
+body.zen-mode-active header,
+body.zen-mode-active footer,
+body.zen-mode-active .ad-container,
+body.zen-mode-active .ad-banner,
+body.zen-mode-active .related-articles,
+body.zen-mode-active .portal-layout aside,
+body.zen-mode-active .article-layout > :nth-child(2),
+body.zen-mode-active .social-share-container,
+body.zen-mode-active .reading-progress-bar {
+  display: none !important;
+}
+
+body.zen-mode-active .article-layout {
+  grid-template-columns: 1fr !important;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+body.zen-mode-active .article-content p {
+  font-size: 1.25rem !important;
+  line-height: 2 !important;
+  color: #333 !important;
+}
+
+body.zen-mode-active.dark .article-content p {
+  color: #e2e8f0 !important;
+}
 
 /* ARTICLE CONTENT STYLES */
 .article-content img {
