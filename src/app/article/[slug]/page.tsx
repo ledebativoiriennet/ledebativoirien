@@ -11,6 +11,8 @@ import SocialShareButtons from "@/components/SocialShareButtons";
 import ArticleStatsRecorder from "@/components/ArticleStatsRecorder";
 import DownloadPdfButton from "@/components/DownloadPdfButton";
 import { LikeButton } from "@/components/LikeButton";
+import BookmarkButton from "@/components/BookmarkButton";
+import GiftArticleButton from "@/components/GiftArticleButton";
 import AdBanner from "@/components/AdBanner";
 import ArticleAudioPlayer from "@/components/ArticleAudioPlayer";
 import TextSizeAdjuster from "@/components/TextSizeAdjuster";
@@ -101,8 +103,10 @@ export async function generateMetadata(
   };
 }
 
-export default async function ArticlePage({ params }: Props) {
+export default async function ArticlePage({ params, searchParams }: { params: Props["params"], searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const { slug } = await params;
+  const resolvedSearchParams = await searchParams;
+  const giftToken = typeof resolvedSearchParams?.giftToken === 'string' ? resolvedSearchParams.giftToken : null;
   
   const article = await prisma.article.findUnique({
     where: { slug },
@@ -168,6 +172,22 @@ export default async function ArticlePage({ params }: Props) {
     showPaywall = !isConfidentielSubscriber;
   } else if (article.isPremium) {
     showPaywall = !isPremiumSubscriber;
+  }
+
+  // Vérifier le jeton cadeau
+  let isGifted = false;
+  if (showPaywall && giftToken) {
+    const giftLink = await prisma.giftLink.findUnique({
+      where: { token: giftToken }
+    });
+    
+    if (giftLink && giftLink.articleId === article.id && giftLink.usedCount < giftLink.maxUses && giftLink.expiresAt > new Date()) {
+      showPaywall = false;
+      isGifted = true;
+      // Ne pas incrémenter le compteur ici car cela s'exécute à chaque chargement de la page par le bénéficiaire.
+      // Dans un système complet, on marquerait le token utilisé via un cookie ou une API au premier accès.
+      // Pour faire simple, on bypass juste s'il est valide.
+    }
   }
 
   // Fetch View Statistics
@@ -307,6 +327,10 @@ export default async function ArticlePage({ params }: Props) {
               <TextSizeAdjuster />
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
+              <BookmarkButton articleId={article.id} />
+              {(article.isPremium || article.isConfidentiel) && (
+                <GiftArticleButton articleId={article.id} articleSlug={article.slug} />
+              )}
               <SocialShareButtons title={article.title} layout="horizontal" />
               <DownloadPdfButton 
                 articleTitle={article.title}

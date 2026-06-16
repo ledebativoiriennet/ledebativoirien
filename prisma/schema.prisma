@@ -26,6 +26,8 @@ model User {
   readingHistory    ReadingHistory[]
   subscriptions     Subscription[]
   comments          Comment[]
+  bookmarks         Bookmark[]
+  giftLinks         GiftLink[]
   company           Company?           @relation(fields: [companyId], references: [id])
 }
 
@@ -95,6 +97,8 @@ model Article {
   categories       Category[]       @relation("ArticleToCategory")
   tags             Tag[]            @relation("ArticleToTag")
   comments         Comment[]
+  bookmarks        Bookmark[]
+  giftLinks        GiftLink[]
   relatedArticles  Article[]        @relation("RelatedArticles")
   referencedIn     Article[]        @relation("RelatedArticles")
 }
@@ -320,6 +324,32 @@ model ArticleLike {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, articleId])
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  articleId String
+  createdAt DateTime @default(now())
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, articleId])
+}
+
+model GiftLink {
+  id        String   @id @default(cuid())
+  token     String   @unique @default(cuid())
+  userId    String
+  articleId String
+  maxUses   Int      @default(1)
+  usedCount Int      @default(0)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
 }
 
 model FootballMatch {

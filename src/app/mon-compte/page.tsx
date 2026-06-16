@@ -82,10 +82,16 @@ export default async function DashboardAbonne() {
           <p style={{ color: 'var(--muted)', fontSize: '0.9rem', marginBottom: '1rem' }}>{user.email}</p>
           
           {isPremium ? (
-             <span style={{ backgroundColor: '#fef08a', color: '#854d0e', padding: '0.3rem 0.8rem', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 'bold' }}>⭐ Membre Premium</span>
+             <span style={{ backgroundColor: '#fef08a', color: '#854d0e', padding: '0.3rem 0.8rem', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 'bold', display: 'inline-block', marginBottom: '1.5rem' }}>⭐ Membre Premium</span>
           ) : (
-             <span style={{ backgroundColor: '#e2e8f0', color: '#475569', padding: '0.3rem 0.8rem', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 'bold' }}>Lecteur Gratuit</span>
+             <span style={{ backgroundColor: '#e2e8f0', color: '#475569', padding: '0.3rem 0.8rem', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 'bold', display: 'inline-block', marginBottom: '1.5rem' }}>Lecteur Gratuit</span>
           )}
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
+            <Link href="/mon-compte/favoris" className="btn btn-secondary" style={{ display: 'block', width: '100%', padding: '0.75rem' }}>
+              📑 Mes Favoris
+            </Link>
+          </div>
         </div>
 
         {/* Colonne Principale : Abonnements & Historique */}

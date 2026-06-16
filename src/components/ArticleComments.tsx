@@ -96,38 +96,68 @@ export default function ArticleComments({ articleId }: { articleId: string }) {
         {status === "loading" ? (
           <div style={{ padding: "1rem", textAlign: "center", color: "var(--muted)" }}>Chargement...</div>
         ) : session ? (
-          <form onSubmit={handleSubmit}>
-            <textarea 
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Partagez votre opinion sur cet article..." 
-              style={{ width: "100%", padding: "1rem", borderRadius: "4px", border: "1px solid var(--border)", minHeight: "100px", fontFamily: "inherit", resize: "vertical" }}
-              disabled={isSubmitting}
-              required
-            />
-            {message && (
-              <div style={{ 
-                marginTop: "0.5rem", 
-                padding: "0.75rem", 
-                borderRadius: "4px", 
-                backgroundColor: message.type === "success" ? "#dcfce7" : "#fee2e2", 
-                color: message.type === "success" ? "#166534" : "#991b1b",
-                fontSize: "0.9rem"
-              }}>
-                {message.text}
-              </div>
-            )}
-            <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "0.5rem" }}>
-              <button 
-                type="submit" 
-                className="btn btn-primary"
-                disabled={isSubmitting || !newComment.trim()}
-                style={{ opacity: isSubmitting || !newComment.trim() ? 0.7 : 1 }}
-              >
-                {isSubmitting ? "Envoi en cours..." : "Publier"}
-              </button>
-            </div>
-          </form>
+          (() => {
+            const role = (session.user as any)?.role || "USER";
+            const isPremium = ["PREMIUM", "CONFIDENTIEL", "ULTIMATE", "EDITOR", "ADMIN"].includes(role);
+            
+            if (isPremium) {
+              return (
+                <form onSubmit={handleSubmit}>
+                  <textarea 
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    placeholder="Partagez votre opinion sur cet article..." 
+                    style={{ width: "100%", padding: "1rem", borderRadius: "4px", border: "1px solid var(--border)", minHeight: "100px", fontFamily: "inherit", resize: "vertical" }}
+                    disabled={isSubmitting}
+                    required
+                  />
+                  {message && (
+                    <div style={{ 
+                      marginTop: "0.5rem", 
+                      padding: "0.75rem", 
+                      borderRadius: "4px", 
+                      backgroundColor: message.type === "success" ? "#dcfce7" : "#fee2e2", 
+                      color: message.type === "success" ? "#166534" : "#991b1b",
+                      fontSize: "0.9rem"
+                    }}>
+                      {message.text}
+                    </div>
+                  )}
+                  <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "0.5rem" }}>
+                    <button 
+                      type="submit" 
+                      className="btn btn-primary"
+                      disabled={isSubmitting || !newComment.trim()}
+                      style={{ opacity: isSubmitting || !newComment.trim() ? 0.7 : 1 }}
+                    >
+                      {isSubmitting ? "Envoi en cours..." : "Publier"}
+                    </button>
+                  </div>
+                </form>
+              );
+            } else {
+              return (
+                <div style={{ 
+                  padding: "1.5rem", 
+                  backgroundColor: "#fefce8", 
+                  border: "1px dashed #ca8a04", 
+                  borderRadius: "4px", 
+                  textAlign: "center" 
+                }}>
+                  <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>⭐</div>
+                  <p style={{ fontWeight: "bold", marginBottom: "0.5rem", color: "#854d0e" }}>
+                    Les commentaires sont réservés à nos abonnés Premium.
+                  </p>
+                  <p style={{ fontSize: "0.9rem", color: "#a16207", marginBottom: "1rem" }}>
+                    Abonnez-vous pour participer aux débats avec la communauté.
+                  </p>
+                  <Link href="/abonnement" className="btn btn-primary" style={{ display: "inline-block" }}>
+                    Découvrir nos offres
+                  </Link>
+                </div>
+              );
+            }
+          })()
         ) : (
           <div style={{ 
             padding: "1.5rem", 

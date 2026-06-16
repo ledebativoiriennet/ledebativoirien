@@ -141,6 +141,8 @@ export default async function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <head>
+        <meta name="theme-color" content="#cc0000" />
+        <link rel="apple-touch-icon" href="/icon-192x192.png" />
         <meta name="google-adsense-account" content={process.env.NEXT_PUBLIC_ADSENSE_ID || "ca-pub-4879894549191568"} />
         <script 
           async 
@@ -159,6 +161,22 @@ export default async function RootLayout({
             }
           ` }} />
         )}
+        <Script id="pwa-sw-register" strategy="lazyOnload">
+          {`
+            if ('serviceWorker' in navigator) {
+              window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').then(
+                  function(registration) {
+                    console.log('Service Worker registration successful with scope: ', registration.scope);
+                  },
+                  function(err) {
+                    console.log('Service Worker registration failed: ', err);
+                  }
+                );
+              });
+            }
+          `}
+        </Script>
       </head>
       <body className={inter.variable}>
         <ScrollProgressBar />
