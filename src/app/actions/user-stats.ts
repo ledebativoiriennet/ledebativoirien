@@ -43,21 +43,35 @@ export async function recordArticleRead(articleId: string) {
   if (!(session?.user as any)?.id) return { success: false };
 
   try {
+    const userId = (session!.user as any).id as string;
+    
+    // Vérifier si c'est la première lecture
+    const existing = await prisma.readingHistory.findUnique({
+      where: {
+        userId_articleId: { userId, articleId }
+      }
+    });
+
     await prisma.readingHistory.upsert({
       where: {
-        userId_articleId: {
-          userId: (session!.user as any).id as string,
-          articleId: articleId
-        }
+        userId_articleId: { userId, articleId }
       },
       update: {
         readAt: new Date()
       },
       create: {
-        userId: (session!.user as any).id as string,
-        articleId: articleId
+        userId,
+        articleId
       }
     });
+
+    // Gamification : 1 point pour la première lecture de cet article
+    if (!existing) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: { points: { increment: 1 } }
+      });
+    }
     return { success: true };
   } catch (error) {
     console.error("Failed to record read:", error);

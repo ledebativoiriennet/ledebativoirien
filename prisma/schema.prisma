@@ -16,6 +16,7 @@ model User {
   role              String             @default("USER")
   resetToken        String?
   resetTokenExpiry  DateTime?
+  points            Int                @default(0)
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
   companyId         String?
@@ -25,10 +26,13 @@ model User {
   pushSubscriptions PushSubscription[]
   readingHistory    ReadingHistory[]
   subscriptions     Subscription[]
-  comments          Comment[]
-  bookmarks         Bookmark[]
-  giftLinks         GiftLink[]
-  company           Company?           @relation(fields: [companyId], references: [id])
+  comments            Comment[]
+  bookmarks           Bookmark[]
+  giftLinks           GiftLink[]
+  highlights          Highlight[]
+  tagSubscriptions    TagSubscriber[]
+  authorSubscriptions AuthorSubscriber[] @relation("UserAuthorSubs")
+  company             Company?           @relation(fields: [companyId], references: [id])
 }
 
 model Subscription {
@@ -99,6 +103,8 @@ model Article {
   comments         Comment[]
   bookmarks        Bookmark[]
   giftLinks        GiftLink[]
+  highlights       Highlight[]
+  polls            Poll[]
   relatedArticles  Article[]        @relation("RelatedArticles")
   referencedIn     Article[]        @relation("RelatedArticles")
 }
@@ -107,8 +113,10 @@ model Poll {
   id        String       @id @default(cuid())
   question  String
   isActive  Boolean      @default(true)
+  articleId String?
   createdAt DateTime     @default(now())
   options   PollOption[]
+  article   Article?     @relation(fields: [articleId], references: [id], onDelete: Cascade)
 }
 
 model PollOption {
@@ -188,12 +196,14 @@ model Activity {
 }
 
 model Tag {
-  id        String    @id @default(cuid())
-  name      String    @unique
-  slug      String    @unique
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  articles  Article[] @relation("ArticleToTag")
+  id          String   @id @default(cuid())
+  wpId        Int?     @unique
+  name        String
+  slug        String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  articles    Article[] @relation("ArticleToTag")
+  subscribers TagSubscriber[]
 }
 
 model FlashNews {
@@ -433,9 +443,11 @@ model NewsletterSubscriber {
 model AuthorSubscriber {
   id        String   @id @default(cuid())
   email     String
+  userId    String?  // Optionnel si l'utilisateur n'est pas connecté mais utilise juste son email
   authorId  String
   createdAt DateTime @default(now())
   author    Author   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  user      User?    @relation("UserAuthorSubs", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([email, authorId])
 }
@@ -584,5 +596,29 @@ model NewsletterLog {
   status         String   // "SUCCESS" | "FAILED"
   errorMessage   String?
   sentAt         DateTime @default(now())
+}
+
+model Highlight {
+  id        String   @id @default(cuid())
+  userId    String
+  articleId String
+  text      String
+  context   String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@index([userId, articleId])
+}
+
+model TagSubscriber {
+  id        String   @id @default(cuid())
+  userId    String
+  tagId     String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tagId])
 }
 

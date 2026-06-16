@@ -13,6 +13,9 @@ import DownloadPdfButton from "@/components/DownloadPdfButton";
 import { LikeButton } from "@/components/LikeButton";
 import BookmarkButton from "@/components/BookmarkButton";
 import GiftArticleButton from "@/components/GiftArticleButton";
+import HighlightWrapper from "@/components/HighlightWrapper";
+import FollowButton from "@/components/FollowButton";
+import ArticlePollWidget from "@/components/ArticlePollWidget";
 import AdBanner from "@/components/AdBanner";
 import ArticleAudioPlayer from "@/components/ArticleAudioPlayer";
 import TextSizeAdjuster from "@/components/TextSizeAdjuster";
@@ -110,7 +113,17 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
   
   const article = await prisma.article.findUnique({
     where: { slug },
-    include: { author: true, categories: true, tags: true, relatedArticles: true },
+    include: { 
+      author: true, 
+      categories: true, 
+      tags: true, 
+      relatedArticles: true,
+      polls: {
+        where: { isActive: true },
+        include: { options: true },
+        take: 1
+      }
+    },
   });
 
   if (!article) return notFound();
@@ -430,14 +443,15 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
           {/* Résumé automatique des points clés */}
           <ArticleSummary content={article.content} />
 
-          <div style={{ position: "relative" }}>
-            <div 
-              className="article-content"
-              style={{ 
-                position: "relative",
-                paddingBottom: showPaywall ? "40px" : "0"
-              }} 
-            >
+          <HighlightWrapper articleId={article.id} articleTitle={article.title} articleUrl={`${process.env.NEXT_PUBLIC_SITE_URL}/article/${article.slug}`}>
+            <div style={{ position: "relative" }}>
+              <div 
+                className="article-content"
+                style={{ 
+                  position: "relative",
+                  paddingBottom: showPaywall ? "40px" : "0"
+                }} 
+              >
               {(() => {
             if (!showPaywall && relatedArticle) {
               // On divise par la balise de fin de paragraphe. Le 'i' rend insensible à la casse.
@@ -484,6 +498,7 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
               </div>
             )}
           </div>
+          </HighlightWrapper>
 
           <GoogleAdSlot adSlot="9260624933" />
 
@@ -492,14 +507,16 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
               <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", alignItems: "center" }}>
                 <span style={{ fontWeight: "bold", marginRight: "0.5rem" }}>Mots-clés :</span>
                 {article.tags.map(tag => (
-                  <Link 
-                    key={tag.id} 
-                    href={`/tag/${tag.slug}`}
-                    style={{ backgroundColor: "#f1f5f9", padding: "0.2rem 0.6rem", borderRadius: "15px", fontSize: "0.75rem", color: "var(--muted)", textDecoration: "none" }}
-                    className="hover-primary"
-                  >
-                    #{tag.name}
-                  </Link>
+                  <div key={tag.id} style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                    <Link 
+                      href={`/tag/${tag.slug}`}
+                      style={{ backgroundColor: "#f1f5f9", padding: "0.2rem 0.6rem", borderRadius: "15px", fontSize: "0.75rem", color: "var(--muted)", textDecoration: "none" }}
+                      className="hover-primary"
+                    >
+                      #{tag.name}
+                    </Link>
+                    <FollowButton type="tag" targetId={tag.id} />
+                  </div>
                 ))}
               </div>
               <LikeButton articleId={article.id} initialLiked={initialLiked} initialCount={initialLikeCount} />
@@ -520,9 +537,12 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
             </div>
             <div>
               <div style={{ fontSize: "0.8rem", color: "var(--primary)", fontWeight: "bold", textTransform: "uppercase" }}>Article rédigé par</div>
-              <Link href="/redaction" style={{ fontSize: "1.2rem", fontWeight: 800, color: "var(--foreground)", textDecoration: "none" }}>
-                {article.author?.name || "La Rédaction"}
-              </Link>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <Link href="/redaction" style={{ fontSize: "1.2rem", fontWeight: 800, color: "var(--foreground)", textDecoration: "none" }}>
+                  {article.author?.name || "La Rédaction"}
+                </Link>
+                {article.author && <FollowButton type="author" targetId={article.author.id} />}
+              </div>
               <p style={{ fontSize: "0.85rem", color: "var(--muted)", margin: "0.2rem 0 0 0" }}>Journaliste / Le Débat Ivoirien</p>
             </div>
           </div>
@@ -556,6 +576,10 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
             </p>
           </div>
         </article>
+
+        {article.polls && article.polls.length > 0 && (
+          <ArticlePollWidget poll={article.polls[0]} />
+        )}
 
         <AdBanner slot="ARTICLE_BOTTOM" />
 

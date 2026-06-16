@@ -205,6 +205,9 @@ export default function ArticleComments({ articleId }: { articleId: string }) {
               <div>
                 <div style={{ fontWeight: "bold", fontSize: "0.9rem" }}>
                   {comment.user.name || (comment.user.email ? comment.user.email.split('@')[0] : "Anonyme")}
+                  {comment.user.points >= 100 ? <span style={{ marginLeft: "0.5rem", fontSize: "0.85rem" }} title="Grand Débatteur">🏆</span> :
+                   comment.user.points >= 50 ? <span style={{ marginLeft: "0.5rem", fontSize: "0.85rem" }} title="Lecteur Fidèle">🥇</span> :
+                   comment.user.points >= 10 ? <span style={{ marginLeft: "0.5rem", fontSize: "0.85rem" }} title="Lecteur Régulier">🥈</span> : null}
                   <span style={{ fontWeight: "normal", color: "var(--muted)", fontSize: "0.75rem", marginLeft: "0.5rem" }}>
                     {formatDate(comment.createdAt)}
                   </span>

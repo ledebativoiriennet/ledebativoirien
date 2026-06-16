@@ -21,7 +21,8 @@ export async function GET(request: Request) {
         user: {
           select: {
             name: true,
-            email: true
+            email: true,
+            points: true
           }
         }
       },
@@ -70,6 +71,12 @@ export async function POST(request: Request) {
           }
         }
       }
+    });
+
+    // 3. Add points for gamification (5 points per comment)
+    await prisma.user.update({
+      where: { id: userId },
+      data: { points: { increment: 5 } }
     });
 
     return NextResponse.json({ 

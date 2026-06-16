@@ -28,7 +28,15 @@ export function UserMenu() {
           <div style={{ width: '30px', height: '30px', backgroundColor: 'var(--primary)', color: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem' }}>
             {session.user.name ? session.user.name.charAt(0).toUpperCase() : 'U'}
           </div>
-          <span style={{ fontSize: '0.9rem' }}>Mon Compte</span>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span style={{ fontSize: '0.9rem', lineHeight: 1.2 }}>Mon Compte</span>
+            <span style={{ fontSize: '0.7rem', color: 'var(--muted)', fontWeight: 'normal' }}>
+              {(session.user as any).points || 0} pts 
+              {((session.user as any).points || 0) >= 100 ? " 🏆 Grand Débatteur" : 
+               ((session.user as any).points || 0) >= 50 ? " 🥇 Lecteur Fidèle" : 
+               ((session.user as any).points || 0) >= 10 ? " 🥈 Lecteur Régulier" : " 🥉 Nouveau"}
+            </span>
+          </div>
         </Link>
         <button 
           onClick={async () => {
