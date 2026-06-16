@@ -102,12 +102,12 @@ export default async function AdminArticles({ searchParams }: { searchParams: Pr
                   {article.publishedAt ? (
                     <div>
                       {new Date(article.publishedAt).toLocaleDateString('fr-FR')}
-                      {canApprove && <ArticleActionButtons articleId={article.id} isPublished={true} />}
+                      {canApprove && <ArticleActionButtons articleId={article.id} isPublished={true} isLiveBlog={article.isLiveBlog} />}
                     </div>
                   ) : (
                     <div>
                       <span style={{ color: '#c2410c', fontWeight: 'bold' }}>Brouillon</span>
-                      {canApprove && <ArticleActionButtons articleId={article.id} isPublished={false} />}
+                      {canApprove && <ArticleActionButtons articleId={article.id} isPublished={false} isLiveBlog={article.isLiveBlog} />}
                     </div>
                   )}
                 </td>

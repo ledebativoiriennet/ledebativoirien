@@ -36,6 +36,7 @@ export async function publishArticle(formData: FormData) {
   const isAudioAvailable = formData.get("isAudioAvailable") === "on";
   const isConfidentiel = formData.get("isConfidentiel") === "on";
   const isFeatured = formData.get("isFeatured") === "on";
+  const isLiveBlog = formData.get("isLiveBlog") === "on";
   const imageFile = formData.get("image") as File | null;
   const categoryIds = formData.getAll("categories") as string[];
   const tagsString = formData.get("tags") as string || "";
@@ -116,6 +117,7 @@ export async function publishArticle(formData: FormData) {
         isAudioAvailable,
         isConfidentiel,
         isFeatured,
+        isLiveBlog,
         publishedAt,
         createdAt,
         authorId,
@@ -200,6 +202,7 @@ export async function updateArticle(articleId: string, formData: FormData) {
   const isAudioAvailable = formData.get("isAudioAvailable") === "on";
   const isConfidentiel = formData.get("isConfidentiel") === "on";
   const isFeatured = formData.get("isFeatured") === "on";
+  const isLiveBlog = formData.get("isLiveBlog") === "on";
   const categoryIds = formData.getAll("categories") as string[];
   const tagsString = formData.get("tags") as string || "";
   const imageCaption = formData.get("imageCaption") as string || null;
@@ -249,6 +252,7 @@ export async function updateArticle(articleId: string, formData: FormData) {
       isAudioAvailable,
       isConfidentiel,
       isFeatured,
+      isLiveBlog,
       seoTitle,
       seoDescription,
       categories: {

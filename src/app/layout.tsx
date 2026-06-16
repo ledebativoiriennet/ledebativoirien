@@ -20,6 +20,7 @@ import GoogleAdSlot from "@/components/GoogleAdSlot";
 import WorldCupTicker from "@/components/WorldCupTicker";
 import { getMatchesAndSync } from "@/lib/sports";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
+import LiveStreamBadge from "@/components/LiveStreamBadge";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -241,6 +242,7 @@ export default async function RootLayout({
                     🔍
                   </button>
                 </form>
+                <LiveStreamBadge />
                 <Link href="/jeux/sudoku" style={{ textDecoration: 'none', fontSize: '1.2rem', padding: '0.2rem' }} title="Sudoku">
                   🧩
                 </Link>

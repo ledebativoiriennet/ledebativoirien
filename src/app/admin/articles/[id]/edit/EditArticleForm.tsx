@@ -568,6 +568,19 @@ export default function EditArticleForm({ article, categories }: { article: any,
               ⭐️ Mettre en avant (Une)
             </label>
           </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <input 
+              type="checkbox" 
+              name="isLiveBlog" 
+              id="isLiveBlog"
+              defaultChecked={article.isLiveBlog}
+              style={{ width: '1.2rem', height: '1.2rem', cursor: 'pointer' }}
+            />
+            <label htmlFor="isLiveBlog" style={{ fontWeight: 'bold', color: '#dc2626', cursor: 'pointer' }}>
+              🔴 Activer le Live Blog
+            </label>
+          </div>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', backgroundColor: '#eff6ff', padding: '1.5rem', borderRadius: '8px', border: '1px solid #bfdbfe' }}>

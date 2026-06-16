@@ -4,12 +4,16 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { approveArticle, unpublishArticle, deleteArticle } from "@/app/actions/admin";
 
+import Link from "next/link";
+
 export default function ArticleActionButtons({ 
   articleId, 
-  isPublished 
+  isPublished, 
+  isLiveBlog
 }: { 
   articleId: string, 
-  isPublished: boolean 
+  isPublished: boolean,
+  isLiveBlog?: boolean
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -84,6 +88,11 @@ export default function ArticleActionButtons({
       >
         {loadingAction === "delete" ? "..." : "Supprimer"}
       </button>
+      {isLiveBlog && (
+        <Link href={`/admin/articles/${articleId}/live`} style={{ padding: '0.2rem 0.5rem', fontSize: '0.75rem', borderRadius: '4px', border: '1px solid #dc2626', backgroundColor: '#dc2626', color: 'white', cursor: 'pointer', fontWeight: 'bold', textDecoration: 'none' }}>
+          🔴 Gérer le Direct
+        </Link>
+      )}
     </div>
   );
 }
