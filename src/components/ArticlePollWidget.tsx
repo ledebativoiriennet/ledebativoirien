@@ -70,7 +70,7 @@ export default function ArticlePollWidget({ poll }: { poll: PollProps }) {
                   padding: "1rem",
                   textAlign: "left",
                   backgroundColor: hasVoted ? "transparent" : (selectedOption === option.id ? "#e0f2fe" : "white"),
-                  border: \`2px solid \${selectedOption === option.id || hasVoted ? "var(--primary)" : "var(--border)"}\`,
+                  border: `2px solid ${selectedOption === option.id || hasVoted ? "var(--primary)" : "var(--border)"}`,
                   borderRadius: "8px",
                   cursor: hasVoted ? "default" : "pointer",
                   position: "relative",
@@ -85,7 +85,7 @@ export default function ArticlePollWidget({ poll }: { poll: PollProps }) {
                     top: 0,
                     left: 0,
                     height: "100%",
-                    width: \`\${percentage}%\`,
+                    width: `${percentage}%`,
                     backgroundColor: "#fee2e2",
                     zIndex: -1,
                     transition: "width 1s ease-out"

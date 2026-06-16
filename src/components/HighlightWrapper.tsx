@@ -81,16 +81,16 @@ export default function HighlightWrapper({
   };
 
   const handleShareTwitter = () => {
-    const text = \`"\${selectedText}" — \${articleTitle}\`;
-    const url = \`https://twitter.com/intent/tweet?text=\${encodeURIComponent(text)}&url=\${encodeURIComponent(articleUrl)}\`;
+    const text = `"${selectedText}" — ${articleTitle}`;
+    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(articleUrl)}`;
     window.open(url, "_blank");
     setShowTooltip(false);
     window.getSelection()?.removeAllRanges();
   };
 
   const handleShareWhatsApp = () => {
-    const text = \`"\${selectedText}" — \${articleTitle}\\n\\nLire ici: \${articleUrl}\`;
-    const url = \`https://wa.me/?text=\${encodeURIComponent(text)}\`;
+    const text = `"${selectedText}" — ${articleTitle}\n\nLire ici: ${articleUrl}`;
+    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
     window.open(url, "_blank");
     setShowTooltip(false);
     window.getSelection()?.removeAllRanges();
@@ -105,8 +105,8 @@ export default function HighlightWrapper({
           className="highlight-tooltip fade-in"
           style={{
             position: "absolute",
-            top: \`\${tooltipPos.y}px\`,
-            left: \`\${tooltipPos.x}px\`,
+            top: `${tooltipPos.y}px`,
+            left: `${tooltipPos.x}px`,
             transform: "translate(-50%, -100%)",
             backgroundColor: "#111",
             color: "white",

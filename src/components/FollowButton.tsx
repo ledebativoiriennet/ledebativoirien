@@ -68,7 +68,7 @@ export default function FollowButton({
         fontSize: "0.7rem",
         fontWeight: "bold",
         borderRadius: "12px",
-        border: \`1px solid \${isFollowing ? "var(--muted)" : "var(--primary)"}\`,
+        border: `1px solid ${isFollowing ? "var(--muted)" : "var(--primary)"}`,
         backgroundColor: isFollowing ? "var(--card-bg)" : "var(--primary)",
         color: isFollowing ? "var(--foreground)" : "white",
         cursor: "pointer",
