@@ -60,12 +60,15 @@ export default function ArticleSummary({ content }: { content: string }) {
     <div style={{
       backgroundColor: '#f8fafc',
       borderLeft: '4px solid var(--primary)',
+      padding: '1.5rem',
+      borderRadius: '0 8px 8px 0',
       marginBottom: '2rem',
       boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-      overflow: 'hidden',
-      wordWrap: 'break-word',
+      overflowX: 'hidden',
+      wordBreak: 'normal',
       overflowWrap: 'break-word',
-      wordBreak: 'normal'
+      boxSizing: 'border-box',
+      width: '100%'
     }}>
       <h3 style={{
         fontSize: '1.1rem',
@@ -91,12 +94,11 @@ export default function ArticleSummary({ content }: { content: string }) {
           <li 
             key={idx}
             style={{ 
-              lineHeight: 1.5, 
+              lineHeight: 1.6,
               fontSize: '0.95rem', 
               fontWeight: 500,
               wordBreak: 'normal',
               overflowWrap: 'break-word',
-              WebkitHyphens: 'none',
               hyphens: 'none'
             }}
             dangerouslySetInnerHTML={{ __html: point }}
