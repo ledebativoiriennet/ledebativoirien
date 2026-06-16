@@ -113,6 +113,10 @@ model Article {
   liveUpdates      LiveUpdate[]
   relatedArticles  Article[]        @relation("RelatedArticles")
   referencedIn     Article[]        @relation("RelatedArticles")
+
+  @@index([publishedAt(sort: Desc)])
+  @@index([isConfidentiel])
+  @@index([isAudioAvailable])
 }
 
 model Poll {

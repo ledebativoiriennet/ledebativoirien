@@ -53,6 +53,8 @@ export default function SafeImage({ src, fallbackSrc = "/logo.png", alt, ...prop
       src={imgSrc}
       alt={alt || ""}
       onError={handleError}
+      loading="lazy"
+      decoding="async"
       {...props}
     />
   );
