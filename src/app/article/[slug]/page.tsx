@@ -297,9 +297,7 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
             }}
           />
 
-        <main className="portal-col-center">
           <ScrollProgressSaver articleId={article.id} />
-          <div className="article-main-container">
 
           <div className="article-meta" style={{ marginBottom: "1rem" }}>
             {article.categories.map((c) => (
@@ -595,7 +593,6 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
               , même partielle, est strictement interdite. Tout contrevenant s'expose à des poursuites.
             </p>
           </div>
-        </article>
 
         {article.polls && article.polls.length > 0 && (
           <ArticlePollWidget poll={article.polls[0]} />
@@ -629,6 +626,7 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
         )}
 
         <ArticleComments articleId={article.id} />
+        </article>
       </div>
 
       {/* RIGHT COLUMN: Sidebar widgets */}

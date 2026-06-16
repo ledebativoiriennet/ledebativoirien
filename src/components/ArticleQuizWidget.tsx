@@ -68,7 +68,7 @@ export default function ArticleQuizWidget({ quiz }: { quiz: QuizProps }) {
   if (isFinished) {
     const isPerfect = score === quiz.questions.length;
     return (
-      <div style={{ margin: "2rem 0", padding: "2rem", backgroundColor: isPerfect ? "#f0fdf4" : "#f8fafc", borderRadius: "12px", border: \`1px solid \${isPerfect ? "#bbf7d0" : "var(--border)"}\`, textAlign: "center" }}>
+      <div style={{ margin: "2rem 0", padding: "2rem", backgroundColor: isPerfect ? "#f0fdf4" : "#f8fafc", borderRadius: "12px", border: `1px solid ${isPerfect ? "#bbf7d0" : "var(--border)"}`, textAlign: "center" }}>
         <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>{isPerfect ? "🏆" : "👍"}</div>
         <h3 style={{ fontSize: "1.5rem", fontWeight: "bold", marginBottom: "0.5rem" }}>
           Quiz terminé !
@@ -129,7 +129,7 @@ export default function ArticleQuizWidget({ quiz }: { quiz: QuizProps }) {
                 padding: "1rem",
                 textAlign: "left",
                 backgroundColor: bgColor,
-                border: \`2px solid \${borderColor}\`,
+                border: `2px solid ${borderColor}`,
                 borderRadius: "8px",
                 color,
                 cursor: isAnswered ? "default" : "pointer",
