@@ -63,7 +63,10 @@ export default function ArticleSummary({ content }: { content: string }) {
       padding: '1.5rem',
       borderRadius: '0 8px 8px 0',
       marginBottom: '2rem',
-      boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+      boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+      overflow: 'hidden',
+      wordWrap: 'break-word',
+      overflowWrap: 'break-word'
     }}>
       <h3 style={{
         fontSize: '1.1rem',
@@ -88,7 +91,13 @@ export default function ArticleSummary({ content }: { content: string }) {
         {points.map((point, idx) => (
           <li 
             key={idx} 
-            style={{ lineHeight: 1.5, fontSize: '0.95rem', fontWeight: 500 }}
+            style={{ 
+              lineHeight: 1.5, 
+              fontSize: '0.95rem', 
+              fontWeight: 500,
+              wordBreak: 'break-word',
+              overflowWrap: 'anywhere'
+            }}
             dangerouslySetInnerHTML={{ __html: point }}
           />
         ))}
