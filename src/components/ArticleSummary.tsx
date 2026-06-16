@@ -60,13 +60,12 @@ export default function ArticleSummary({ content }: { content: string }) {
     <div style={{
       backgroundColor: '#f8fafc',
       borderLeft: '4px solid var(--primary)',
-      padding: '1.5rem',
-      borderRadius: '0 8px 8px 0',
       marginBottom: '2rem',
       boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
       overflow: 'hidden',
       wordWrap: 'break-word',
-      overflowWrap: 'break-word'
+      overflowWrap: 'break-word',
+      wordBreak: 'normal'
     }}>
       <h3 style={{
         fontSize: '1.1rem',
@@ -89,14 +88,14 @@ export default function ArticleSummary({ content }: { content: string }) {
         color: '#334155'
       }}>
         {points.map((point, idx) => (
-          <li 
-            key={idx} 
             style={{ 
               lineHeight: 1.5, 
               fontSize: '0.95rem', 
               fontWeight: 500,
-              wordBreak: 'break-word',
-              overflowWrap: 'anywhere'
+              wordBreak: 'normal',
+              overflowWrap: 'break-word',
+              WebkitHyphens: 'none',
+              hyphens: 'none'
             }}
             dangerouslySetInnerHTML={{ __html: point }}
           />

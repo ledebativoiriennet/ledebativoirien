@@ -143,9 +143,9 @@ a:hover {
 }
 
 .article-content {
-  word-wrap: normal !important;
+  word-wrap: break-word !important;
   word-break: normal !important;
-  overflow-wrap: normal !important;
+  overflow-wrap: break-word !important;
   overflow: hidden;
   width: 100%;
   max-width: 100%;
@@ -176,20 +176,20 @@ a:hover {
   margin-bottom: 1.5rem !important;
   color: var(--foreground);
   text-align: left !important;
-  word-wrap: normal !important;
+  word-wrap: break-word !important;
   word-break: normal !important;
-  overflow-wrap: normal !important;
-  hyphens: manual !important;
-  -webkit-hyphens: manual !important;
+  overflow-wrap: break-word !important;
+  hyphens: none !important;
+  -webkit-hyphens: none !important;
 }
 
 /* Fix text wrapping in Quill Editor (Editions) */
 .ql-editor, .ql-editor p, .ql-editor div, .ql-editor span {
-  word-wrap: normal !important;
+  word-wrap: break-word !important;
   word-break: normal !important;
-  overflow-wrap: normal !important;
-  hyphens: manual !important;
-  -webkit-hyphens: manual !important;
+  overflow-wrap: break-word !important;
+  hyphens: none !important;
+  -webkit-hyphens: none !important;
 }
 
 /* Permit long links to break so they don't overflow the screen */
