@@ -33,6 +33,8 @@ model User {
   tagSubscriptions    TagSubscriber[]
   authorSubscriptions AuthorSubscriber[] @relation("UserAuthorSubs")
   company             Company?           @relation(fields: [companyId], references: [id])
+  debateArguments     DebateArgument[]
+  argumentVotes       ArgumentVote[]
 }
 
 model Subscription {
@@ -94,6 +96,7 @@ model Article {
   seoTitle         String?
   seoDescription   String?
   isAudioAvailable Boolean          @default(false)
+  isLiveBlog       Boolean          @default(false)
   author           Author?          @relation(fields: [authorId], references: [id])
   likes            ArticleLike[]
   views            ArticleView[]
@@ -106,6 +109,8 @@ model Article {
   highlights       Highlight[]
   quiz              ArticleQuiz?
   polls            Poll[]
+  debate           Debate?
+  liveUpdates      LiveUpdate[]
   relatedArticles  Article[]        @relation("RelatedArticles")
   referencedIn     Article[]        @relation("RelatedArticles")
 }
@@ -638,4 +643,49 @@ model QuizQuestion {
   options   String   // JSON stringified array of strings
   answer    Int      // Index of the correct option
   quiz      ArticleQuiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+}
+
+model Debate {
+  id        String   @id @default(cuid())
+  articleId String   @unique
+  question  String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  arguments DebateArgument[]
+}
+
+model DebateArgument {
+  id        String   @id @default(cuid())
+  debateId  String
+  userId    String
+  content   String
+  type      String   // "AGREE" or "DISAGREE"
+  votes     Int      @default(0)
+  createdAt DateTime @default(now())
+  debate    Debate   @relation(fields: [debateId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  argumentVotes ArgumentVote[]
+}
+
+model ArgumentVote {
+  id         String   @id @default(cuid())
+  argumentId String
+  userId     String
+  createdAt  DateTime @default(now())
+  argument   DebateArgument @relation(fields: [argumentId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([argumentId, userId])
+}
+
+model LiveUpdate {
+  id         String   @id @default(cuid())
+  articleId  String
+  content    String
+  authorName String   @default("La Rédaction")
+  isPinned   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  article    Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
 }

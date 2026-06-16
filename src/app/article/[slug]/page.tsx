@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import { Paywall } from "@/components/Paywall";
 import SubscriptionBanner from "@/components/SubscriptionBanner";
 import Link from "next/link";
@@ -25,6 +26,9 @@ import ArticleQuizWidget from "@/components/ArticleQuizWidget";
 import OfflineSaveButton from "@/components/OfflineSaveButton";
 import TableOfContents from "@/components/TableOfContents";
 import InlineArticleRecommendation from "@/components/InlineArticleRecommendation";
+import MeteredPaywallTracker from "@/components/MeteredPaywallTracker";
+import ArticleDebateWidget from "@/components/ArticleDebateWidget";
+import LiveBlogFeed from "@/components/LiveBlogFeed";
 import { Metadata, ResolvingMetadata } from "next";
 import NewsletterWidget from "@/components/NewsletterWidget";
 import AuthorSubscribeButton from "@/components/AuthorSubscribeButton";
@@ -129,6 +133,16 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
       },
       quiz: {
         include: { questions: true }
+      },
+      debate: {
+        include: {
+          arguments: {
+            include: { user: { select: { name: true } } }
+          }
+        }
+      },
+      liveUpdates: {
+        orderBy: { createdAt: 'desc' }
       }
     },
   });
@@ -207,6 +221,45 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
       // Ne pas incrémenter le compteur ici car cela s'exécute à chaque chargement de la page par le bénéficiaire.
       // Dans un système complet, on marquerait le token utilisé via un cookie ou une API au premier accès.
       // Pour faire simple, on bypass juste s'il est valide.
+    }
+  }
+
+  // --- METERED PAYWALL LOGIC ---
+  let isMeteredPaywall = false;
+  if (!showPaywall && !isPremiumSubscriber && !isConfidentielSubscriber && !isGifted) {
+    if (!session?.user) {
+      // Unauthenticated User (limit: 3)
+      const cookieStore = await cookies();
+      const readArticlesStr = cookieStore.get('metered_read_articles')?.value;
+      let readArticles: string[] = [];
+      if (readArticlesStr) {
+        try { readArticles = JSON.parse(decodeURIComponent(readArticlesStr)); } catch (e) {}
+      }
+      
+      if (!readArticles.includes(article.id) && readArticles.length >= 3) {
+        showPaywall = true;
+        isMeteredPaywall = true;
+      }
+    } else {
+      // Free Authenticated User (limit: 10)
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0,0,0,0);
+      
+      const distinctArticlesRead = await prisma.readingHistory.findMany({
+        where: {
+          userId: (session.user as any).id,
+          readAt: { gte: startOfMonth },
+          articleId: { not: article.id }
+        },
+        distinct: ['articleId'],
+        select: { articleId: true }
+      });
+      
+      if (distinctArticlesRead.length >= 10) {
+        showPaywall = true;
+        isMeteredPaywall = true;
+      }
     }
   }
 
@@ -297,6 +350,7 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
             }}
           />
 
+          <MeteredPaywallTracker articleId={article.id} />
           <ScrollProgressSaver articleId={article.id} />
 
           <div className="article-meta" style={{ marginBottom: "1rem" }}>
@@ -461,6 +515,10 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
           {/* Résumé automatique des points clés */}
           <ArticleSummary content={article.content} />
 
+          {article.isLiveBlog && (
+            <LiveBlogFeed articleId={article.id} initialUpdates={(article as any).liveUpdates || []} />
+          )}
+
           <HighlightWrapper articleId={article.id} articleTitle={article.title} articleUrl={`${process.env.NEXT_PUBLIC_SITE_URL}/article/${article.slug}`}>
             <div style={{ position: "relative" }}>
               <div 
@@ -512,7 +570,25 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
 
             {showPaywall && (
               <div style={{ position: "relative", zIndex: 10, marginTop: "-2rem" }}>
-                <Paywall type={article.isConfidentiel ? 'confidentiel' : 'premium'} />
+                {isMeteredPaywall ? (
+                  <div style={{ padding: "2rem", backgroundColor: "var(--card-bg)", borderRadius: "12px", border: "1px solid var(--border)", textAlign: "center", boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" }}>
+                    <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🚧</div>
+                    <h3 style={{ fontSize: "1.5rem", fontWeight: "bold", marginBottom: "1rem" }}>Vous avez atteint votre limite d'articles gratuits</h3>
+                    <p style={{ color: "var(--muted)", marginBottom: "2rem" }}>
+                      {!session?.user 
+                        ? "Vous avez lu vos 3 articles gratuits ce mois-ci. Créez un compte gratuitement pour en lire 7 de plus !" 
+                        : "Vous avez lu vos 10 articles gratuits ce mois-ci. Abonnez-vous pour un accès illimité à toute l'actualité."}
+                    </p>
+                    <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
+                      {!session?.user && (
+                        <Link href="/register" className="btn btn-primary">Créer un compte gratuit</Link>
+                      )}
+                      <Link href="/abonnement" className={!session?.user ? "btn btn-secondary" : "btn btn-primary"}>Voir les offres d'abonnement</Link>
+                    </div>
+                  </div>
+                ) : (
+                  <Paywall type={article.isConfidentiel ? 'confidentiel' : 'premium'} />
+                )}
               </div>
             )}
           </div>
@@ -597,6 +673,11 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
         {article.polls && article.polls.length > 0 && (
           <ArticlePollWidget poll={article.polls[0]} />
         )}
+
+        {article.debate && article.debate.isActive && (
+          <ArticleDebateWidget debate={article.debate} />
+        )}
+
 
         <AdBanner slot="ARTICLE_BOTTOM" />
 
