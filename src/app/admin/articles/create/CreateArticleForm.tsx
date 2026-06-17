@@ -157,6 +157,18 @@ export default function CreateArticleForm({ categories }: { categories: Category
           const quill = quillRef.current.getEditor();
           const range = quill.getSelection(true);
           quill.insertEmbed(range.index, 'image', data.url);
+          // Remove any inline width/height Quill may add — images must always be responsive
+          setTimeout(() => {
+            const imgs = quillRef.current?.getEditor()?.root?.querySelectorAll('img');
+            imgs?.forEach((img: HTMLImageElement) => {
+              img.removeAttribute('width');
+              img.removeAttribute('height');
+              img.style.width = '100%';
+              img.style.maxWidth = '100%';
+              img.style.height = 'auto';
+              img.style.float = 'none';
+            });
+          }, 50);
         } else {
           alert('Erreur: ' + (data.error || 'Upload failed'));
         }

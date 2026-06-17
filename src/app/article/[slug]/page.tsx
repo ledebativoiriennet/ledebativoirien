@@ -308,6 +308,27 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
   contentToShow = contentToShow.replace(/http:\/\/ledebativoirien\.africanewsquick\.net/g, "https://ledebativoirien.net");
   contentToShow = contentToShow.replace(/https:\/\/ledebativoirien\.africanewsquick\.net/g, "https://ledebativoirien.net");
 
+  // === QUILL CLEANUP: Remove fixed px widths/heights that Quill injects on images
+  // e.g. <img style="width: 600px; height: 400px" ...> → <img style="width:100%;height:auto" ...>
+  contentToShow = contentToShow.replace(
+    /<img([^>]*?)style="([^"]*?)"([^>]*?)>/gi,
+    (match, before, styleStr, after) => {
+      // Remove width and height from inline style
+      const cleanStyle = styleStr
+        .replace(/width\s*:\s*[^;]+;?/gi, '')
+        .replace(/height\s*:\s*[^;]+;?/gi, '')
+        .replace(/float\s*:\s*[^;]+;?/gi, '')
+        .replace(/margin-right\s*:\s*[^;]+;?/gi, '')
+        .replace(/margin-left\s*:\s*[^;]+;?/gi, '')
+        .trim();
+      const newStyle = cleanStyle ? `style="${cleanStyle}" ` : '';
+      return `<img${before}${newStyle}${after}>`;
+    }
+  );
+  // Also remove width/height HTML attributes directly on img tags
+  contentToShow = contentToShow.replace(/<img([^>]*?)\s+width=["'][^"']*["']/gi, '<img$1');
+  contentToShow = contentToShow.replace(/<img([^>]*?)\s+height=["'][^"']*["']/gi, '<img$1');
+
   let cleanImageUrl = article.imageUrl;
   if (cleanImageUrl && cleanImageUrl.includes("ledebativoirien.africanewsquick.net")) {
     cleanImageUrl = cleanImageUrl

@@ -150,21 +150,22 @@ a:hover {
   margin: 0;
 }
 
-.article-content img {
+/* === QUILL CONTENT OVERRIDE: Neutralize inline width/float injected by Quill editor ===
+   Quill generates: <img style="width: 600px"> and <span style="font-size: 18px">
+   These MUST be overridden with max specificity. */
+.article-content img,
+.article-content img[style] {
   width: 100% !important;
   max-width: 100% !important;
   height: auto !important;
+  float: none !important;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+  margin-top: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
   border-radius: 4px;
-  margin: 1.5rem 0;
   display: block;
-}
-
-@media (max-width: 640px) {
-  .article-content img {
-    float: none !important;
-    margin-right: 0 !important;
-    margin-left: 0 !important;
-  }
+  box-sizing: border-box;
 }
 
 .article-content p {
@@ -200,9 +201,23 @@ a:hover {
   }
 }
 
-.article-content span {
+/* Neutralize Quill inline font-size/font-family/color on spans */
+.article-content span,
+.article-content span[style] {
   font-size: inherit !important;
   line-height: inherit !important;
+  font-family: inherit !important;
+  max-width: 100% !important;
+  display: inline !important;
+  box-sizing: border-box;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+/* Nuclear containment: NO element inside article-content can overflow the parent */
+.article-content * {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .article-content h2, .article-content h3, .article-content h4 {
