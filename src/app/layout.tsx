@@ -470,7 +470,8 @@ export default async function RootLayout({
             </div>
           </div>
           <div className="container" style={{ textAlign: 'center', fontSize: '0.85rem', color: '#64748b', borderTop: '1px solid #334155', paddingTop: '2rem' }}>
-            © {new Date().getFullYear()} Le Débat Ivoirien. Tous droits réservés. - Développée par <a href="https://www.cornerstoneros.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Cornerstoneros</a>
+            <div>© {new Date().getFullYear()} Le Débat Ivoirien. Tous droits réservés. - Développée par <a href="https://www.cornerstoneros.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Cornerstoneros</a></div>
+            <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', opacity: 0.7 }}>Application LDI - v1.0.0</div>
           </div>
         </footer>
 
