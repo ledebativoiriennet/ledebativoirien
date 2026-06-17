@@ -6,17 +6,17 @@ import ReactMarkdown from 'react-markdown';
 
 export default function AISearchResult({ query }: { query: string }) {
   const [hasStarted, setHasStarted] = useState(false);
-  const { messages, append, isLoading, error } = useChat();
+  const { messages, sendMessage, status, error } = useChat();
+  const isLoading = status === 'streaming' || status === 'submitted';
 
   useEffect(() => {
     if (query && !hasStarted) {
       setHasStarted(true);
-      append({
-        role: 'user',
-        content: query
+      sendMessage({
+        text: query
       });
     }
-  }, [query, append, hasStarted]);
+  }, [query, sendMessage, hasStarted]);
 
   if (error) {
     // Ne pas afficher l'erreur en plein milieu si on n'a pas de clé API, on l'affiche discrètement ou on cache le bloc.
