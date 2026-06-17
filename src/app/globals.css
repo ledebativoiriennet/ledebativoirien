@@ -180,16 +180,8 @@ a:hover {
   -webkit-hyphens: none !important;
 }
 
-/* Fix text wrapping in Quill Editor (Editions) */
-.ql-editor, .ql-editor p, .ql-editor div, .ql-editor span {
-  word-break: break-word !important;
-  overflow-wrap: break-word !important;
-  hyphens: none !important;
-  -webkit-hyphens: none !important;
-}
-
 /* Long URLs can break to avoid overflow */
-.article-content a, .ql-editor a {
+.article-content a {
   word-break: break-word !important;
   overflow-wrap: anywhere !important;
 }

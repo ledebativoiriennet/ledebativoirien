@@ -1,17 +1,15 @@
 "use client";
 
-import { useState, useRef, useMemo } from "react";
+import { useState } from "react";
+
 import { useRouter } from "next/navigation";
 import { publishArticle, searchArticlesForSelection } from "@/app/actions/admin";
 import { createCategory } from "@/app/actions/category";
 import { useEffect } from "react";
 import dynamic from "next/dynamic";
-import "react-quill-new/dist/quill.snow.css";
 import Link from "next/link";
 
-const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false }) as any;
-
-// quillModules are now defined inside the component using useMemo
+const TipTapEditor = dynamic(() => import("@/components/admin/TipTapEditor"), { ssr: false });
 
 type Category = { id: string; name: string };
 
@@ -21,7 +19,6 @@ export default function CreateArticleForm({ categories }: { categories: Category
   const [error, setError] = useState("");
   const [content, setContent] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
-  const quillRef = useRef<any>(null);
 
   // New Category State
   const [localCategories, setLocalCategories] = useState<Category[]>(categories);
@@ -133,70 +130,7 @@ export default function CreateArticleForm({ categories }: { categories: Category
     setCreatingCat(false);
   };
 
-  const imageHandler = () => {
-    const input = document.createElement('input');
-    input.setAttribute('type', 'file');
-    input.setAttribute('accept', 'image/*');
-    input.click();
-
-    input.onchange = async () => {
-      const file = input.files ? input.files[0] : null;
-      if (!file) return;
-
-      const formData = new FormData();
-      formData.append('file', file);
-
-      try {
-        const res = await fetch('/api/admin/upload-image', {
-          method: 'POST',
-          body: formData
-        });
-        const data = await res.json();
-        
-        if (data.url) {
-          const quill = quillRef.current.getEditor();
-          const range = quill.getSelection(true);
-          quill.insertEmbed(range.index, 'image', data.url);
-          // Remove any inline width/height Quill may add — images must always be responsive
-          setTimeout(() => {
-            const imgs = quillRef.current?.getEditor()?.root?.querySelectorAll('img');
-            imgs?.forEach((img: HTMLImageElement) => {
-              img.removeAttribute('width');
-              img.removeAttribute('height');
-              img.style.width = '100%';
-              img.style.maxWidth = '100%';
-              img.style.height = 'auto';
-              img.style.float = 'none';
-            });
-          }, 50);
-        } else {
-          alert('Erreur: ' + (data.error || 'Upload failed'));
-        }
-      } catch (e) {
-        console.error(e);
-        alert('Upload failed');
-      }
-    };
-  };
-
-  const modules = useMemo(() => ({
-    toolbar: {
-      container: [
-        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-        [{ 'font': [] }],
-        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-        [{ 'color': [] }, { 'background': [] }],
-        [{ 'script': 'sub'}, { 'script': 'super' }],
-        [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
-        [{ 'direction': 'rtl' }, { 'align': [] }],
-        ['link', 'image', 'video'],
-        ['clean']
-      ],
-      handlers: {
-        image: imageHandler
-      }
-    }
-  }), []);
+  // imageHandler & modules are now handled inside TipTapEditor
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -508,20 +442,15 @@ export default function CreateArticleForm({ categories }: { categories: Category
         </div>
         <div>
           <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Contenu HTML de l'article</label>
-          <div style={{ backgroundColor: 'white', borderRadius: '4px' }}>
-            {/* @ts-ignore */}
-            <ReactQuill 
-              ref={quillRef}
-              theme="snow" 
-              value={content} 
-              onChange={setContent} 
-              modules={modules}
-              style={{ height: '400px', marginBottom: '3rem' }} // Add margin bottom because quill toolbar/editor height can overlap
-            />
-          </div>
+          <TipTapEditor
+            value={content}
+            onChange={setContent}
+            placeholder="Rédigez le contenu de l'article ici..."
+            minHeight="500px"
+          />
           {/* Hidden input to pass content to FormData */}
           <input type="hidden" name="content" value={content} />
-          <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.25rem' }}>Utilisez l'éditeur pour mettre en forme votre texte, ajouter des liens ou des listes.</p>
+          <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.5rem' }}>Utilisez l&apos;éditeur pour mettre en forme votre texte, ajouter des liens, des images ou des vidéos.</p>
         </div>
 
         <div style={{ display: 'flex', gap: '2rem', marginBottom: '2rem', backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>

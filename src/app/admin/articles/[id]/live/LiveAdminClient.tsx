@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useRef, useMemo } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import "react-quill-new/dist/quill.snow.css";
 
-const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false }) as any;
+const TipTapEditor = dynamic(() => import("@/components/admin/TipTapEditor"), { ssr: false });
 
 export default function LiveAdminClient({ article, initialUpdates }: { article: any, initialUpdates: any[] }) {
   const [updates, setUpdates] = useState(initialUpdates);
@@ -14,20 +13,11 @@ export default function LiveAdminClient({ article, initialUpdates }: { article: 
   const [author, setAuthor] = useState("La Rédaction");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const quillRef = useRef<any>(null);
 
-  const modules = useMemo(() => ({
-    toolbar: [
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      ['link', 'image', 'video'],
-      ['clean']
-    ]
-  }), []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!content.trim() || content === "<p><br></p>") return;
+    if (!content.trim() || content === "<p></p>" || content === "<p><br></p>") return;
 
     setLoading(true);
     try {
@@ -97,17 +87,12 @@ export default function LiveAdminClient({ article, initialUpdates }: { article: 
           </div>
           <div style={{ marginBottom: '1rem' }}>
             <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Message</label>
-            <div style={{ backgroundColor: 'white', borderRadius: '4px' }}>
-              {/* @ts-ignore */}
-              <ReactQuill 
-                ref={quillRef}
-                theme="snow" 
-                value={content} 
-                onChange={setContent} 
-                modules={modules}
-                style={{ height: '200px', marginBottom: '3rem' }}
-              />
-            </div>
+            <TipTapEditor
+              value={content}
+              onChange={setContent}
+              placeholder="Rédigez la mise à jour live..."
+              minHeight="200px"
+            />
           </div>
           <button 
             type="submit" 
