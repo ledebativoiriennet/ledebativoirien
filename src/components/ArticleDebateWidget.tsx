@@ -28,6 +28,13 @@ export default function ArticleDebateWidget({ debate }: { debate: DebateProps })
   const agreeArgs = args.filter(a => a.type === "AGREE").sort((a, b) => b.votes - a.votes);
   const disagreeArgs = args.filter(a => a.type === "DISAGREE").sort((a, b) => b.votes - a.votes);
 
+  const totalVotes = args.reduce((sum, a) => sum + a.votes, 0);
+  const agreeVotes = agreeArgs.reduce((sum, a) => sum + a.votes, 0);
+  const disagreeVotes = disagreeArgs.reduce((sum, a) => sum + a.votes, 0);
+  
+  const agreePercentage = totalVotes > 0 ? Math.round((agreeVotes / totalVotes) * 100) : 50;
+  const disagreePercentage = totalVotes > 0 ? 100 - agreePercentage : 50;
+
   const handleVote = async (argId: string) => {
     if (!session) return alert("Vous devez être connecté pour voter.");
     if (votedArgs.has(argId)) return;
@@ -83,6 +90,21 @@ export default function ArticleDebateWidget({ debate }: { debate: DebateProps })
       <div style={{ textAlign: "center", marginBottom: "2rem" }}>
         <span style={{ fontSize: "0.8rem", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "1px", color: "var(--primary)" }}>Le Grand Débat</span>
         <h3 style={{ fontSize: "1.8rem", fontWeight: 900, marginTop: "0.5rem" }}>{debate.question}</h3>
+      </div>
+
+      {/* JAUGE DE DEBAT */}
+      <div style={{ marginBottom: "3rem", padding: "1.5rem", backgroundColor: "var(--background)", borderRadius: "12px", border: "1px solid var(--border)" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem", fontWeight: "bold" }}>
+          <span style={{ color: "#166534" }}>Pour ({agreePercentage}%)</span>
+          <span style={{ color: "#991b1b" }}>Contre ({disagreePercentage}%)</span>
+        </div>
+        <div style={{ width: "100%", height: "24px", borderRadius: "12px", display: "flex", overflow: "hidden", backgroundColor: "var(--muted)" }}>
+          <div style={{ width: `${agreePercentage}%`, backgroundColor: "#22c55e", transition: "width 0.5s ease" }} />
+          <div style={{ width: `${disagreePercentage}%`, backgroundColor: "#ef4444", transition: "width 0.5s ease" }} />
+        </div>
+        <div style={{ textAlign: "center", marginTop: "0.5rem", fontSize: "0.85rem", color: "var(--muted)" }}>
+          Basé sur {totalVotes} votes d'arguments
+        </div>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "2rem" }}>

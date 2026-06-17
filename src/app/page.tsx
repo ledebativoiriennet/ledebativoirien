@@ -41,7 +41,8 @@ export default async function Home() {
     brvmIndicators,
     trendingTags,
     caricatures,
-    audioArticlesData
+    audioArticlesData,
+    liveBlogArticle
   ] = await Promise.all([
     prisma.article.findMany({
       where: { publishedAt: { not: null, lte: new Date() } },
@@ -100,6 +101,20 @@ export default async function Home() {
         slug: true,
         imageUrl: true,
         categories: { select: { slug: true, name: true } }
+      }
+    }),
+    prisma.article.findFirst({
+      where: { isLiveBlog: true },
+      orderBy: { publishedAt: "desc" },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        liveUpdates: {
+          take: 3,
+          orderBy: { createdAt: 'desc' },
+          select: { id: true, content: true, createdAt: true, authorName: true }
+        }
       }
     })
   ]);
@@ -373,6 +388,42 @@ export default async function Home() {
 
       {/* CENTER COLUMN: Thematic Hub */}
       <div className="portal-col-center">
+
+        {/* EN DIRECT WIDGET */}
+        {liveBlogArticle && (
+          <div style={{ marginBottom: "2.5rem", backgroundColor: "white", border: "2px solid #ef4444", borderRadius: "16px", overflow: "hidden", boxShadow: "0 10px 15px -3px rgba(239, 68, 68, 0.2)" }}>
+            <div style={{ backgroundColor: "#ef4444", color: "white", padding: "0.75rem 1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                <div style={{ width: "12px", height: "12px", backgroundColor: "white", borderRadius: "50%", animation: "pulse 1.5s infinite" }} />
+                <h2 style={{ margin: 0, fontSize: "1.2rem", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.05em" }}>EN DIRECT</h2>
+              </div>
+              <Link href={`/article/${liveBlogArticle.slug}`} style={{ color: "white", fontWeight: "bold", fontSize: "0.85rem", textDecoration: "none", backgroundColor: "rgba(0,0,0,0.2)", padding: "0.4rem 0.8rem", borderRadius: "9999px" }}>Suivre →</Link>
+            </div>
+            <div style={{ padding: "1.5rem" }}>
+              <h3 style={{ fontSize: "1.4rem", fontWeight: 900, color: "var(--foreground)", marginBottom: "1rem", lineHeight: 1.2 }}>
+                <Link href={`/article/${liveBlogArticle.slug}`} style={{ color: "inherit", textDecoration: "none" }}>{liveBlogArticle.title}</Link>
+              </h3>
+              
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                {liveBlogArticle.liveUpdates && liveBlogArticle.liveUpdates.length > 0 ? (
+                  liveBlogArticle.liveUpdates.map((update: any) => (
+                    <div key={update.id} style={{ display: "flex", gap: "1rem", borderLeft: "3px solid #fca5a5", paddingLeft: "1rem" }}>
+                      <div style={{ fontSize: "0.85rem", fontWeight: 800, color: "#ef4444", flexShrink: 0, width: "50px" }}>
+                        {new Date(update.createdAt).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+                      </div>
+                      <div style={{ fontSize: "0.95rem", color: "var(--foreground)", lineHeight: 1.4 }}>
+                        <div dangerouslySetInnerHTML={{ __html: update.content.substring(0, 150) + (update.content.length > 150 ? '...' : '') }} />
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p style={{ color: "var(--muted)", fontStyle: "italic", fontSize: "0.9rem" }}>Le direct va bientôt commencer...</p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* New Premium Hero */}
         <div style={{ marginBottom: "2.5rem" }}>
           <Link href={`/article/${mainFeatured.slug}`} style={{ textDecoration: 'none' }}>

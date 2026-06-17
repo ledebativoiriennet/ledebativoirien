@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import MarketSparkline from "@/components/MarketSparkline";
+import MarketDetailedChart from "@/components/MarketDetailedChart";
 import BrvmTable from "@/components/BrvmTable";
 import GlobalMarketSection from "@/components/GlobalMarketSection";
 import CompanyMarketExplorer from "@/components/CompanyMarketExplorer";
@@ -77,6 +78,19 @@ export default async function EconomieDashboardPage() {
               )}
             </div>
           </section>
+
+          {/* BRVM COMPOSITE DETAILED CHART */}
+          {brvmIndices.length > 0 && brvmIndices[0].history.length > 0 && (
+            <section style={{ marginBottom: '4rem' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '1rem' }}>Évolution {brvmIndices[0].label} (Derniers jours)</h3>
+              <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                <MarketDetailedChart 
+                  data={brvmIndices[0].history.map(h => ({ date: h.date.toISOString(), value: h.value }))} 
+                  color={brvmIndices[0].trend === 'UP' ? '#22c55e' : '#ef4444'} 
+                />
+              </div>
+            </section>
+          )}
 
           {/* AFRICAN MARKETS LIVE */}
           <GlobalMarketSection type="africa" />

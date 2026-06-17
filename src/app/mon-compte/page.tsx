@@ -91,6 +91,15 @@ export default async function DashboardAbonne() {
             <Link href="/mon-compte/favoris" className="btn btn-secondary" style={{ display: 'block', width: '100%', padding: '0.75rem' }}>
               📑 Mes Favoris
             </Link>
+            <Link href="/mon-compte/surlignages" className="btn btn-secondary" style={{ display: 'block', width: '100%', padding: '0.75rem' }}>
+              🖍️ Mes Surlignages
+            </Link>
+            <Link href="/mon-compte/cadeaux" className="btn btn-secondary" style={{ display: 'block', width: '100%', padding: '0.75rem' }}>
+              🎁 Mes Liens Cadeaux
+            </Link>
+            <Link href="/mon-compte/abonnements" className="btn btn-secondary" style={{ display: 'block', width: '100%', padding: '0.75rem' }}>
+              🔔 Mes Alertes & Abonnements
+            </Link>
           </div>
         </div>
 

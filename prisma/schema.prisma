@@ -35,6 +35,8 @@ model User {
   company             Company?           @relation(fields: [companyId], references: [id])
   debateArguments     DebateArgument[]
   argumentVotes       ArgumentVote[]
+  quizAttempts        QuizAttempt[]
+  newsletterSub       NewsletterSubscriber?
 }
 
 model Subscription {
@@ -117,6 +119,7 @@ model Article {
   @@index([publishedAt(sort: Desc)])
   @@index([isConfidentiel])
   @@index([isAudioAvailable])
+  @@index([authorId])
 }
 
 model Poll {
@@ -449,8 +452,10 @@ model Quote {
 model NewsletterSubscriber {
   id        String   @id @default(cuid())
   email     String   @unique
+  userId    String?  @unique
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
 
 model AuthorSubscriber {
@@ -639,8 +644,22 @@ model ArticleQuiz {
   id        String   @id @default(cuid())
   articleId String   @unique
   questions QuizQuestion[]
+  attempts  QuizAttempt[]
   article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+}
+
+model QuizAttempt {
+  id        String   @id @default(cuid())
+  userId    String
+  quizId    String
+  score     Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz      ArticleQuiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([quizId])
 }
 
 model QuizQuestion {
@@ -695,4 +714,6 @@ model LiveUpdate {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   article    Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@index([articleId, createdAt(sort: Desc)])
 }
