@@ -336,8 +336,27 @@ a:hover {
 
 @media (max-width: 768px) {
   .main-header {
-    flex-direction: column;
-    text-align: center;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    text-align: left;
+    padding: 0.5rem 0;
+  }
+  .logo-container img {
+    height: 40px !important;
+  }
+  .header-actions {
+    gap: 0.5rem;
+    justify-content: flex-end;
+  }
+}
+
+.hidden-on-mobile {
+  display: flex;
+}
+
+@media (max-width: 768px) {
+  .hidden-on-mobile {
+    display: none !important;
   }
 }
 
@@ -962,9 +981,14 @@ body.zen-mode-active.dark .article-content p {
 @media (max-width: 768px) {
   .financial-ticker-scroll {
     gap: 1rem;
+    padding: 0.25rem 0;
   }
   .financial-ticker-item {
-    min-width: 140px;
+    min-width: 130px;
+    padding-right: 0.5rem;
+  }
+  .financial-ticker-item [style*="font-size: 0.75rem"] {
+    font-size: 0.65rem !important;
   }
 }
 /* Dashboard Responsive Utilities */

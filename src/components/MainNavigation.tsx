@@ -22,9 +22,10 @@ interface Category {
 
 interface MainNavigationProps {
   categories: Category[];
+  isAuthenticated?: boolean;
 }
 
-export default function MainNavigation({ categories }: MainNavigationProps) {
+export default function MainNavigation({ categories, isAuthenticated = false }: MainNavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const pathname = usePathname();
@@ -42,13 +43,32 @@ export default function MainNavigation({ categories }: MainNavigationProps) {
   return (
     <div className="main-nav-wrapper" onMouseLeave={() => setActiveCategory(null)}>
       {/* Mobile Toggle Button */}
-      <div className="mobile-menu-toggle" onClick={toggleMenu} style={{ padding: '0.75rem 1rem', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontWeight: 'bold' }}>
-        <span>MENU PRINCIPAL</span>
-        <span style={{ fontSize: '1.5rem', lineHeight: 1 }}>{isOpen ? '✕' : '☰'}</span>
+      <div className="mobile-menu-toggle" onClick={toggleMenu} style={{ padding: '0.75rem 1rem', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontWeight: 'bold', gap: '0.5rem', backgroundColor: 'var(--primary)' }}>
+        <span style={{ fontSize: '1.2rem', lineHeight: 1 }}>{isOpen ? '✕' : '☰'}</span>
+        <span>MENU</span>
       </div>
 
       {/* Navigation Links */}
       <nav className={`nav ${isOpen ? 'nav-open' : 'nav-closed'}`}>
+        {/* Mobile only items */}
+        <div className="mobile-only-items" style={{ width: '100%', padding: '1rem', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <form action="/search" method="GET" style={{ display: 'flex', position: 'relative', width: '100%' }}>
+            <input 
+              name="q" 
+              type="text" 
+              placeholder="Rechercher..." 
+              style={{ padding: '0.5rem', width: '100%', paddingRight: '2rem', borderRadius: '4px', border: 'none' }} 
+            />
+            <button type="submit" style={{ position: 'absolute', right: '0.5rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer' }}>🔍</button>
+          </form>
+          {isAuthenticated && (
+            <Link href="/marketplace" style={{ backgroundColor: '#ffeb3b', color: '#111', padding: '0.5rem', borderRadius: '4px', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textDecoration: 'none', fontSize: '0.85rem' }}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              KIOSQUE PDF
+            </Link>
+          )}
+        </div>
+
         <Link href="/" className="nav-link" style={{ fontWeight: 'bold', color: 'var(--primary)' }} onMouseEnter={() => setActiveCategory(null)}>
           Accueil
         </Link>
@@ -136,6 +156,10 @@ export default function MainNavigation({ categories }: MainNavigationProps) {
 
         .nav-link:hover, .nav-item:hover .nav-link {
           color: var(--primary);
+        }
+
+        .mobile-only-items {
+          display: none !important;
         }
 
         /* Mega Menu Styles */
@@ -281,6 +305,10 @@ export default function MainNavigation({ categories }: MainNavigationProps) {
             max-height: calc(100vh - 120px);
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+          }
+
+          .mobile-only-items {
+            display: flex !important;
           }
 
           .nav-link {
