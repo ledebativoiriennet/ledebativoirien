@@ -167,6 +167,17 @@ export default async function RootLayout({
               filter: blur(${siteSettings?.siteSkinBlur || 0}px) brightness(${siteSettings?.siteSkinBrightness ?? 100}%);
               z-index: -1;
             }
+            @media (max-width: 768px) {
+              body {
+                background-color: var(--background) !important;
+              }
+              body::before {
+                display: none !important;
+              }
+              .site-wrapper {
+                background-color: var(--background) !important;
+              }
+            }
           ` }} />
         )}
         <Script id="pwa-sw-register" strategy="lazyOnload">
@@ -203,7 +214,7 @@ export default async function RootLayout({
             <span style={{ display: 'none' }}>{skinAd.title}</span>
           </a>
         )}
-        <div style={{ position: 'relative', zIndex: 1, backgroundColor: skinAd ? 'transparent' : 'var(--background)', overflowX: 'hidden', width: '100%' }}>
+        <div className="site-wrapper" style={{ position: 'relative', zIndex: 1, backgroundColor: skinAd ? 'transparent' : 'var(--background)', overflowX: 'hidden', width: '100%' }}>
         <CookieConsentPopup />
         <PushNotificationPrompt />
         {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
