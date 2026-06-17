@@ -37,7 +37,6 @@ html, body {
   font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
   background-color: var(--background);
   color: var(--foreground);
-  overflow-x: hidden;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -817,23 +816,6 @@ body.zen-mode-active.dark .article-content p {
   color: #e2e8f0 !important;
 }
 
-/* ARTICLE CONTENT STYLES */
-.article-content img {
-  float: left;
-  margin-right: 1.5rem;
-  margin-bottom: 1rem;
-  max-width: 50%;
-  border-radius: var(--radius);
-}
-
-@media (max-width: 640px) {
-  .article-content img {
-    float: none;
-    margin-right: 0;
-    max-width: 100%;
-    width: 100%;
-  }
-}
 
 .article-content iframe,
 .article-content video {

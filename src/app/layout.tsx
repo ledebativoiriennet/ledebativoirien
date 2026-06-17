@@ -214,7 +214,7 @@ export default async function RootLayout({
             <span style={{ display: 'none' }}>{skinAd.title}</span>
           </a>
         )}
-        <div className="site-wrapper" style={{ position: 'relative', zIndex: 1, backgroundColor: skinAd ? 'transparent' : 'var(--background)', overflowX: 'hidden', width: '100%' }}>
+        <div className="site-wrapper" style={{ position: 'relative', zIndex: 1, backgroundColor: skinAd ? 'transparent' : 'var(--background)', width: '100%' }}>
         <CookieConsentPopup />
         <PushNotificationPrompt />
         {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
