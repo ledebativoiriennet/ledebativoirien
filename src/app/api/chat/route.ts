@@ -12,7 +12,7 @@ export async function POST(req: Request) {
 
     const { messages } = await req.json();
     const latestMessage = messages[messages.length - 1];
-    const query = latestMessage.content;
+    const query = latestMessage.content || (latestMessage.parts && latestMessage.parts.filter((p: any) => p.type === 'text').map((p: any) => p.text).join('')) || '';
 
     // Fetch relevant articles from Prisma (simple keyword search for context)
     const articles = await prisma.article.findMany({

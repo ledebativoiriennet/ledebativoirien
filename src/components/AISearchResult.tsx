@@ -59,7 +59,7 @@ export default function AISearchResult({ query }: { query: string }) {
               a: ({ node, ...props }) => <a {...props} style={{ color: 'var(--primary)', textDecoration: 'underline', fontWeight: 600 }} />
             }}
           >
-            {assistantMessage.content}
+            {(assistantMessage as any).content || (assistantMessage.parts as any[])?.filter(p => p.type === 'text').map(p => p.text).join('') || ''}
           </ReactMarkdown>
         ) : (
           <p style={{ color: '#94a3b8', fontStyle: 'italic', margin: 0 }}>Lecture des articles et génération de la réponse...</p>
