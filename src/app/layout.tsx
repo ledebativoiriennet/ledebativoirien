@@ -21,6 +21,7 @@ import WorldCupTicker from "@/components/WorldCupTicker";
 import { getMatchesAndSync } from "@/lib/sports";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
 import LiveStreamBadge from "@/components/LiveStreamBadge";
+import MobileStories from "@/components/MobileStories";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -278,17 +279,31 @@ export default async function RootLayout({
             </div>
 
             {/* BREAKING NEWS */}
-            <div style={{ backgroundColor: 'var(--primary)', color: 'white', height: '40px', overflow: 'hidden' }}>
-              <div className="container" style={{ display: 'flex', alignItems: 'center', gap: '1rem', height: '100%' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0, zIndex: 1 }}>
-                  <div style={{ width: '22px', height: '22px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: 'white', animation: 'pulse 2s infinite' }}></div>
+            {breakingNews.length > 0 && (
+              <>
+                {/* Desktop Marquee */}
+                <div className="hidden-on-mobile" style={{ backgroundColor: 'var(--primary)', color: 'white', height: '40px', overflow: 'hidden' }}>
+                  <div className="container" style={{ display: 'flex', alignItems: 'center', gap: '1rem', height: '100%' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0, zIndex: 1 }}>
+                      <div style={{ width: '22px', height: '22px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: 'white', animation: 'pulse 2s infinite' }}></div>
+                      </div>
+                      <span style={{ fontWeight: 900, fontSize: '0.9rem', letterSpacing: '0.5px' }}>BREAKING NEWS</span>
+                    </div>
+                    <div dangerouslySetInnerHTML={{ __html: `<marquee scrollamount="5" style="font-weight: 700; font-size: 0.9rem; width: 100%;">${breakingText}</marquee>` }} style={{ flex: 1, display: 'flex', alignItems: 'center' }} />
                   </div>
-                  <span style={{ fontWeight: 900, fontSize: '0.9rem', letterSpacing: '0.5px' }}>BREAKING NEWS</span>
                 </div>
-                <div dangerouslySetInnerHTML={{ __html: `<marquee scrollamount="5" style="font-weight: 700; font-size: 0.9rem; width: 100%;">${breakingText}</marquee>` }} style={{ flex: 1, display: 'flex', alignItems: 'center' }} />
-              </div>
-            </div>
+                {/* Mobile Stories */}
+                <div className="mobile-only-stories" style={{ display: 'none' }}>
+                  <MobileStories stories={breakingNews} />
+                </div>
+                <style dangerouslySetInnerHTML={{ __html: `
+                  @media (max-width: 768px) {
+                    .mobile-only-stories { display: block !important; }
+                  }
+                ` }} />
+              </>
+            )}
           </div>
           
           {/* Indicators Strip - Abidjan.net Style */}

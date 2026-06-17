@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import GenerateNewsletterButton from "@/components/admin/GenerateNewsletterButton";
 
 export default async function NewsletterAdminPage() {
   const session = await getServerSession(authOptions);
@@ -87,6 +88,8 @@ export default async function NewsletterAdminPage() {
           <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.5rem' }}>Total cumulé des e-mails expédiés</div>
         </div>
       </div>
+
+      <GenerateNewsletterButton />
 
       {/* Main Content Layout */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '2rem' }}>

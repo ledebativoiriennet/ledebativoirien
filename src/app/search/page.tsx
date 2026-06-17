@@ -4,6 +4,7 @@ import { Metadata } from "next";
 import { headers } from "next/headers";
 import crypto from "crypto";
 import SearchResultList from "@/components/SearchResultList";
+import AISearchResult from "@/components/AISearchResult";
 
 export const metadata: Metadata = {
   title: "Résultats de recherche - Le Débat Ivoirien",
@@ -70,6 +71,8 @@ export default async function SearchPage({
         Résultats pour : "{query}"
       </h1>
       
+      <AISearchResult query={query} />
+
       <p style={{ marginBottom: '2rem', color: 'var(--muted)' }}>
         {articles.length} {articles.length > 1 ? 'articles trouvés' : 'article trouvé'}
       </p>
