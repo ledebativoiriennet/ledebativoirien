@@ -94,6 +94,8 @@ a:hover {
 .portal-col-center {
   width: 100%;
   max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
   box-sizing: border-box;
 }
 
@@ -104,6 +106,8 @@ a:hover {
   padding: 1rem;
   width: 100%;
   max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
   box-sizing: border-box;
 }
 
@@ -143,6 +147,7 @@ a:hover {
 .article-content {
   word-break: break-word !important;
   overflow-wrap: break-word !important;
+  overflow-x: hidden;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
@@ -188,7 +193,7 @@ a:hover {
 
 /* Long URLs can break to avoid overflow */
 .article-content a, .ql-editor a {
-  word-break: break-all !important;
+  word-break: break-word !important;
   overflow-wrap: anywhere !important;
 }
 
