@@ -116,7 +116,7 @@ export default function MobileStories({ stories }: { stories: Story[] }) {
                 <div style={{
                   height: '100%',
                   backgroundColor: 'white',
-                  width: i < activeIndex ? '100%' : i === activeIndex ? \`\${progress}%\` : '0%',
+                  width: i < activeIndex ? '100%' : i === activeIndex ? `${progress}%` : '0%',
                   transition: i === activeIndex ? 'width 50ms linear' : 'none'
                 }} />
               </div>
