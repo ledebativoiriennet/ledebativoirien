@@ -94,7 +94,6 @@ a:hover {
 .portal-col-center {
   width: 100%;
   max-width: 100%;
-  overflow: hidden;
   box-sizing: border-box;
 }
 
@@ -103,7 +102,6 @@ a:hover {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 1rem;
-  overflow: hidden;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
@@ -143,10 +141,8 @@ a:hover {
 }
 
 .article-content {
-  word-break: normal !important;
+  word-break: break-word !important;
   overflow-wrap: break-word !important;
-  overflow-x: hidden;
-  overflow-y: visible;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
@@ -176,7 +172,7 @@ a:hover {
   margin-bottom: 1.5rem !important;
   color: var(--foreground);
   text-align: left !important;
-  word-break: normal !important;
+  word-break: break-word !important;
   overflow-wrap: break-word !important;
   hyphens: none !important;
   -webkit-hyphens: none !important;
@@ -184,7 +180,7 @@ a:hover {
 
 /* Fix text wrapping in Quill Editor (Editions) */
 .ql-editor, .ql-editor p, .ql-editor div, .ql-editor span {
-  word-break: normal !important;
+  word-break: break-word !important;
   overflow-wrap: break-word !important;
   hyphens: none !important;
   -webkit-hyphens: none !important;
@@ -192,7 +188,7 @@ a:hover {
 
 /* Long URLs can break to avoid overflow */
 .article-content a, .ql-editor a {
-  word-break: normal !important;
+  word-break: break-all !important;
   overflow-wrap: anywhere !important;
 }
 
@@ -227,18 +223,35 @@ a:hover {
   line-height: 1.6;
 }
 
-/* Force Table & Iframe Responsiveness */
+/* Force Table & Iframe & Ads Responsiveness */
 .article-content table {
   display: block;
   width: 100% !important;
+  max-width: 100%;
   overflow-x: auto;
   border-collapse: collapse;
+  word-break: normal !important; /* Keep tables legible, allow scroll */
 }
 
 .article-content iframe {
   width: 100% !important;
+  max-width: 100% !important;
   height: auto !important;
   aspect-ratio: 16/9;
+}
+
+ins.adsbygoogle, .ad-slot, .ad-banner {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  box-sizing: border-box;
+  display: block;
+}
+
+pre, code {
+  white-space: pre-wrap !important;
+  word-break: break-all !important;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .article-content li {
@@ -340,9 +353,14 @@ a:hover {
     flex-wrap: nowrap;
     text-align: left;
     padding: 0.5rem 0;
+    overflow-x: auto;
+  }
+  .logo-container {
+    flex-shrink: 0;
   }
   .logo-container img {
     height: 40px !important;
+    width: auto !important;
   }
   .header-actions {
     gap: 0.5rem;
