@@ -41,7 +41,7 @@ export default function MarketDetailedChart({ data, color = "#2563eb" }: MarketD
           />
           <Tooltip 
             contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" }} 
-            formatter={(value: number) => [value.toLocaleString("fr-FR"), "Valeur"]}
+            formatter={(value: any) => [Number(value).toLocaleString("fr-FR"), "Valeur"]}
           />
           <Line 
             type="monotone" 

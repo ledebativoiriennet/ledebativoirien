@@ -45,8 +45,9 @@ export default async function CadeauxPage() {
         {user.giftLinks.length > 0 ? (
           user.giftLinks.map(gift => {
             const isExpired = new Date(gift.expiresAt) < new Date();
-            const statusColor = isExpired ? 'var(--muted)' : (gift.isUsed ? '#10b981' : 'var(--primary)');
-            const statusText = isExpired ? 'Expiré' : (gift.isUsed ? 'Utilisé' : 'Actif');
+            const isUsed = gift.usedCount >= gift.maxUses;
+            const statusColor = isExpired ? 'var(--muted)' : (isUsed ? '#10b981' : 'var(--primary)');
+            const statusText = isExpired ? 'Expiré' : (isUsed ? 'Utilisé' : 'Actif');
 
             return (
               <div key={gift.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'var(--card-bg)', border: `1px solid var(--border)`, borderLeft: `4px solid ${statusColor}`, borderRadius: 'var(--radius)', padding: '1.5rem' }}>
@@ -60,14 +61,14 @@ export default async function CadeauxPage() {
                     <span>Créé le : {new Date(gift.createdAt).toLocaleDateString("fr-FR")}</span>
                     <span>Expire le : {new Date(gift.expiresAt).toLocaleDateString("fr-FR")}</span>
                   </div>
-                  {!isExpired && !gift.isUsed && (
+                  {!isExpired && !isUsed && (
                      <div style={{ marginTop: '1rem', padding: '0.5rem', backgroundColor: 'var(--background)', border: '1px solid var(--border)', borderRadius: '4px', fontSize: '0.85rem', userSelect: 'all' }}>
                         {process.env.NEXT_PUBLIC_APP_URL || 'https://ledebativoirien.net'}/article/{gift.article.slug}?gift={gift.token}
                      </div>
                   )}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem' }}>
-                   <span style={{ padding: '0.3rem 0.8rem', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 'bold', backgroundColor: isExpired ? '#f1f5f9' : (gift.isUsed ? '#ecfdf5' : '#eff6ff'), color: statusColor }}>
+                   <span style={{ padding: '0.3rem 0.8rem', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 'bold', backgroundColor: isExpired ? '#f1f5f9' : (isUsed ? '#ecfdf5' : '#eff6ff'), color: statusColor }}>
                      {statusText}
                    </span>
                 </div>

@@ -43,7 +43,7 @@ export default async function SurlignagesPage() {
           user.highlights.map(highlight => (
             <div key={highlight.id} style={{ backgroundColor: 'var(--card-bg)', border: '1px solid var(--border)', borderLeft: '4px solid var(--primary)', borderRadius: 'var(--radius)', padding: '2rem' }}>
               <blockquote style={{ fontSize: '1.2rem', fontStyle: 'italic', margin: '0 0 1.5rem 0', color: 'var(--foreground)', lineHeight: 1.6 }}>
-                "{highlight.content}"
+                "{highlight.text}"
               </blockquote>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
