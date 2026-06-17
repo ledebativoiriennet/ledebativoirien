@@ -3,9 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { createAd, updateAdStatus, deleteAd } from "@/app/actions/ads";
+import { updateSiteSettings } from "@/app/actions/content";
 
-export default function AdsClient({ initialAds }: { initialAds: any[] }) {
+export default function AdsClient({ initialAds, siteSettings }: { initialAds: any[], siteSettings?: any }) {
   const [loading, setLoading] = useState(false);
+  const [loadingSkin, setLoadingSkin] = useState(false);
 
   const slots = [
     { id: 'HOME_TOP', label: 'Accueil - Haut' },
@@ -88,8 +90,61 @@ export default function AdsClient({ initialAds }: { initialAds: any[] }) {
         </form>
       </div>
 
+      {/* Configuration Habillage (si sélectionné) */}
+      <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', alignSelf: 'start', gridColumn: '1 / -1' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+          <h2 style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#0f172a', margin: 0 }}>Options de l'Habillage de Site (Arrière-plan)</h2>
+        </div>
+        <form onSubmit={async (e) => {
+          e.preventDefault();
+          setLoadingSkin(true);
+          const formData = new FormData(e.currentTarget);
+          const res = await updateSiteSettings({
+            siteSkinBlur: parseInt(formData.get("siteSkinBlur") as string || "0"),
+            siteSkinBrightness: parseInt(formData.get("siteSkinBrightness") as string || "100"),
+            siteSkinAttachment: formData.get("siteSkinAttachment") as string
+          });
+          if (res?.success) alert("Paramètres d'habillage mis à jour !");
+          else alert("Erreur lors de la mise à jour");
+          setLoadingSkin(false);
+        }} style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+          
+          <div style={{ flex: '1 1 200px' }}>
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>
+              Flou de l'arrière-plan (px)
+            </label>
+            <input type="range" name="siteSkinBlur" min="0" max="50" defaultValue={siteSettings?.siteSkinBlur ?? 0} style={{ width: '100%', marginBottom: '0.5rem' }} onInput={(e) => document.getElementById('adsBlurVal')!.innerText = e.currentTarget.value + 'px'} />
+            <div style={{ fontSize: '0.8rem', color: '#64748b' }}><span id="adsBlurVal" style={{ fontWeight: 'bold' }}>{siteSettings?.siteSkinBlur ?? 0}px</span></div>
+          </div>
+          
+          <div style={{ flex: '1 1 200px' }}>
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>
+              Clarté / Luminosité (%)
+            </label>
+            <input type="range" name="siteSkinBrightness" min="0" max="200" defaultValue={siteSettings?.siteSkinBrightness ?? 100} style={{ width: '100%', marginBottom: '0.5rem' }} onInput={(e) => document.getElementById('adsBrightVal')!.innerText = e.currentTarget.value + '%'} />
+            <div style={{ fontSize: '0.8rem', color: '#64748b' }}><span id="adsBrightVal" style={{ fontWeight: 'bold' }}>{siteSettings?.siteSkinBrightness ?? 100}%</span></div>
+          </div>
+
+          <div style={{ flex: '1 1 250px' }}>
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>
+              Mouvement
+            </label>
+            <select name="siteSkinAttachment" defaultValue={siteSettings?.siteSkinAttachment ?? 'fixed'} style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: 'white' }}>
+              <option value="fixed">Fixe (Reste en place)</option>
+              <option value="scroll">Défilant (Scrolle avec le contenu)</option>
+            </select>
+          </div>
+
+          <div style={{ flex: '1 1 100%', display: 'flex', justifyContent: 'flex-end' }}>
+            <button type="submit" disabled={loadingSkin} style={{ padding: '0.75rem 1.5rem', backgroundColor: '#10b981', color: 'white', fontWeight: 'bold', borderRadius: '4px', border: 'none', cursor: loadingSkin ? 'not-allowed' : 'pointer' }}>
+              {loadingSkin ? 'Enregistrement...' : 'Mettre à jour l\'habillage'}
+            </button>
+          </div>
+        </form>
+      </div>
+
       {/* Liste des publicités */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', gridColumn: '1 / -1' }}>
         {initialAds.map(ad => (
           <div key={ad.id} style={{ backgroundColor: 'white', padding: '1rem', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
             <img src={ad.imageUrl} alt={ad.title} style={{ width: '120px', height: '80px', objectFit: 'cover', borderRadius: '4px', border: '1px solid #e2e8f0' }} />

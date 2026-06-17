@@ -152,9 +152,6 @@ export default async function RootLayout({
         ></script>
         {skinAd && (
           <style dangerouslySetInnerHTML={{ __html: `
-            body {
-              background-color: #000;
-            }
             body::before {
               content: "";
               position: ${siteSettings?.siteSkinAttachment === 'scroll' ? 'absolute' : 'fixed'};
