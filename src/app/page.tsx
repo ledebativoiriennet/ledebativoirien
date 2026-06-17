@@ -19,6 +19,7 @@ import WhatsAppAd from "@/components/WhatsAppAd";
 import SubscriptionBanner from "@/components/SubscriptionBanner";
 import WebTVModule from "@/components/WebTVModule";
 import PromoLucarne from "@/components/promo/PromoLucarne";
+import FlashNewsStoryViewer from "@/components/FlashNewsStoryViewer";
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -229,6 +230,8 @@ export default async function Home() {
         </div>
       )}
     </div>
+
+    <FlashNewsStoryViewer flashNews={flashNewsItems} />
 
     <div className="portal-layout">
       {/* LEFT COLUMN: Titrologie & Services */}

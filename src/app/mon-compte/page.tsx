@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import BadgeShowcase from "@/components/BadgeShowcase";
 
 export default async function DashboardAbonne() {
   const session = await getServerSession(authOptions);
@@ -106,6 +107,9 @@ export default async function DashboardAbonne() {
         {/* Colonne Principale : Abonnements & Historique */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
           
+          {/* Trophées / Badges */}
+          <BadgeShowcase badgesStr={user.badges} />
+
           {/* Statistiques Rapides */}
           <div>
             <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '1rem', borderBottom: '2px solid var(--primary)', paddingBottom: '0.5rem' }}>Mes Statistiques</h3>

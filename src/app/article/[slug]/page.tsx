@@ -399,7 +399,7 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "1.5rem" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
-              <ArticleAudioPlayer title={article.title} content={contentToShow} />
+              <ArticleAudioPlayer title={article.title} content={contentToShow} audioUrl={article.audioUrl} />
               <TextSizeAdjuster />
               <ZenModeToggle />
               <OfflineSaveButton article={{
@@ -504,6 +504,20 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
           )}
 
           <AdBanner slot="ARTICLE_MIDDLE" />
+
+          {/* En Bref (IA) */}
+          {article.aiSummary && (
+            <div style={{ backgroundColor: '#faf5ff', padding: '1.5rem', borderRadius: '12px', marginBottom: '2rem', border: '1px solid #f3e8ff', position: 'relative' }}>
+              <div style={{ position: 'absolute', top: '-12px', left: '20px', backgroundColor: '#a21caf', color: 'white', padding: '0.2rem 0.8rem', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                ✨ En Bref (IA)
+              </div>
+              <ul style={{ margin: 0, padding: '1rem 0 0 1.5rem', color: '#4c1d95', fontSize: '1.05rem', lineHeight: 1.6 }}>
+                {article.aiSummary.split('\n').filter(line => line.trim().length > 0).map((line, idx) => (
+                  <li key={idx} style={{ marginBottom: '0.5rem' }}>{line.replace(/^- /, '')}</li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* Chapô (Extrait) */}
           {article.excerpt && (

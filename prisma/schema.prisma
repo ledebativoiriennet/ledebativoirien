@@ -37,6 +37,7 @@ model User {
   argumentVotes       ArgumentVote[]
   quizAttempts        QuizAttempt[]
   newsletterSub       NewsletterSubscriber?
+  badges              String?            // JSON stringified array of badge identifiers
 }
 
 model Subscription {
@@ -109,6 +110,9 @@ model Article {
   bookmarks        Bookmark[]
   giftLinks        GiftLink[]
   highlights       Highlight[]
+  aiSummary        String?
+  audioUrl         String?
+  region           String?
   quiz              ArticleQuiz?
   polls            Poll[]
   debate           Debate?
@@ -225,6 +229,7 @@ model FlashNews {
   content   String
   link      String?
   source    String?
+  region    String?
   createdAt DateTime @default(now())
 }
 

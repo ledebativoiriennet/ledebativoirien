@@ -5,30 +5,59 @@ import React, { useState, useEffect, useRef } from 'react';
 interface Props {
   title: string;
   content: string;
+  audioUrl?: string | null;
 }
 
-export default function ArticleAudioPlayer({ title, content }: Props) {
+export default function ArticleAudioPlayer({ title, content, audioUrl }: Props) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [isSupported, setIsSupported] = useState(true);
   const synthRef = useRef<SpeechSynthesis | null>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      synthRef.current = window.speechSynthesis;
+    if (audioUrl) {
+      audioRef.current = new Audio(audioUrl);
+      audioRef.current.onended = () => {
+        setIsPlaying(false);
+        setIsPaused(false);
+      };
+      setIsSupported(true);
     } else {
-      setIsSupported(false);
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        synthRef.current = window.speechSynthesis;
+      } else {
+        setIsSupported(false);
+      }
     }
 
     return () => {
       if (synthRef.current) {
         synthRef.current.cancel();
       }
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
     };
-  }, []);
+  }, [audioUrl]);
 
   const handlePlayPause = () => {
+    if (audioUrl && audioRef.current) {
+      if (isPlaying && !isPaused) {
+        audioRef.current.pause();
+        setIsPaused(true);
+      } else if (isPlaying && isPaused) {
+        audioRef.current.play();
+        setIsPaused(false);
+      } else {
+        audioRef.current.play();
+        setIsPlaying(true);
+        setIsPaused(false);
+      }
+      return;
+    }
+
     if (!synthRef.current) return;
 
     if (isPlaying && !isPaused) {
@@ -58,6 +87,13 @@ export default function ArticleAudioPlayer({ title, content }: Props) {
   };
 
   const handleStop = () => {
+    if (audioUrl && audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setIsPlaying(false);
+      setIsPaused(false);
+      return;
+    }
     if (synthRef.current) {
       synthRef.current.cancel();
       setIsPlaying(false);
@@ -94,7 +130,9 @@ export default function ArticleAudioPlayer({ title, content }: Props) {
         <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--foreground)' }}>
           {isPlaying && !isPaused ? 'Lecture en cours...' : 'Écouter l\'article'}
         </span>
-        <span style={{ fontSize: '0.65rem', color: 'var(--muted)', textTransform: 'uppercase' }}>Généré automatiquement</span>
+        <span style={{ fontSize: '0.65rem', color: 'var(--muted)', textTransform: 'uppercase' }}>
+          {audioUrl ? 'Piste Audio Officielle' : 'Généré automatiquement'}
+        </span>
       </div>
     </div>
   );

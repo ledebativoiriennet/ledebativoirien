@@ -40,6 +40,9 @@ export async function publishArticle(formData: FormData) {
   const imageFile = formData.get("image") as File | null;
   const categoryIds = formData.getAll("categories") as string[];
   const tagsString = formData.get("tags") as string || "";
+  const aiSummary = formData.get("aiSummary") as string || null;
+  const audioUrl = formData.get("audioUrl") as string || null;
+  const region = formData.get("region") as string || null;
 
   if (!title || !content) {
     return { success: false, error: "Le titre et le contenu sont obligatoires." };
@@ -113,6 +116,9 @@ export async function publishArticle(formData: FormData) {
         videoUrl,
         videoFile: savedVideoPath,
         videoCaption,
+        aiSummary,
+        audioUrl,
+        region,
         isPremium,
         isAudioAvailable,
         isConfidentiel,
@@ -207,6 +213,9 @@ export async function updateArticle(articleId: string, formData: FormData) {
   const tagsString = formData.get("tags") as string || "";
   const imageCaption = formData.get("imageCaption") as string || null;
   const videoCaption = formData.get("videoCaption") as string || null;
+  const aiSummary = formData.get("aiSummary") as string || null;
+  const audioUrl = formData.get("audioUrl") as string || null;
+  const region = formData.get("region") as string || null;
 
   if (!title || !content) {
     return { success: false, error: "Le titre et le contenu sont obligatoires." };
@@ -248,6 +257,9 @@ export async function updateArticle(articleId: string, formData: FormData) {
       videoUrl,
       videoFile: savedVideoPath,
       videoCaption: videoCaption || null,
+      aiSummary,
+      audioUrl,
+      region,
       isPremium,
       isAudioAvailable,
       isConfidentiel,

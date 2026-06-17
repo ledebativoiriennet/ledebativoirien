@@ -252,6 +252,40 @@ export default function EditArticleForm({ article, categories }: { article: any,
           </div>
         </div>
 
+        <div style={{ backgroundColor: '#fdf4ff', padding: '1.5rem', borderRadius: '8px', border: '1px solid #fbcfe8' }}>
+          <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.1rem', color: '#a21caf', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            🤖 Innovations IA & Audio
+          </h3>
+          <div style={{ display: 'grid', gap: '1.5rem' }}>
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                <label style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>Résumé Intelligent (IA)</label>
+                <button type="button" onClick={() => alert("Simulation: Résumé généré par l'IA !")} style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem', backgroundColor: '#d946ef', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Générer par IA</button>
+              </div>
+              <textarea 
+                name="aiSummary" 
+                defaultValue={article.aiSummary || ""}
+                rows={3}
+                placeholder="En Bref : 3 points clés générés par IA..."
+                style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '0.9rem' }}
+              />
+            </div>
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                <label style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>Lien Audio (Génération vocale)</label>
+                <button type="button" onClick={() => alert("Simulation: Piste audio générée ! /api/audio/mock.mp3")} style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem', backgroundColor: '#a21caf', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Créer Piste Audio</button>
+              </div>
+              <input 
+                type="url" 
+                name="audioUrl" 
+                defaultValue={article.audioUrl || ""}
+                placeholder="https://.../audio.mp3"
+                style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '0.9rem' }}
+              />
+            </div>
+          </div>
+        </div>
+
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
           <div>
             <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Date de publication (Planning)</label>
@@ -319,16 +353,31 @@ export default function EditArticleForm({ article, categories }: { article: any,
           </select>
         </div>
 
-        <div>
-          <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Tags / Mots-clés (séparés par des virgules)</label>
-          <input 
-            type="text" 
-            name="tags" 
-            defaultValue={article.tags?.map((t: any) => t.name).join(', ')}
-            placeholder="Ex: Cacao, Economie, Exportation..."
-            style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '1rem', fontFamily: 'inherit' }}
-          />
-          <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.25rem' }}>Les tags s'afficheront en #tendances sur la page d'accueil.</p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+          <div>
+            <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Tags / Mots-clés (séparés par des virgules)</label>
+            <input 
+              type="text" 
+              name="tags" 
+              defaultValue={article.tags?.map((t: any) => t.name).join(', ')}
+              placeholder="Ex: Cacao, Economie, Exportation..."
+              style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '1rem', fontFamily: 'inherit' }}
+            />
+            <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.25rem' }}>Les tags s'afficheront en #tendances sur la page d'accueil.</p>
+          </div>
+          <div>
+            <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem', color: '#475569' }}>Région (Carte Interactive)</label>
+            <select name="region" defaultValue={article.region || ""} style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '1rem', fontFamily: 'inherit' }}>
+              <option value="">Aucune (Nationale)</option>
+              <option value="Abidjan">Abidjan</option>
+              <option value="Yamoussoukro">Yamoussoukro</option>
+              <option value="Bouaké">Bouaké</option>
+              <option value="San-Pédro">San-Pédro</option>
+              <option value="Korhogo">Korhogo</option>
+              <option value="Daloa">Daloa</option>
+              <option value="Man">Man</option>
+            </select>
+          </div>
         </div>
 
         <div style={{ backgroundColor: '#f0f9ff', padding: '1.5rem', borderRadius: '8px', border: '1px solid #bae6fd' }}>
