@@ -51,7 +51,7 @@ Instructions:
       messages,
     });
 
-    return result.toDataStreamResponse();
+    return result.toTextStreamResponse();
   } catch (error) {
     console.error("AI Search Error:", error);
     return new Response("Une erreur est survenue lors du traitement IA.", { status: 500 });
