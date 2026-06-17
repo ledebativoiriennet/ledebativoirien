@@ -6,10 +6,7 @@ import ReactMarkdown from 'react-markdown';
 
 export default function AISearchResult({ query }: { query: string }) {
   const [hasStarted, setHasStarted] = useState(false);
-  const chatResult = useChat({
-    api: '/api/search-ai',
-  }) as any;
-  const { messages, append, isLoading, error } = chatResult;
+  const { messages, append, isLoading, error } = useChat();
 
   useEffect(() => {
     if (query && !hasStarted) {
