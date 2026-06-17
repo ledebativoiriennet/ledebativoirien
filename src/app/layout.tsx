@@ -153,12 +153,19 @@ export default async function RootLayout({
         {skinAd && (
           <style dangerouslySetInnerHTML={{ __html: `
             body {
+              background-color: #000;
+            }
+            body::before {
+              content: "";
+              position: ${siteSettings?.siteSkinAttachment === 'scroll' ? 'absolute' : 'fixed'};
+              top: -5px; left: -5px; right: -5px; bottom: -5px;
               background-image: url('${skinAd.imageUrl}');
-              background-attachment: fixed;
+              background-attachment: ${siteSettings?.siteSkinAttachment || 'fixed'};
               background-size: cover;
               background-position: center top;
               background-repeat: no-repeat;
-              background-color: #000;
+              filter: blur(${siteSettings?.siteSkinBlur || 0}px) brightness(${siteSettings?.siteSkinBrightness ?? 100}%);
+              z-index: -1;
             }
           ` }} />
         )}

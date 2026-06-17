@@ -432,6 +432,9 @@ model SiteSettings {
   twitterApiSecret    String?
   footerCode          String?
   headerCode          String?
+  siteSkinBlur        Int?     @default(0)
+  siteSkinBrightness  Int?     @default(100)
+  siteSkinAttachment  String?  @default("fixed")
 }
 
 model Quote {

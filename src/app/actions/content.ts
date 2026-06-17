@@ -342,7 +342,10 @@ export async function updateSiteSettings(data: {
   linkedinAccessToken?: string,
   linkedinUrn?: string,
   headerCode?: string,
-  footerCode?: string
+  footerCode?: string,
+  siteSkinBlur?: number,
+  siteSkinBrightness?: number,
+  siteSkinAttachment?: string
 }) {
   try {
     await prisma.siteSettings.upsert({

@@ -14,6 +14,10 @@ export default async function ParametresPage() {
     where: { id: (session.user as any).id as string }
   });
 
+  const siteSettings = await prisma.siteSettings.findUnique({
+    where: { id: "global" }
+  });
+
   if (!user) {
     redirect("/login");
   }
@@ -22,10 +26,13 @@ export default async function ParametresPage() {
     <div style={{ padding: '2rem', maxWidth: '800px' }}>
       <h1 style={{ fontSize: '2rem', fontWeight: 900, marginBottom: '0.5rem', color: '#0f172a' }}>⚙️ Paramètres</h1>
       <p style={{ color: '#64748b', marginBottom: '2rem' }}>
-        Gérez vos informations personnelles et la sécurité de votre compte administrateur.
+        Gérez vos informations personnelles et l'apparence globale du site.
       </p>
 
-      <ParametresClient user={{ id: user.id, name: user.name, email: user.email }} />
+      <ParametresClient 
+        user={{ id: user.id, name: user.name, email: user.email }} 
+        siteSettings={siteSettings}
+      />
     </div>
   );
 }
