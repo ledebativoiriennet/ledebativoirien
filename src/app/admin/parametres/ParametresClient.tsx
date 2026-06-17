@@ -88,6 +88,9 @@ export default function ParametresClient({ user, siteSettings }: { user: { id: s
           <button type="submit" disabled={loadingSecurity} style={{ alignSelf: 'flex-start', padding: '0.75rem 1.5rem', backgroundColor: '#ef4444', color: 'white', fontWeight: 'bold', borderRadius: '4px', border: 'none', cursor: loadingSecurity ? 'not-allowed' : 'pointer', marginTop: '0.5rem' }}>
             {loadingSecurity ? 'Enregistrement...' : 'Changer mon mot de passe'}
           </button>
+        </form>
+      </div>
+
     </div>
   );
 }
