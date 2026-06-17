@@ -10,6 +10,7 @@ import { sendNewArticleNotification } from "@/lib/newsletter";
 import { sendPushNotification } from "@/lib/push";
 import { logActivity } from "@/lib/activity";
 import { publishToAllSocials } from "@/lib/social-publish";
+import { revalidatePath } from "next/cache";
 
 // Convert a title to a URL-friendly slug
 function generateSlug(title: string) {
@@ -183,6 +184,9 @@ export async function publishArticle(formData: FormData) {
       details: `Article créé avec le slug: ${newArticle.slug}`
     });
 
+    revalidatePath("/");
+    revalidatePath(`/article/${newArticle.slug}`);
+
     return { success: true, id: newArticle.id };
   } catch (error) {
     console.error("Erreur création article:", error);
@@ -352,9 +356,12 @@ export async function updateArticle(articleId: string, formData: FormData) {
 
     await logActivity({
       action: "UPDATE_ARTICLE",
-      resource: `Article ID: ${articleId}`,
-      details: `Article modifié: ${title}`
+      resource: `Article: ${updateData.title}`,
+      details: `Mis à jour l'article ID: ${articleId}`
     });
+
+    revalidatePath("/");
+    revalidatePath(`/article/${newSlug}`);
 
     return { success: true };
   } catch (error) {
