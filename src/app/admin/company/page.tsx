@@ -31,7 +31,7 @@ export default async function AdminCompanyPage() {
           <thead style={{ backgroundColor: "var(--primary)", color: "white", textAlign: "left" }}>
             <tr>
               <th style={{ padding: "1rem" }}>Nom de l'entreprise</th>
-              <th style={{ padding: "1rem" }}>Domaine (Email)</th>
+              <th style={{ padding: "1rem" }}>Email / Domaine</th>
               <th style={{ padding: "1rem" }}>Utilisateurs Actifs</th>
               <th style={{ padding: "1rem" }}>Licences Max</th>
               <th style={{ padding: "1rem" }}>Statut</th>
@@ -46,7 +46,7 @@ export default async function AdminCompanyPage() {
               return (
                 <tr key={company.id} style={{ borderBottom: "1px solid var(--border)" }}>
                   <td style={{ padding: "1rem", fontWeight: "bold" }}>{company.name}</td>
-                  <td style={{ padding: "1rem", color: "var(--muted)" }}>@{company.domain}</td>
+                  <td style={{ padding: "1rem", color: "var(--muted)" }}>{company.email}</td>
                   <td style={{ padding: "1rem" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                       <span>{company._count.users}</span>
