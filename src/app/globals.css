@@ -142,7 +142,7 @@ a:hover {
 }
 
 .article-content {
-  word-break: break-word !important;
+  word-break: normal !important;
   overflow-wrap: break-word !important;
   width: 100%;
   max-width: 100%;
@@ -174,7 +174,7 @@ a:hover {
   margin-bottom: 1.5rem !important;
   color: var(--foreground);
   text-align: left !important;
-  word-break: break-word !important;
+  word-break: normal !important;
   overflow-wrap: break-word !important;
   hyphens: none !important;
   -webkit-hyphens: none !important;
@@ -182,7 +182,7 @@ a:hover {
 
 /* Long URLs can break to avoid overflow */
 .article-content a {
-  word-break: break-word !important;
+  word-break: normal !important;
   overflow-wrap: anywhere !important;
 }
 
@@ -202,7 +202,7 @@ a:hover {
   max-width: 100% !important;
   display: inline !important;
   box-sizing: border-box;
-  word-break: break-word !important;
+  word-break: normal !important;
   overflow-wrap: break-word !important;
 }
 
@@ -257,7 +257,7 @@ ins.adsbygoogle, .ad-slot, .ad-banner {
 
 pre, code {
   white-space: pre-wrap !important;
-  word-break: break-all !important;
+  word-break: normal !important;
   max-width: 100%;
   overflow-x: auto;
 }

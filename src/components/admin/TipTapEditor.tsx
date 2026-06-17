@@ -268,7 +268,7 @@ export default function TipTapEditor({
           font-size: 1rem;
           line-height: 1.7;
           color: #0f172a;
-          word-break: break-word;
+          word-break: normal;
           overflow-wrap: break-word;
         }
         .tiptap-content p {
