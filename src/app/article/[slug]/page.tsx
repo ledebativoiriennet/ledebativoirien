@@ -39,6 +39,8 @@ import WhatsAppAd from "@/components/WhatsAppAd";
 import ArticleComments from "@/components/ArticleComments";
 import PromoLucarne from "@/components/promo/PromoLucarne";
 import ArticleSummary from "@/components/ArticleSummary";
+import FactCheckWidget from "@/components/FactCheckWidget";
+import ArticleTimeline from "@/components/ArticleTimeline";
 
 export const revalidate = 60;
 
@@ -148,6 +150,25 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
   });
 
   if (!article) return notFound();
+
+  // Fetch timeline events if applicable
+  let timelineEvents: any[] = [];
+  if (article.timelineId) {
+    timelineEvents = await prisma.article.findMany({
+      where: { 
+        timelineId: article.timelineId,
+        publishedAt: { not: null, lte: new Date() }
+      },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        timelineEventDate: true,
+        publishedAt: true
+      },
+      orderBy: { timelineEventDate: 'asc' }
+    });
+  }
 
   const session = await getServerSession(authOptions);
   const dbUser = session?.user?.email ? await prisma.user.findUnique({ where: { email: session.user.email }, select: { role: true } }) : null;
@@ -396,6 +417,18 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
             {article.isConfidentiel && <span style={{ backgroundColor: '#7f1d1d', color: 'white', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 'bold', textTransform: 'uppercase', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>🔒 CONFIDENTIEL</span>}
             <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }} title="Temps de lecture estimé">⏱️ {readTime} min</span>
           </div>
+
+          {article.isFactCheck && article.factVerdict && (
+            <FactCheckWidget verdict={article.factVerdict} />
+          )}
+
+          {article.timelineId && timelineEvents.length > 1 && (
+            <ArticleTimeline 
+              currentArticleId={article.id} 
+              timelineId={article.timelineId} 
+              events={timelineEvents} 
+            />
+          )}
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "1.5rem" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>

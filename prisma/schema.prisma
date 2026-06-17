@@ -113,6 +113,10 @@ model Article {
   aiSummary        String?
   audioUrl         String?
   region           String?
+  isFactCheck      Boolean          @default(false)
+  factVerdict      String?          // e.g. "VRAI", "FAUX", "NUANCE"
+  timelineId       String?
+  timelineEventDate DateTime?
   quiz              ArticleQuiz?
   polls            Poll[]
   debate           Debate?

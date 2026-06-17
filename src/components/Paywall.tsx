@@ -22,10 +22,45 @@ export function Paywall({ type = 'premium' }: PaywallProps) {
               : "Cet article est réservé aux abonnés Premium. Abonnez-vous pour lire l'intégralité de cet article et soutenir le journalisme d'investigation ivoirien."}
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
-            <Link href="/abonnement" className="btn btn-primary" style={{ padding: '1rem 2rem', fontSize: '1.1rem', width: '100%', maxWidth: '300px', backgroundColor: isConfidentiel ? '#7f1d1d' : 'var(--primary)' }}>
-              {isConfidentiel ? "S'abonner au pack Confidentiel" : "S'abonner pour lire la suite"}
+            <Link href="/abonnement" className="btn btn-primary" style={{ padding: '1rem 2rem', fontSize: '1.1rem', width: '100%', backgroundColor: isConfidentiel ? '#7f1d1d' : 'var(--primary)' }}>
+              {isConfidentiel ? "S'abonner au pack Confidentiel (Illimité)" : "S'abonner pour lire la suite (Illimité)"}
             </Link>
-            <div style={{ fontSize: '0.9rem', marginTop: '1rem' }}>
+            
+            <div style={{ margin: '1.5rem 0', width: '100%', position: 'relative' }}>
+              <div style={{ borderTop: '1px solid var(--border)', position: 'absolute', top: '50%', width: '100%', zIndex: 0 }}></div>
+              <span style={{ backgroundColor: 'var(--card-bg)', padding: '0 1rem', position: 'relative', zIndex: 1, color: 'var(--muted)', fontSize: '0.9rem', fontWeight: 'bold' }}>OU ACHETER À L'UNITÉ (100 FCFA)</span>
+            </div>
+
+            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', width: '100%', flexWrap: 'wrap' }}>
+              <button 
+                onClick={() => alert("Simulation de l'API Wave : Veuillez valider le paiement de 100 FCFA sur votre application Wave.")}
+                style={{ 
+                  flex: '1', minWidth: '120px', padding: '0.75rem', backgroundColor: '#1ce6e6', color: '#000', fontWeight: 'bold', border: 'none', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' 
+                }}
+              >
+                <span style={{ fontSize: '1.2rem' }}>🌊</span> Wave
+              </button>
+              
+              <button 
+                onClick={() => alert("Simulation de l'API Orange Money : Tapez #144# pour valider.")}
+                style={{ 
+                  flex: '1', minWidth: '120px', padding: '0.75rem', backgroundColor: '#ff6600', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' 
+                }}
+              >
+                OMoney
+              </button>
+              
+              <button 
+                onClick={() => alert("Simulation de l'API MTN MoMo : Validation PUSH en cours...")}
+                style={{ 
+                  flex: '1', minWidth: '120px', padding: '0.75rem', backgroundColor: '#ffcc00', color: '#000', fontWeight: 'bold', border: 'none', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' 
+                }}
+              >
+                MTN MoMo
+              </button>
+            </div>
+
+            <div style={{ fontSize: '0.9rem', marginTop: '1.5rem' }}>
               Déjà abonné ? <Link href="/login" style={{ color: 'var(--primary)', fontWeight: 800, textDecoration: 'underline' }}>Connectez-vous</Link>
             </div>
           </div>

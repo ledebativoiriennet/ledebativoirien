@@ -43,6 +43,12 @@ export async function publishArticle(formData: FormData) {
   const aiSummary = formData.get("aiSummary") as string || null;
   const audioUrl = formData.get("audioUrl") as string || null;
   const region = formData.get("region") as string || null;
+  const isFactCheck = formData.get("isFactCheck") === "on";
+  const factVerdict = formData.get("factVerdict") as string || null;
+  const timelineId = formData.get("timelineId") as string || null;
+  const timelineEventDateStr = formData.get("timelineEventDate") as string || null;
+  let timelineEventDate: Date | null = null;
+  if (timelineEventDateStr) timelineEventDate = new Date(timelineEventDateStr);
 
   if (!title || !content) {
     return { success: false, error: "Le titre et le contenu sont obligatoires." };
@@ -119,6 +125,10 @@ export async function publishArticle(formData: FormData) {
         aiSummary,
         audioUrl,
         region,
+        isFactCheck,
+        factVerdict,
+        timelineId,
+        timelineEventDate,
         isPremium,
         isAudioAvailable,
         isConfidentiel,
@@ -216,6 +226,12 @@ export async function updateArticle(articleId: string, formData: FormData) {
   const aiSummary = formData.get("aiSummary") as string || null;
   const audioUrl = formData.get("audioUrl") as string || null;
   const region = formData.get("region") as string || null;
+  const isFactCheck = formData.get("isFactCheck") === "on";
+  const factVerdict = formData.get("factVerdict") as string || null;
+  const timelineId = formData.get("timelineId") as string || null;
+  const timelineEventDateStr = formData.get("timelineEventDate") as string || null;
+  let timelineEventDate: Date | null = null;
+  if (timelineEventDateStr) timelineEventDate = new Date(timelineEventDateStr);
 
   if (!title || !content) {
     return { success: false, error: "Le titre et le contenu sont obligatoires." };
@@ -260,6 +276,10 @@ export async function updateArticle(articleId: string, formData: FormData) {
       aiSummary,
       audioUrl,
       region,
+      isFactCheck,
+      factVerdict,
+      timelineId,
+      timelineEventDate,
       isPremium,
       isAudioAvailable,
       isConfidentiel,

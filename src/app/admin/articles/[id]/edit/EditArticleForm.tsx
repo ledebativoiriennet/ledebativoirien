@@ -408,7 +408,64 @@ export default function EditArticleForm({ article, categories }: { article: any,
           </div>
         </div>
 
-        <div style={{ backgroundColor: '#fcfafa', padding: '1.5rem', borderRadius: '8px', border: '1px solid #fce7f3' }}>
+        <div style={{ backgroundColor: '#fdf4ff', padding: '1.5rem', borderRadius: '8px', border: '1px solid #fbcfe8', marginTop: '1.5rem' }}>
+          <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.1rem', color: '#a21caf', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            ✅ Vérification des Faits (Fact-Checking)
+          </h3>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <input 
+                type="checkbox" 
+                name="isFactCheck" 
+                id="isFactCheck"
+                defaultChecked={article.isFactCheck}
+                style={{ width: '1.2rem', height: '1.2rem', cursor: 'pointer' }}
+              />
+              <label htmlFor="isFactCheck" style={{ fontWeight: 'bold', color: '#0f172a', cursor: 'pointer' }}>
+                Cet article est un Fact-Check
+              </label>
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>Verdict</label>
+              <select name="factVerdict" defaultValue={article.factVerdict || ""} style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}>
+                <option value="">Aucun</option>
+                <option value="VRAI">Vrai 🟢</option>
+                <option value="FAUX">Faux 🔴</option>
+                <option value="NUANCE">Nuancé 🟡</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ backgroundColor: '#fffbeb', padding: '1.5rem', borderRadius: '8px', border: '1px solid #fde68a', marginTop: '1.5rem' }}>
+          <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.1rem', color: '#b45309', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            ⏳ Chronologie (Dossier Long-Terme)
+          </h3>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>ID du Dossier / Timeline</label>
+              <input 
+                type="text" 
+                name="timelineId" 
+                defaultValue={article.timelineId || ""}
+                placeholder="ex: proces-gbagbo, can-2027..."
+                style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
+              />
+              <p style={{ fontSize: '0.75rem', color: '#78350f', marginTop: '0.25rem' }}>Tous les articles avec ce même ID seront regroupés.</p>
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>Date de l'événement</label>
+              <input 
+                type="datetime-local" 
+                name="timelineEventDate" 
+                defaultValue={formatDateForInput(article.timelineEventDate)}
+                style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div style={{ backgroundColor: '#fcfafa', padding: '1.5rem', borderRadius: '8px', border: '1px solid #fce7f3', marginTop: '1.5rem' }}>
           <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.1rem', color: '#be185d', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             🔗 Articles Liés (Manuels)
           </h3>
