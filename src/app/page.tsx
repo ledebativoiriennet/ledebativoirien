@@ -40,13 +40,28 @@ export default async function Home() {
     pressReleases,
     brvmIndicators,
     trendingTags,
-    caricatures
+    caricatures,
+    audioArticlesData
   ] = await Promise.all([
     prisma.article.findMany({
       where: { publishedAt: { not: null, lte: new Date() } },
       take: 400, // Large pool to cover all categories to avoid N+1 queries
       orderBy: { publishedAt: "desc" },
-      include: { categories: true },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        excerpt: true,
+        imageUrl: true,
+        publishedAt: true,
+        createdAt: true,
+        isConfidentiel: true,
+        isAudioAvailable: true,
+        categories: { select: { slug: true, name: true } },
+        _count: { select: { views: true } },
+        // 'content' is explicitly omitted here to avoid loading ~20MB of HTML
+        // If 'imageUrl' is missing, fallback image will be used.
+      },
     }),
     prisma.poll.findFirst({ where: { isActive: true }, include: { options: true }, orderBy: { createdAt: 'desc' } }),
     prisma.obituary.findMany({ take: 5, orderBy: { createdAt: 'desc' } }),
@@ -70,7 +85,23 @@ export default async function Home() {
         }
       }
     }),
-    prisma.caricature.findMany({ take: 1, orderBy: { createdAt: 'desc' } })
+    prisma.caricature.findMany({ take: 1, orderBy: { createdAt: 'desc' } }),
+    prisma.article.findMany({
+      where: {
+        publishedAt: { not: null, lte: new Date() },
+        isAudioAvailable: true
+      },
+      take: 8,
+      orderBy: { publishedAt: "desc" },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        slug: true,
+        imageUrl: true,
+        categories: { select: { slug: true, name: true } }
+      }
+    })
   ]);
 
   // In-memory filtering to drastically reduce SQLite query load
@@ -82,7 +113,7 @@ export default async function Home() {
   const faitsDiversArticles = filterBySlugs(['faits-divers', 'faits_divers', 'societe'], 15);
   const economieArticles = filterBySlugs(['economie', 'economie-finances', 'finances'], 15);
   const publieReportageArticles = filterBySlugs(['publie-reportage'], 4);
-  const audioArticles = recentArticles.filter(a => a.isAudioAvailable).slice(0, 100);
+  const audioArticles = audioArticlesData;
   const internationalArticles = filterBySlugs(['international', 'internationale', 'diplomatie'], 4);
   const cedeauArticles = filterBySlugs(['afrique-occidentale', 'cedeau', 'afrique', 'benin', 'togo', 'mali', 'burkina-faso', 'senegal', 'guinee'], 10);
   const aLaUneArticles = filterBySlugs(['a-la-une'], 5);
@@ -358,7 +389,13 @@ export default async function Home() {
                 backgroundColor: '#0f172a'
               }}>
                 {getArticleImage(mainFeatured) ? (
-                  <SafeImage src={getArticleImage(mainFeatured) as string} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <SafeImage 
+                    src={getArticleImage(mainFeatured) as string} 
+                    alt="" 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                    loading="eager" 
+                    fetchPriority="high" 
+                  />
                 ) : (
                   <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #0f172a, #334155)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <span style={{ fontSize: '4rem', fontWeight: 900, color: 'white', opacity: 0.1 }}>LE DÉBAT IVOIRIEN</span>
@@ -1149,7 +1186,7 @@ export default async function Home() {
       articles={audioArticles.map(a => ({
         id: a.id,
         title: a.title,
-        content: a.content,
+        content: a.content as string,
         slug: a.slug,
         imageUrl: getArticleImage(a) as string | null,
         categoryName: a.categories[0]?.name
