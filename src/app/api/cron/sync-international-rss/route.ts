@@ -98,7 +98,6 @@ export async function GET(request: Request) {
           data: {
             time: item.date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
             content: cleanTitle,
-            link: item.link,
             source: item.source,
             region: "International",
             createdAt: item.date

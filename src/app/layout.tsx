@@ -320,7 +320,10 @@ export default async function RootLayout({
                 </div>
                 {/* Mobile Stories */}
                 <div className="mobile-only-stories" style={{ display: 'none' }}>
-                  <MobileStories stories={breakingNews} />
+                  <MobileStories groups={[
+                    ...(breakingNews.length > 0 ? [{ id: 'flash', label: 'Flash', icon: '⚡', gradient: 'linear-gradient(45deg, #f59e0b, var(--primary))', stories: breakingNews }] : []),
+                    ...(internationalNews.length > 0 ? [{ id: 'intl', label: 'Intl', icon: '🌍', gradient: 'linear-gradient(45deg, #3b82f6, #1e3a8a)', stories: internationalNews }] : [])
+                  ]} />
                 </div>
                 <style dangerouslySetInnerHTML={{ __html: `
                   @media (max-width: 768px) {
