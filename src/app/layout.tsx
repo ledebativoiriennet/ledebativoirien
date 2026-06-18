@@ -301,7 +301,7 @@ export default async function RootLayout({
               <div className="hidden-on-mobile" style={{ backgroundColor: 'white', color: '#cc0000', height: '35px', overflow: 'hidden', borderBottom: '1px solid #e5e7eb' }}>
                 <div className="container" style={{ display: 'flex', alignItems: 'center', gap: '1rem', height: '100%' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0, zIndex: 1 }}>
-                    <span style={{ fontWeight: 900, fontSize: '0.85rem', letterSpacing: '0.5px' }}>INTERNATIONAL</span>
+                    <span style={{ fontWeight: 900, fontSize: '0.85rem', letterSpacing: '0.5px', textTransform: 'uppercase' }}>Cote d'ivoire & inter</span>
                   </div>
                   <div dangerouslySetInnerHTML={{ __html: `<marquee scrollamount="4" style="font-weight: 600; font-size: 0.85rem; width: 100%;">${internationalText}</marquee>` }} style={{ flex: 1, display: 'flex', alignItems: 'center' }} />
                 </div>
@@ -327,7 +327,7 @@ export default async function RootLayout({
                 <div className="mobile-only-stories" style={{ display: 'none' }}>
                   <MobileStories groups={[
                     ...(breakingNews.length > 0 ? [{ id: 'flash', label: 'Flash', icon: '⚡', gradient: 'linear-gradient(45deg, #f59e0b, var(--primary))', stories: breakingNews }] : []),
-                    ...(internationalNews.length > 0 ? [{ id: 'intl', label: 'Intl', icon: '🌍', gradient: 'linear-gradient(45deg, #3b82f6, #1e3a8a)', stories: internationalNews }] : [])
+                    ...(internationalNews.length > 0 ? [{ id: 'intl', label: 'CI & Inter', icon: '🌍', gradient: 'linear-gradient(45deg, #3b82f6, #1e3a8a)', stories: internationalNews }] : [])
                   ]} />
                 </div>
                 <style dangerouslySetInnerHTML={{ __html: `

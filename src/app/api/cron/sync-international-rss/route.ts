@@ -3,8 +3,8 @@ import { prisma } from '@/lib/prisma';
 import xml2js from 'xml2js';
 
 const RSS_FEEDS = [
-  'https://www.lemonde.fr/international/rss_full.xml',
-  'http://atlasflux.suptribune.org/Outil_RSS_lecture.php?code_id=816&charge=&urllist=fra_presse_monde'
+  'http://atlasflux.suptribune.org/Outil_RSS_lecture.php?code_id=30091&charge=&urllist=fra_territoire_afrique',
+  'https://feeds.feedburner.com/AfricaIntelligence-fr'
 ];
 
 export async function GET(request: Request) {
@@ -66,7 +66,7 @@ export async function GET(request: Request) {
               title: typeof item.title === 'string' ? item.title : item.title._ || 'Sans titre',
               link: typeof item.link === 'string' ? item.link : item.link?._ || '',
               date: item.pubDate ? new Date(item.pubDate) : new Date(),
-              source: feedUrl.includes('lemonde') ? 'Le Monde' : 'AtlasFlux',
+              source: feedUrl.includes('AfricaIntelligence') ? 'Africa Intelligence' : 'AtlasFlux',
             });
           }
         }
