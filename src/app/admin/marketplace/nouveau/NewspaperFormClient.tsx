@@ -3,6 +3,8 @@
 import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { saveNewspaper, updateNewspaper } from '@/app/actions/marketplace';
+
 export default function NewspaperFormClient({ initialData }: { initialData?: any }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -43,27 +45,15 @@ export default function NewspaperFormClient({ initialData }: { initialData?: any
       if (coverFile) data.append('coverFile', coverFile);
       if (pdfFile) data.append('pdfFile', pdfFile);
 
-      const endpoint = isEditing ? `/api/admin/marketplace/${initialData.id}` : '/api/admin/marketplace';
-      const method = isEditing ? 'PUT' : 'POST';
+      let result;
+      if (isEditing) {
+        result = await updateNewspaper(initialData.id, data);
+      } else {
+        result = await saveNewspaper(data);
+      }
 
-      const response = await fetch(endpoint, {
-        method,
-        body: data,
-      });
-
-      // Robust error handling
-      const contentType = response.headers.get("content-type");
-      if (!response.ok) {
-        if (contentType && contentType.includes("application/json")) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Erreur lors de l'enregistrement");
-        } else {
-          // Typically hits here if 413 Payload Too Large or 500 HTML error
-          if (response.status === 413) {
-            throw new Error("Le fichier est trop volumineux. Veuillez réduire la taille du PDF.");
-          }
-          throw new Error(`Erreur serveur (${response.status}). Impossible d'enregistrer.`);
-        }
+      if (!result.success) {
+        throw new Error(result.error || "Erreur lors de l'enregistrement");
       }
 
       router.push('/admin/marketplace');
