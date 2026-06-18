@@ -9,35 +9,35 @@ datasource db {
 }
 
 model User {
-  id                String             @id @default(cuid())
-  name              String?
-  email             String?            @unique
-  password          String?
-  role              String             @default("USER")
-  resetToken        String?
-  resetTokenExpiry  DateTime?
-  points            Int                @default(0)
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  companyId         String?
-  lastLoginAt       DateTime?
-  articleLikes      ArticleLike[]
-  purchases         Purchase[]
-  pushSubscriptions PushSubscription[]
-  readingHistory    ReadingHistory[]
-  subscriptions     Subscription[]
+  id                  String                @id @default(cuid())
+  name                String?
+  email               String?               @unique
+  password            String?
+  role                String                @default("USER")
+  resetToken          String?
+  resetTokenExpiry    DateTime?
+  points              Int                   @default(0)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  companyId           String?
+  lastLoginAt         DateTime?
+  articleLikes        ArticleLike[]
+  purchases           Purchase[]
+  pushSubscriptions   PushSubscription[]
+  readingHistory      ReadingHistory[]
+  subscriptions       Subscription[]
   comments            Comment[]
   bookmarks           Bookmark[]
   giftLinks           GiftLink[]
   highlights          Highlight[]
   tagSubscriptions    TagSubscriber[]
-  authorSubscriptions AuthorSubscriber[] @relation("UserAuthorSubs")
-  company             Company?           @relation(fields: [companyId], references: [id])
+  authorSubscriptions AuthorSubscriber[]    @relation("UserAuthorSubs")
+  company             Company?              @relation(fields: [companyId], references: [id])
   debateArguments     DebateArgument[]
   argumentVotes       ArgumentVote[]
   quizAttempts        QuizAttempt[]
   newsletterSub       NewsletterSubscriber?
-  badges              String?            // JSON stringified array of badge identifiers
+  badges              String? // JSON stringified array of badge identifiers
 }
 
 model Subscription {
@@ -78,51 +78,51 @@ model Category {
 }
 
 model Article {
-  id               String           @id @default(cuid())
-  wpId             Int?             @unique
-  title            String
-  slug             String           @unique
-  content          String
-  excerpt          String?
-  imageUrl         String?
-  imageCaption     String?
-  isPremium        Boolean          @default(false)
-  isConfidentiel   Boolean          @default(false)
-  isFeatured       Boolean          @default(false)
-  publishedAt      DateTime?
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
-  authorId         String?
-  videoUrl         String?
-  videoFile        String?
-  videoCaption     String?
-  seoTitle         String?
-  seoDescription   String?
-  isAudioAvailable Boolean          @default(false)
-  isLiveBlog       Boolean          @default(false)
-  author           Author?          @relation(fields: [authorId], references: [id])
-  likes            ArticleLike[]
-  views            ArticleView[]
-  readingHistory   ReadingHistory[]
-  categories       Category[]       @relation("ArticleToCategory")
-  tags             Tag[]            @relation("ArticleToTag")
-  comments         Comment[]
-  bookmarks        Bookmark[]
-  giftLinks        GiftLink[]
-  highlights       Highlight[]
-  aiSummary        String?
-  audioUrl         String?
-  region           String?
-  isFactCheck      Boolean          @default(false)
-  factVerdict      String?          // e.g. "VRAI", "FAUX", "NUANCE"
-  timelineId       String?
+  id                String           @id @default(cuid())
+  wpId              Int?             @unique
+  title             String
+  slug              String           @unique
+  content           String
+  excerpt           String?
+  imageUrl          String?
+  imageCaption      String?
+  isPremium         Boolean          @default(false)
+  isConfidentiel    Boolean          @default(false)
+  isFeatured        Boolean          @default(false)
+  publishedAt       DateTime?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  authorId          String?
+  videoUrl          String?
+  videoFile         String?
+  videoCaption      String?
+  seoTitle          String?
+  seoDescription    String?
+  isAudioAvailable  Boolean          @default(false)
+  isLiveBlog        Boolean          @default(false)
+  author            Author?          @relation(fields: [authorId], references: [id])
+  likes             ArticleLike[]
+  views             ArticleView[]
+  readingHistory    ReadingHistory[]
+  categories        Category[]       @relation("ArticleToCategory")
+  tags              Tag[]            @relation("ArticleToTag")
+  comments          Comment[]
+  bookmarks         Bookmark[]
+  giftLinks         GiftLink[]
+  highlights        Highlight[]
+  aiSummary         String?
+  audioUrl          String?
+  region            String?
+  isFactCheck       Boolean          @default(false)
+  factVerdict       String? // e.g. "VRAI", "FAUX", "NUANCE"
+  timelineId        String?
   timelineEventDate DateTime?
   quiz              ArticleQuiz?
-  polls            Poll[]
-  debate           Debate?
-  liveUpdates      LiveUpdate[]
-  relatedArticles  Article[]        @relation("RelatedArticles")
-  referencedIn     Article[]        @relation("RelatedArticles")
+  polls             Poll[]
+  debate            Debate?
+  liveUpdates       LiveUpdate[]
+  relatedArticles   Article[]        @relation("RelatedArticles")
+  referencedIn      Article[]        @relation("RelatedArticles")
 
   @@index([publishedAt(sort: Desc)])
   @@index([isConfidentiel])
@@ -217,13 +217,13 @@ model Activity {
 }
 
 model Tag {
-  id          String   @id @default(cuid())
-  wpId        Int?     @unique
+  id          String          @id @default(cuid())
+  wpId        Int?            @unique
   name        String
-  slug        String   @unique
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  articles    Article[] @relation("ArticleToTag")
+  slug        String          @unique
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  articles    Article[]       @relation("ArticleToTag")
   subscribers TagSubscriber[]
 }
 
@@ -272,26 +272,26 @@ model Visitor {
 }
 
 model Advertisement {
-  id          String     @id @default(cuid())
+  id          String    @id @default(cuid())
   title       String
   company     String
   imageUrl    String
   linkUrl     String?
   slot        String
-  status      String     @default("PENDING")
+  status      String    @default("PENDING")
   startDate   DateTime?
   endDate     DateTime?
-  clicks      Int        @default(0)
-  impressions Int        @default(0)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  clicks      Int       @default(0)
+  impressions Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   events      AdEvent[]
 }
 
 model AdEvent {
   id        String        @id @default(cuid())
   adId      String
-  type      String        // "IMPRESSION" | "CLICK"
+  type      String // "IMPRESSION" | "CLICK"
   path      String?
   ipHash    String?
   userAgent String?
@@ -470,7 +470,7 @@ model NewsletterSubscriber {
 model AuthorSubscriber {
   id        String   @id @default(cuid())
   email     String
-  userId    String?  // Optionnel si l'utilisateur n'est pas connecté mais utilise juste son email
+  userId    String? // Optionnel si l'utilisateur n'est pas connecté mais utilise juste son email
   authorId  String
   createdAt DateTime @default(now())
   author    Author   @relation(fields: [authorId], references: [id], onDelete: Cascade)
@@ -592,11 +592,11 @@ model Comment {
 }
 
 model SearchEvent {
-  id              String    @id @default(cuid())
+  id              String   @id @default(cuid())
   query           String
   ipHash          String
-  clickedPosition Int?      // Position de l'article cliqué (1, 2, 3...)
-  createdAt       DateTime  @default(now())
+  clickedPosition Int? // Position de l'article cliqué (1, 2, 3...)
+  createdAt       DateTime @default(now())
 
   @@index([createdAt])
   @@index([query])
@@ -617,10 +617,10 @@ model GoogleSearchStat {
 
 model NewsletterLog {
   id             String   @id @default(cuid())
-  campaignType   String   // "DAILY" | "WEEKLY" | "MONTHLY"
+  campaignType   String // "DAILY" | "WEEKLY" | "MONTHLY"
   subject        String
   recipientCount Int
-  status         String   // "SUCCESS" | "FAILED"
+  status         String // "SUCCESS" | "FAILED"
   errorMessage   String?
   sentAt         DateTime @default(now())
 }
@@ -650,21 +650,21 @@ model TagSubscriber {
 }
 
 model ArticleQuiz {
-  id        String   @id @default(cuid())
-  articleId String   @unique
+  id        String         @id @default(cuid())
+  articleId String         @unique
   questions QuizQuestion[]
   attempts  QuizAttempt[]
-  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
+  article   Article        @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  createdAt DateTime       @default(now())
 }
 
 model QuizAttempt {
-  id        String   @id @default(cuid())
+  id        String      @id @default(cuid())
   userId    String
   quizId    String
   score     Int
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime    @default(now())
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   quiz      ArticleQuiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
 
   @@index([userId])
@@ -672,44 +672,44 @@ model QuizAttempt {
 }
 
 model QuizQuestion {
-  id        String   @id @default(cuid())
-  quizId    String
-  question  String
-  options   String   // JSON stringified array of strings
-  answer    Int      // Index of the correct option
-  quiz      ArticleQuiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  id       String      @id @default(cuid())
+  quizId   String
+  question String
+  options  String // JSON stringified array of strings
+  answer   Int // Index of the correct option
+  quiz     ArticleQuiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
 }
 
 model Debate {
-  id        String   @id @default(cuid())
-  articleId String   @unique
+  id        String           @id @default(cuid())
+  articleId String           @unique
   question  String
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  isActive  Boolean          @default(true)
+  createdAt DateTime         @default(now())
+  article   Article          @relation(fields: [articleId], references: [id], onDelete: Cascade)
   arguments DebateArgument[]
 }
 
 model DebateArgument {
-  id        String   @id @default(cuid())
-  debateId  String
-  userId    String
-  content   String
-  type      String   // "AGREE" or "DISAGREE"
-  votes     Int      @default(0)
-  createdAt DateTime @default(now())
-  debate    Debate   @relation(fields: [debateId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id            String         @id @default(cuid())
+  debateId      String
+  userId        String
+  content       String
+  type          String // "AGREE" or "DISAGREE"
+  votes         Int            @default(0)
+  createdAt     DateTime       @default(now())
+  debate        Debate         @relation(fields: [debateId], references: [id], onDelete: Cascade)
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   argumentVotes ArgumentVote[]
 }
 
 model ArgumentVote {
-  id         String   @id @default(cuid())
+  id         String         @id @default(cuid())
   argumentId String
   userId     String
-  createdAt  DateTime @default(now())
+  createdAt  DateTime       @default(now())
   argument   DebateArgument @relation(fields: [argumentId], references: [id], onDelete: Cascade)
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([argumentId, userId])
 }

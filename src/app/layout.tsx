@@ -111,6 +111,19 @@ export default async function RootLayout({
 
 
 
+  const internationalNews = await prisma.flashNews.findMany({
+    where: { 
+      region: "International",
+      createdAt: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } 
+    },
+    orderBy: { createdAt: 'desc' },
+    take: 15
+  });
+
+  const internationalText = internationalNews.length > 0 
+    ? internationalNews.map(fn => fn.content).join(' &nbsp; &nbsp; | &nbsp; &nbsp; ') 
+    : "";
+
   const breakingNews = await prisma.breakingNews.findMany({
     where: { isActive: true },
     orderBy: { createdAt: 'desc' }
@@ -277,6 +290,18 @@ export default async function RootLayout({
                 <MainNavigation categories={navCategories} isAuthenticated={!!session} />
               </div>
             </div>
+
+            {/* INTERNATIONAL NEWS */}
+            {internationalNews.length > 0 && (
+              <div className="hidden-on-mobile" style={{ backgroundColor: '#2563eb', color: 'white', height: '35px', overflow: 'hidden', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                <div className="container" style={{ display: 'flex', alignItems: 'center', gap: '1rem', height: '100%' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0, zIndex: 1 }}>
+                    <span style={{ fontWeight: 900, fontSize: '0.85rem', letterSpacing: '0.5px' }}>INTERNATIONAL</span>
+                  </div>
+                  <div dangerouslySetInnerHTML={{ __html: `<marquee scrollamount="4" style="font-weight: 600; font-size: 0.85rem; width: 100%;">${internationalText}</marquee>` }} style={{ flex: 1, display: 'flex', alignItems: 'center' }} />
+                </div>
+              </div>
+            )}
 
             {/* BREAKING NEWS */}
             {breakingNews.length > 0 && (
