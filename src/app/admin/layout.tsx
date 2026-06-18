@@ -83,6 +83,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
               <Link href="/admin/logs" style={{ padding: '0.75rem 1rem', borderRadius: '4px', textDecoration: 'none', color: '#cbd5e1', fontWeight: 'bold', transition: 'all 0.2s' }}>📜 Journal d'Activité</Link>
             </>
           )}
+          <Link href="/admin/cron" style={{ display: 'block', padding: '0.75rem', borderRadius: '8px', color: '#cbd5e1', textDecoration: 'none', fontWeight: 'bold', transition: 'all 0.2s', border: '1px solid #10b981', marginTop: '0.5rem', backgroundColor: 'rgba(16, 185, 129, 0.1)' }}>⏱️ Tâches (Crons)</Link>
           <Link href="/admin/parametres" style={{ display: 'block', padding: '0.75rem', borderRadius: '8px', color: '#cbd5e1', textDecoration: 'none', fontWeight: 'bold', transition: 'all 0.2s', border: '1px solid #475569', marginTop: '0.5rem', backgroundColor: 'rgba(71, 85, 105, 0.2)' }}>⚙️ Paramètres</Link>
         </nav>
         <div style={{ padding: '1rem', borderTop: '1px solid #334155', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
