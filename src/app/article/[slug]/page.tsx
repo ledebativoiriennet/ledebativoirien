@@ -41,6 +41,8 @@ import PromoLucarne from "@/components/promo/PromoLucarne";
 import ArticleSummary from "@/components/ArticleSummary";
 import FactCheckWidget from "@/components/FactCheckWidget";
 import ArticleTimeline from "@/components/ArticleTimeline";
+import ArticleStoryMode from "@/components/ArticleStoryMode";
+import ArticleCopilot from "@/components/ArticleCopilot";
 
 export const revalidate = 60;
 
@@ -500,6 +502,13 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
             </div>
           )}
 
+          {/* Mode Story - Innovation UX */}
+          <ArticleStoryMode 
+            title={article.title} 
+            contentHtml={contentToShow} 
+            imageUrl={cleanImageUrl || mainImageUrl || undefined} 
+          />
+
           {/* Vidéo de l'article */}
           {(article.videoUrl || article.videoFile) && (
             <div style={{ marginBottom: "2rem" }}>
@@ -864,6 +873,12 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
         </div>
       </aside>
     </div>
+    
+    {/* Copilote IA */}
+    <ArticleCopilot 
+      articleTitle={article.title} 
+      articleContent={article.content} 
+    />
     </>
   );
 }
