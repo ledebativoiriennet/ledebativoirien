@@ -293,7 +293,7 @@ export default async function RootLayout({
 
             {/* INTERNATIONAL NEWS */}
             {internationalNews.length > 0 && (
-              <div className="hidden-on-mobile" style={{ backgroundColor: '#2563eb', color: 'white', height: '35px', overflow: 'hidden', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+              <div className="hidden-on-mobile" style={{ backgroundColor: 'white', color: '#cc0000', height: '35px', overflow: 'hidden', borderBottom: '1px solid #e5e7eb' }}>
                 <div className="container" style={{ display: 'flex', alignItems: 'center', gap: '1rem', height: '100%' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0, zIndex: 1 }}>
                     <span style={{ fontWeight: 900, fontSize: '0.85rem', letterSpacing: '0.5px' }}>INTERNATIONAL</span>
