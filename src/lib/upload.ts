@@ -10,7 +10,11 @@ export async function saveUpload(file: File): Promise<string> {
   const buffer = Buffer.from(bytes);
   const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
   
-  await mkdir(UPLOAD_DIR, { recursive: true }).catch(() => {});
+  try {
+    await mkdir(UPLOAD_DIR, { recursive: true });
+  } catch (error: any) {
+    console.error("Erreur création dossier UPLOAD_DIR:", error.message);
+  }
   const filePath = join(UPLOAD_DIR, filename);
   await writeFile(filePath, buffer);
   

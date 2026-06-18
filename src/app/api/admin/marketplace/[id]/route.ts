@@ -51,8 +51,8 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 
     return NextResponse.json({ success: true, newspaper });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("Erreur modification marketplace PDF:", error);
-    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+    return NextResponse.json({ error: `Erreur serveur: ${error.message || String(error)}` }, { status: 500 });
   }
 }

@@ -50,8 +50,8 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, newspaper });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("Erreur création marketplace PDF:", error);
-    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+    return NextResponse.json({ error: `Erreur serveur: ${error.message || String(error)}` }, { status: 500 });
   }
 }
