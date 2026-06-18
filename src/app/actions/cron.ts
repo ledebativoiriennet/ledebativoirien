@@ -37,6 +37,9 @@ export async function executeCronJob(endpoint: string) {
 
     const res = await fetch(url, {
       method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${secret}`
+      },
       // On évite le cache
       cache: 'no-store'
     });

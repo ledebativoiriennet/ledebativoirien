@@ -28,7 +28,9 @@ export async function GET(request: Request) {
           continue;
         }
 
-        const xml = await res.text();
+        const buffer = await res.arrayBuffer();
+        const decoder = new TextDecoder(feedUrl.includes('atlasflux') ? 'iso-8859-1' : 'utf-8');
+        const xml = decoder.decode(buffer);
         
         let items: any[] = [];
         
@@ -43,14 +45,22 @@ export async function GET(request: Request) {
         } catch (xmlError) {
           // Fallback to regex if it's an HTML page (like AtlasFlux)
           if (xml.includes('<html')) {
-            const titleMatches = [...xml.matchAll(/class="[^"]*titre[^"]*"[^>]*>(.*?)<\/a>/gi)];
-            const linkMatches = [...xml.matchAll(/href="([^"]+)"[^>]*class="[^"]*titre[^"]*"/gi)];
-            
-            for (let i = 0; i < Math.min(titleMatches.length, 10); i++) {
-              // Strip HTML tags from title
-              const rawTitle = titleMatches[i][1].replace(/<[^>]*>?/gm, '');
-              const link = linkMatches[i] ? linkMatches[i][1] : feedUrl;
-              items.push({ title: rawTitle, link: link });
+            const itemMatchesNew = [...xml.matchAll(/<a[^>]+href=['"]([^'"]+)['"][^>]*>(?:(?!<\/a>)[\s\S])*?<div\s+class=['"]titre['"][^>]*>(.*?)<\/div>/gi)];
+            if (itemMatchesNew.length > 0) {
+              for (let i = 0; i < Math.min(itemMatchesNew.length, 10); i++) {
+                const rawTitle = itemMatchesNew[i][2].replace(/<[^>]*>?/gm, '');
+                items.push({ title: rawTitle, link: itemMatchesNew[i][1] });
+              }
+            } else {
+              const titleMatches = [...xml.matchAll(/class="[^"]*titre[^"]*"[^>]*>(.*?)<\/a>/gi)];
+              const linkMatches = [...xml.matchAll(/href="([^"]+)"[^>]*class="[^"]*titre[^"]*"/gi)];
+              
+              for (let i = 0; i < Math.min(titleMatches.length, 10); i++) {
+                // Strip HTML tags from title
+                const rawTitle = titleMatches[i][1].replace(/<[^>]*>?/gm, '');
+                const link = linkMatches[i] ? linkMatches[i][1] : feedUrl;
+                items.push({ title: rawTitle, link: link });
+              }
             }
           } else {
             throw xmlError;

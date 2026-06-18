@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="Title" content="L'Atlas des flux - annuaire des flux RSS et Atom /" />
+<meta name="Identifier-url" content="https://atlasflux.saynete.net/" />
+<meta name="Description" content="L'annuaire des flux r�f�rence et classe plus de cinq mille adresses RSS et ATOM actives et abrite des bases de donn�es pour la veille technologique et l'agr�gation d'actualit�. Inscrivez votre flux dans la base." />
+<meta name="keywords" content="rss atom syndication theme classement flux actualit� info presse annuaire atlas r�f�rencement gratuit outil veille" />
+<meta name="Category" content="webmestre" />
+<meta name="Copyright" content="2015" />
+<meta name="revisit-after" content="1 day" />
+<meta name="language" content="fr" />
+<link rel="alternate" type="application/rss+xml" title="RSS : Mise � jour" href="https://atlasflux.saynete.net/actualite_rss.xml" />
+<link rel="alternate" type="application/rss+xml" title="RSS : Derni�res entr�es" href="https://atlasflux.saynete.net/entree_rss.xml" />
+<link rel="alternate" type="application/rss+xml" title="RSS : Articles" href="https://atlasflux.saynete.net/atlasdesflux_blog.xml" />
+<link rel="shortcut icon" href="rss_fil_marron.ico" />
+<style>
+body {background-color:#F8F8F8;}
+a {text-decoration:none;}
+
+@font-face {
+    font-family: "bauhaus-boldregular";
+    src:url("font/bauhaus_bold-webfont.eot") format("embedded-opentype");
+	src:url("font/bauhaus_bold-webfont.woff2") format("woff2"),
+         url("font/bauhaus_bold-webfont.woff") format("woff"),
+		 url("font/bauhaus_bold-webfont.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;}
+	
+@media screen and (min-height: 401px)  and (max-height: 500px){.conta {height: 250px;}}
+@media screen and (min-height: 501px)  and (max-height: 600px){.conta {height: 350px;}}
+@media screen and (min-height: 601px)  and (max-height: 700px){.conta {height: 450px;}}
+@media screen and (min-height: 701px)  and (max-height: 800px){.conta {height: 550px;}}
+@media screen and (min-height: 801px)  and (max-height: 900px){.conta {height: 650px;}}
+@media screen and (min-height: 901px)  and (max-height: 1000px){.conta {height: 750px;}}
+@media screen and (min-height: 1001px)  and (max-height: 1100px){.conta {height: 850px;}}
+@media screen and (min-height: 1101px)  and (max-height: 1200px){.conta {height: 950px;}}
+@media screen and (min-height: 1201px)  and (max-height: 1300px){.conta {height: 1050px;}}
+@media screen and (min-height: 1301px)  and (max-height: 1400px){.conta {height: 1150px;}}
+@media screen and (min-height: 1401px)  and (max-height: 1500px){.conta {height: 1250px;}}
+@media screen and (min-height: 1501px)  {.conta {height: 1350px;}}
+@media screen and (max-width: 800px) {
+.conta {-webkit-columns: 1;-moz-columns: 1;columns: 1;margin-left:20px;margin-right:40px;height:auto;}
+}
+
+@media screen and (min-width: 801px) and (max-width: 1200px) {
+.conta {display: flex;flex-direction: column;flex-wrap: wrap;}
+.conta>* {flex: 3;width:48%;}
+}
+
+@media screen and (min-width: 1201px) {
+.conta {display: flex;flex-direction: column;flex-wrap: wrap;}
+.conta>* {flex: 3;width:30%;}
+}
+.conta {padding-top:20px;} 
+
+.encart_source {}
+.boite {font-family:Arial, Helvetica, sans-serif;margin-bottom:10px;border:2px solid transparent;border-top:1px solid transparent;border-radius:10px;}
+.boite:hover {transition: 0.5s;-o-transition: 0.5s;-moz-transition: 0.5s;-webkit-transition: 0.5s;background-color:#FBF7EF;}
+.intit {font-size:110%;letter-spacing:1px;color:#CF9B69;font-family:Verdana, Arial, Helvetica, sans-serif;font-weight:bold;border-radius:15px;padding-left:18px;padding-right:10px;background-color:white;}
+.titre {font-size:110%;letter-spacing:1px;color:#333333;text-decoration:none;margin-bottom:8px;background-color:white;border-radius:10px;padding:4px;padding-left:20px;padding-right:4px;padding-top:7px;width:90%;box-shadow: rgba(0, 0, 0, 0.07) 0px 2px 4px 0px, rgba(0, 0, 0, 0.1) 0px 2px 8px 0px;}
+.titre:hover {background-color:#FFFDFB;color:#000000;}
+.titre:first-letter{text-transform: capitalize}
+.descr {font-size:90%;color:#666666;text-align:justify;width:90%;padding:10px;padding-right:15px;padding-left:15px;overflow:hidden;max-height:200px;background-color:white;margin-left:15px;width:80%;border-radius:10px;}
+.numer {font-size:80%;letter-spacing:1px;font-family:Verdana, Arial, Helvetica, sans-serif;background-color:#CCCCCC;color:white;margin-top:-10px;margin-left:-30px;border-radius:10px;font-weight:bold;float:left;padding:4px;}
+.sourc {font-size:90%;letter-spacing:2px;color:#999999;font-weight:bold;padding-left:15px;}
+.dates {font-size:80%;color:#999999;text-align:justify;width:70%;font-family:Verdana, Arial, Helvetica, sans-serif;font-weight:bold;background-color:white;border-radius:8px;padding-left:5px;padding-right:5px;padding-bottom:3px;box-shadow: rgba(0, 0, 0, 0.1) 0px -2px 3px; }
+.horlo {float:right;margin-top:-12px;color:white;height:8px;overflow:visible;}
+.titre_htm {font-weight:bold;padding-bottom:5px;color:white;font-size:250%;text-shadow: -1px 0 #CF9B69, 0 1px #CF9B69,      1px 0 #CF9B69, 0 -1px #CF9B69, -2px 0 #CF9B69, 0 2px #CF9B69,      2px 0 #CF9B69, 0 -2px #CF9B69;font-family:bauhaus-boldregular,Georgia, Times New Roman, Times, serif;letter-spacing:4px;text-transform:lowercase;border-radius:15px;padding-left:10px;padding-right:10px;}
+affic {display:none;}
+</style>
+<title>Atlas - AIP - Agence Ivoirienne de Presse</title><div>&nbsp;&nbsp;&nbsp;&nbsp;<a href='https://atlasflux.saynete.net/'><span class='titre_htm'>atlas<span style="font-size:60%;letter-spacing:1px;"> des </span>actus</span></a></div><div style='margin-bottom:30px;margin-top:5px;width:25%;margin-left:15px;text-indent:-20px;'><a href='https://www.aip.ci/feed/' target='_blank' class='intit' ><img src='ico_rss_orange.svg' />&nbsp;&nbsp;AIP - Agence Ivoirienne de Presse</a></div>
+
+<div class='conta'>
+<div id='b_0' class='boite'><div class='horlo'> <span class='dates'>18&nbsp; juin </span>&nbsp;&nbsp;&nbsp; <span class='dates'>22h15</span></div><a href='https://www.aip.ci/cote-divoire-aip-le-ministere-de-linterieur-dement-toute-mission-dinspection-liee-a-un-detournement-de-16-milliard-fcfa-a-la-mairie-de-san-pedro/'  target='_blank'><div class='titre'>C�te d�Ivoire-AIP Le minist�re de l�Int�rieur d�ment toute mission d�inspection li�e � un d�tournement de 1,6 milliard FCFA � la mairie de San Pedro</div><div class='descr'><span style='text-transform: uppercase;'>MARYAM COULIBALY</span> &nbsp;&nbsp; Abidjan, 18 juin 2026 (AIP) - Le minist�re de l�Int�rieur et de la S�curit� a formellement d�menti, jeudi 18 juin 2026 dans un communiqu� relay� par...</div></a></div>
+<div id='b_1' class='boite'><div class='horlo'> &nbsp;&nbsp;&nbsp; <span class='dates'>21h39</span></div><a href='https://www.aip.ci/cote-divoire-aip-sante-numerique-abidjan-abrite-la-2e-edition-du-forum-intech-sante-medical-expo-2026-pour-une-afrique-souveraine-et-interconnectee/'  target='_blank'><div class='titre'>C�te d�Ivoire-AIP Sant� num�rique : Abidjan abrite la 2e �dition du Forum Intech Sant� Medical Expo 2026 pour une Afrique souveraine et interconnect�e</div><div class='descr'><span style='text-transform: uppercase;'>GEORGES AUBIN KONAN</span> &nbsp;&nbsp; Abidjan, 18 juin 2026 (AIP) - La deuxi�me �dition du Forum Intech Sant� et Medical Expo 2026 s�est ouverte, jeudi 18 juin 2026, au Parc des...</div></a></div>
+<div id='b_2' class='boite'><div class='horlo'> &nbsp;&nbsp;&nbsp; <span class='dates'>21h02</span></div><a href='https://www.aip.ci/cote-divoire-aip-la-mairie-et-le-conseil-regional-soumettent-leur-bilan-a-lappreciation-des-populations-dabengourou/'  target='_blank'><div class='titre'>C�te d�Ivoire-AIP La mairie et le conseil r�gional soumettent leur bilan � l�appr�ciation des populations d�Abengourou</div><div class='descr'><span style='text-transform: uppercase;'>ASSOUMOU MARCEL NGBESSO</span> &nbsp;&nbsp; Abengourou, 18 juin 2026 (AIP) - La commune d�Abengourou et le Conseil r�gional de l�Ind�ni�-Djuablin ont pr�sent� leurs r�alisations et recueilli...</div></a></div>
+<div id='b_3' class='boite'><div class='horlo'> &nbsp;&nbsp;&nbsp; <span class='dates'>20h55</span></div><a href='https://www.aip.ci/aip-jaf-2026-plus-de-90-du-trace-frontalier-cote-divoire-mali-boucle-cnfci/'  target='_blank'><div class='titre'>AIP JAF 2026: plus de 90% du trac� frontalier C�te d�Ivoire-Mali boucl� (CNFCI)</div><div class='descr'><span style='text-transform: uppercase;'>GEORGES AUBIN KONAN</span> &nbsp;&nbsp; N�Gandana (M�Bengu�), 18 juin 2026 (AIP) - Plus de 90% du trac� de la fronti�re entre la C�te d�Ivoire et le Mali ont d�j� fait l�objet d�un accord...</div></a></div>
+<div id='b_4' class='boite'><div class='horlo'> &nbsp;&nbsp;&nbsp; <span class='dates'>20h53</span></div><a href='https://www.aip.ci/cote-divoire-aip-celebree-a-ngandana-la-jaf-2026-met-en-avant-la-cooperation-transfrontaliere-et-le-developpement/'  target='_blank'><div class='titre'>C�te d�Ivoire-AIP C�l�br�e � N�Gandana, la JAF 2026 met en avant la coop�ration transfrontali�re et le d�veloppement</div><div class='descr'><span style='text-transform: uppercase;'>GEORGES AUBIN KONAN</span> &nbsp;&nbsp; N�Gandana (M�Bengu�), 18 juin 2026 (AIP) - La Journ�e africaine des fronti�res (JAF) 2026 a �t� c�l�br�e jeudi 18 juin 2026 � N�Gandana, dans la r...</div></a></div>
+<div id='b_5' class='boite'><div class='horlo'> &nbsp;&nbsp;&nbsp; <span class='dates'>20h50</span></div><a href='https://www.aip.ci/cote-divoire-aip-le-programme-national-passeport-competences-sappuiera-sur-les-besoins-reels-des-entreprises-et-des-territoires-ministre/'  target='_blank'><div class='titre'>C�te d�Ivoire-AIP Le Programme national Passeport-Comp�tences s�appuiera sur les besoins r�els des entreprises et des territoires (Ministre)</div><div class='descr'><span style='text-transform: uppercase;'>MARYAM COULIBALY</span> &nbsp;&nbsp; Abidjan, 18 juin 2026 (AIP) - Le ministre de l�Emploi, de la Protection sociale et de la Formation professionnelle, Ma�tre Adama Kamara, a annonc�...</div></a></div>
+<div id='b_6' class='boite'><div class='horlo'> &nbsp;&nbsp;&nbsp; <span class='dates'>20h47</span></div><a href='https://www.aip.ci/cote-divoire-aip-des-elus-francophones-saluent-la-transformation-exemplaire-de-lancienne-decharge-dakouedo-en-parc-ecologique/'  target='_blank'><div class='titre'>C�te d�Ivoire-AIP Des �lus francophones saluent la transformation exemplaire de l�ancienne d�charge d�Akou�do en parc �cologique</div><div class='descr'><span style='text-transform: uppercase;'>PIECHION BENJAMIN SORO</span> &nbsp;&nbsp; Abidjan, 18 juin 2026 (AIP) - Des �lus locaux membres de l�Association internationale des r�gions francophones (AIRF) ont exprim� leur admiration...</div></a></div>
+<div id='b_7' class='boite'><div class='horlo'> &nbsp;&nbsp;&nbsp; <span class='dates'>20h46</span></div><a href='https://www.aip.ci/cote-divoire-aip-lagefop-veut-faire-du-passeport-competences-un-outil-de-transformation-du-capital-humain-dg/'  target='_blank'><div class='titre'>C�te d�Ivoire-AIP L�AGEFOP veut faire du Passeport-Comp�tences un outil de transformation du capital humain (DG)</div><div class='descr'><span style='text-transform: uppercase;'>MARYAM COULIBALY</span> &nbsp;&nbsp; Abidjan, 18 juin 2026 (AIP) - La directrice g�n�rale de l�Agence nationale de la formation professionnelle (AGEFOP), Karitia Coulibaly De Medeiros, a...</div></a></div>
+<div id='b_8' class='boite'><div class='horlo'> &nbsp;&nbsp;&nbsp; <span class='dates'>20h43</span></div><a href='https://www.aip.ci/aip-la-cote-divoire-et-les-pays-bas-examinent-les-perspectives-de-renforcement-du-partenariat-economique/'  target='_blank'><div class='titre'>AIP La C�te d�Ivoire et les Pays-Bas examinent les perspectives de renforcement du partenariat �conomique</div><div class='descr'><span style='text-transform: uppercase;'>MARYAM COULIBALY</span> &nbsp;&nbsp; Abidjan, 18 juin 2026 (AIP) - La ministre d��tat, ministre des Affaires �trang�res et de la Coop�ration internationale, Nial� Kaba, a re�u en...</div></a></div>
+<div id='b_9' class='boite'><div class='horlo'> &nbsp;&nbsp;&nbsp; <span class='dates'>20h38</span></div><a href='https://www.aip.ci/aip-miss-cote-divoire-2026-la-lonaci-renforce-les-capacites-des-finalistes-en-prise-de-parole-et-developpement-personnel/'  target='_blank'><div class='titre'>AIP Miss C�te d�Ivoire 2026: la LONACI renforce les capacit�s des finalistes en prise de parole et d�veloppement personnel</div><div class='descr'><span style='text-transform: uppercase;'>AWA DIABY</span> &nbsp;&nbsp; Abidjan, 18 juin 2026 (AIP)- La Loterie nationale de C�te d�Ivoire (LONACI), partenaire du concours Miss C�te d�Ivoire, a initi� jeudi 18 juin dans...</div></a></div>
+</div><affic>1781821063</affic>	<div id="source_rank" class='encart_source' style="-webkit-transition:0.3s;-moz-transition:0.3s;-o-transition:0.3s;transition:0.3s;border:2px solid #CCCCCC;background-color:white;border-radius:10px;margin-bottom:5px;font-family:Arial, Helvetica, sans-serif;padding:5px;padding-left:15px;margin-right:5px;position:absolute;top:0px;right:0px;width:35%;height:95px;overflow-y:hidden;overflow-x:hidden;" onmouseover="document.getElementById('source_rank').style.height = '450px';document.getElementById('source_rank').style.overflowY = 'scroll';" onmouseout="document.getElementById('source_rank').style.height = '95px';document.getElementById('source_rank').style.overflowY = 'hidden';">
+	
+	<iframe  style="border:0px none transparent;background-color:white;border-radius:10px;font-family:Arial, Helvetica, sans-serif;height:6000px;overflow:hidden;width:98%;" src="https://atlasflux.saynete.net/atlas_des_flux_rss_base_complet_blanc.htm"></iframe>
+	</div>
+	<div id="catalogue_rank" class='encart_source' style="-webkit-transition:0.3s;-moz-transition:0.3s;-o-transition:0.3s;transition:0.3s;border:2px solid #CCCCCC;background-color:white;border-radius:10px;margin-bottom:5px;font-family:Arial, Helvetica, sans-serif;padding:5px;padding-left:15px;margin-right:5px;position:absolute;top:0px;right:37%;width:35%;height:95px;overflow-y:hidden;overflow-x:hidden;" onmouseover="document.getElementById('catalogue_rank').style.height = '450px';document.getElementById('catalogue_rank').style.overflowY = 'scroll';" onmouseout="document.getElementById('catalogue_rank').style.height = '95px';document.getElementById('catalogue_rank').style.overflowY = 'hidden';">
+	<iframe  style="border:0px none transparent;background-color:white;border-radius:10px;margin-bottom:5px;font-family:Arial, Helvetica, sans-serif;padding:5px;padding-left:15px;margin-right:5px;height:4000px;overflow:hidden;width:98%;" src="https://atlasflux.saynete.net/atlas_des_flux_rss_fra_territoire_afrique.html"></iframe>
+	</div>
+	
