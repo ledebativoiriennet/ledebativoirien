@@ -23,18 +23,11 @@ export async function saveNewspaper(formData: FormData) {
     const price = parseFloat(priceStr);
     const isActive = formData.get('isActive') === 'true';
     
-    const pdfFile = formData.get('pdfFile') as File | null;
-    const coverFile = formData.get('coverFile') as File | null;
+    const pdfUrl = formData.get('pdfUrl') as string;
+    const coverImageUrl = formData.get('coverImageUrl') as string | null;
 
-    if (!title || isNaN(price) || !pdfFile || pdfFile.size === 0) {
+    if (!title || isNaN(price) || !pdfUrl) {
       return { success: false, error: "Données manquantes ou invalides (Titre, Prix et Fichier PDF obligatoires)." };
-    }
-
-    const pdfUrl = await saveUpload(pdfFile);
-
-    let coverUrl = null;
-    if (coverFile && coverFile.size > 0) {
-      coverUrl = await saveUpload(coverFile);
     }
 
     const newspaper = await prisma.digitalNewspaper.create({
@@ -44,7 +37,7 @@ export async function saveNewspaper(formData: FormData) {
         issueNumber,
         price,
         pdfUrl,
-        coverImageUrl: coverUrl,
+        coverImageUrl: coverImageUrl || null,
         isActive,
       }
     });
@@ -75,8 +68,8 @@ export async function updateNewspaper(id: string, formData: FormData) {
     const price = parseFloat(priceStr);
     const isActive = formData.get('isActive') === 'true';
     
-    const pdfFile = formData.get('pdfFile') as File | null;
-    const coverFile = formData.get('coverFile') as File | null;
+    const pdfUrl = formData.get('pdfUrl') as string | null;
+    const coverImageUrl = formData.get('coverImageUrl') as string | null;
 
     if (!title || isNaN(price)) {
       return { success: false, error: "Le titre et le prix sont invalides." };
@@ -90,13 +83,8 @@ export async function updateNewspaper(id: string, formData: FormData) {
       isActive,
     };
 
-    if (pdfFile && pdfFile.size > 0) {
-      updateData.pdfUrl = await saveUpload(pdfFile);
-    }
-
-    if (coverFile && coverFile.size > 0) {
-      updateData.coverImageUrl = await saveUpload(coverFile);
-    }
+    if (pdfUrl) updateData.pdfUrl = pdfUrl;
+    if (coverImageUrl) updateData.coverImageUrl = coverImageUrl;
 
     await prisma.digitalNewspaper.update({
       where: { id },

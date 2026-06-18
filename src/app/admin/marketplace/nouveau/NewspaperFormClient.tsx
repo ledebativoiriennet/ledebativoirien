@@ -23,6 +23,26 @@ export default function NewspaperFormClient({ initialData }: { initialData?: any
 
   const isEditing = !!initialData;
 
+  const uploadFileRaw = async (file: File): Promise<string> => {
+    const arrayBuffer = await file.arrayBuffer();
+    const response = await fetch('/api/admin/marketplace/upload-raw', {
+      method: 'POST',
+      headers: {
+        'x-filename': encodeURIComponent(file.name),
+        'Content-Type': 'application/octet-stream'
+      },
+      body: arrayBuffer
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.error || `Erreur d'upload HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.url;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -35,6 +55,17 @@ export default function NewspaperFormClient({ initialData }: { initialData?: any
     }
 
     try {
+      let uploadedPdfUrl: string | null = null;
+      let uploadedCoverUrl: string | null = null;
+
+      if (pdfFile) {
+        uploadedPdfUrl = await uploadFileRaw(pdfFile);
+      }
+
+      if (coverFile) {
+        uploadedCoverUrl = await uploadFileRaw(coverFile);
+      }
+
       const data = new FormData();
       data.append('title', formData.title.trim());
       data.append('description', formData.description.trim());
@@ -42,8 +73,8 @@ export default function NewspaperFormClient({ initialData }: { initialData?: any
       data.append('price', formData.price.trim());
       data.append('isActive', String(formData.isActive));
       
-      if (coverFile) data.append('coverFile', coverFile);
-      if (pdfFile) data.append('pdfFile', pdfFile);
+      if (uploadedPdfUrl) data.append('pdfUrl', uploadedPdfUrl);
+      if (uploadedCoverUrl) data.append('coverImageUrl', uploadedCoverUrl);
 
       let result;
       if (isEditing) {
