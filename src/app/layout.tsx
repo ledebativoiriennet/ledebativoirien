@@ -22,6 +22,10 @@ import { getMatchesAndSync } from "@/lib/sports";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
 import LiveStreamBadge from "@/components/LiveStreamBadge";
 import MobileStories from "@/components/MobileStories";
+import { Suspense } from 'react';
+import BottomNavBar from '@/components/BottomNavBar';
+import BackToTopButton from '@/components/BackToTopButton';
+import PullToRefresh from '@/components/PullToRefresh';
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -533,6 +537,9 @@ export default async function RootLayout({
         {siteSettings?.footerCode && (
           <div dangerouslySetInnerHTML={{ __html: siteSettings.footerCode }} />
         )}
+        <BottomNavBar />
+        <BackToTopButton />
+        <PullToRefresh />
         </Providers>
         </div>
       </body>
