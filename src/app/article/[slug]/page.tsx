@@ -43,6 +43,7 @@ import FactCheckWidget from "@/components/FactCheckWidget";
 import ArticleTimeline from "@/components/ArticleTimeline";
 import ArticleStoryMode from "@/components/ArticleStoryMode";
 import ArticleCopilot from "@/components/ArticleCopilot";
+import AnimatedReactions from "@/components/AnimatedReactions";
 
 export const revalidate = 60;
 
@@ -690,14 +691,12 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
                   </div>
                 ))}
               </div>
-              <LikeButton articleId={article.id} initialLiked={initialLiked} initialCount={initialLikeCount} />
             </div>
           )}
-          {!article.tags?.length && (
-            <div style={{ marginTop: "3rem", paddingTop: "2rem", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "flex-end" }}>
-              <LikeButton articleId={article.id} initialLiked={initialLiked} initialCount={initialLikeCount} />
-            </div>
-          )}
+          
+          {/* Innovations UX : Réactions Animées au lieu d'un simple Like */}
+          <AnimatedReactions />
+
           
           <SocialShareButtons title={article.title} layout="horizontal" />
 

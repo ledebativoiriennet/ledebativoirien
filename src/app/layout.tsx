@@ -26,6 +26,7 @@ import { Suspense } from 'react';
 import BottomNavBar from '@/components/BottomNavBar';
 import BackToTopButton from '@/components/BackToTopButton';
 import PullToRefresh from '@/components/PullToRefresh';
+import CommandPalette from '@/components/CommandPalette';
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -540,6 +541,7 @@ export default async function RootLayout({
         <BottomNavBar />
         <BackToTopButton />
         <PullToRefresh />
+        <CommandPalette />
         </Providers>
         </div>
       </body>
