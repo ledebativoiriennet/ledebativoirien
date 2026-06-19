@@ -454,7 +454,7 @@ export default async function RootLayout({
           <WorldCupTicker initialMatches={wcMatches} />
         
         <main style={{ minHeight: '60vh', width: '100%' }}>
-          <div className="container">
+          <div className="container" style={{ backgroundColor: 'var(--card-bg)', minHeight: '60vh', paddingTop: '1.5rem', paddingBottom: '1.5rem', boxShadow: 'var(--shadow)' }}>
             <GoogleAdSlot adSlot="3353692131" format="horizontal" />
             {children}
             <GoogleAdSlot adSlot="1597757330" format="horizontal" />
