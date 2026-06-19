@@ -27,6 +27,7 @@ import BottomNavBar from '@/components/BottomNavBar';
 import BackToTopButton from '@/components/BackToTopButton';
 import PullToRefresh from '@/components/PullToRefresh';
 import CommandPalette from '@/components/CommandPalette';
+import NewsletterPopup from '@/components/NewsletterPopup';
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -542,6 +543,7 @@ export default async function RootLayout({
         <BackToTopButton />
         <PullToRefresh />
         <CommandPalette />
+        <NewsletterPopup />
         </Providers>
         </div>
       </body>
