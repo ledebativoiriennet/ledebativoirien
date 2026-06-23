@@ -37,23 +37,11 @@ export async function POST(request: Request) {
       }
     });
 
-    // Mock response if API keys are missing (for local testing without keys)
+    // Si les clés CINETPAY sont absentes, on ne peut pas initier le paiement en ligne.
+    // On retourne une erreur pour forcer l'utilisateur à utiliser le transfert manuel.
     if (!apiKey || !siteId) {
-      console.warn("⚠️ Clés CINETPAY absentes. Redirection simulée pour achat PDF.");
-      
-      // Simulate success update
-      await prisma.purchase.update({
-        where: { id: purchase.id },
-        data: { status: 'COMPLETED' }
-      });
-
-      return NextResponse.json({
-        code: "201",
-        message: "CREATED",
-        data: {
-          payment_url: `/marketplace/success?token=${purchase.downloadToken}`,
-        }
-      });
+      console.error("⚠️ Clés CINETPAY absentes.");
+      return NextResponse.json({ error: "Le paiement en ligne n'est pas configuré. Veuillez utiliser l'option 'TRANSFERT DIRECT'." }, { status: 500 });
     }
 
     // Appel réel à l'API CinetPay
