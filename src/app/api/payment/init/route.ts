@@ -12,6 +12,20 @@ export async function POST(request: Request) {
     // Generate a unique transaction ID
     const transactionId = `TX-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
+    if (email) {
+      const user = await prisma.user.findUnique({ where: { email } });
+      if (user) {
+         await prisma.subscription.create({
+           data: {
+             userId: user.id,
+             plan: plan || 'Mensuel',
+             status: 'PENDING',
+             transactionId: transactionId
+           }
+         });
+      }
+    }
+
     // Mock response if API keys are missing (for local testing without keys)
     if (!apiKey || !siteId) {
       console.warn("⚠️ Clés CINETPAY absentes dans le fichier .env. Redirection simulée.");
@@ -28,10 +42,9 @@ export async function POST(request: Request) {
            const endDate = new Date();
            endDate.setDate(endDate.getDate() + days);
 
-           await prisma.subscription.create({
+           await prisma.subscription.update({
+             where: { transactionId: transactionId },
              data: {
-               userId: user.id,
-               plan: plan || 'Mensuel',
                status: 'ACTIVE',
                endDate: endDate
              }

@@ -34,7 +34,42 @@ export async function POST(request: Request) {
       console.log(`[CINETPAY] ✅ Paiement réussi pour : ${customerEmail} (TX: ${cpm_trans_id})`);
 
       // Activer l'abonnement dans Prisma
-      if (customerEmail) {
+      const pendingSub = await prisma.subscription.findUnique({
+        where: { transactionId: cpm_trans_id }
+      });
+
+      if (pendingSub) {
+        if (pendingSub.status === 'PENDING') {
+          let days = 30;
+          const plan = pendingSub.plan;
+          if (plan.includes('Quotidien')) days = 1;
+          if (plan.includes('Hebdo')) days = 7;
+          if (plan.includes('Annuel')) days = 365;
+
+          const endDate = new Date();
+          endDate.setDate(endDate.getDate() + days);
+
+          await prisma.subscription.update({
+            where: { id: pendingSub.id },
+            data: { status: 'ACTIVE', endDate: endDate }
+          });
+
+          const user = await prisma.user.findUnique({ where: { id: pendingSub.userId } });
+          if (user && user.role === 'USER') {
+            let roleToSet = 'PREMIUM';
+            if (plan.includes('Ultimate')) roleToSet = 'ULTIMATE';
+            else if (plan.includes('Confidentiel')) roleToSet = 'CONFIDENTIEL';
+
+            await prisma.user.update({
+              where: { id: user.id },
+              data: { role: roleToSet }
+            });
+          }
+        } else {
+          console.log(`[CINETPAY] ⚠️ Transaction déjà traitée ou annulée (TX: ${cpm_trans_id})`);
+        }
+      } else if (customerEmail) {
+        // Rétrocompatibilité pour les anciennes transactions sans transactionId
         const user = await prisma.user.findUnique({ where: { email: customerEmail } });
         if (user) {
            // On détermine la durée via le montant (puisque le plan n'est pas renvoyé par CinetPay Check)
@@ -57,7 +92,8 @@ export async function POST(request: Request) {
                userId: user.id,
                plan: plan,
                status: 'ACTIVE',
-               endDate: endDate
+               endDate: endDate,
+               transactionId: cpm_trans_id // on le lie maintenant
              }
            });
            
