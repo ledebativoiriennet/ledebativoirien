@@ -1,123 +1,177 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { createHmac, timingSafeEqual } from 'crypto';
+
+const GENIUSPAY_BASE_URL = 'https://geniuspay.ci/api/v1/merchant';
+
+/**
+ * Vérifie la signature HMAC-SHA256 du webhook GeniusPay.
+ * Format : HMAC-SHA256(timestamp + "." + raw_body, webhook_secret)
+ */
+function verifyWebhookSignature(
+  rawBody: string,
+  signature: string,
+  timestamp: string,
+  secret: string
+): boolean {
+  try {
+    const data = `${timestamp}.${rawBody}`;
+    const expected = createHmac('sha256', secret).update(data).digest('hex');
+    return timingSafeEqual(Buffer.from(expected), Buffer.from(signature));
+  } catch {
+    return false;
+  }
+}
 
 export async function POST(request: Request) {
   try {
-    // CinetPay webhook sends data as x-www-form-urlencoded
-    const formData = await request.formData();
-    const cpm_trans_id = formData.get('cpm_trans_id') as string;
-    const cpm_site_id = formData.get('cpm_site_id') as string;
+    // GeniusPay webhooks envoient du JSON (application/json)
+    const rawBody = await request.text();
+    let payload: any;
 
-    if (!cpm_trans_id || !cpm_site_id) {
-      return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
+    try {
+      payload = JSON.parse(rawBody);
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON payload' }, { status: 400 });
     }
 
-    const apiKey = process.env.CINETPAY_API_KEY;
-    const siteId = process.env.CINETPAY_SITE_ID;
+    const webhookSecret = process.env.GENIUSPAY_WEBHOOK_SECRET;
+    const signature  = request.headers.get('X-Webhook-Signature') || '';
+    const timestamp  = request.headers.get('X-Webhook-Timestamp') || '';
+    const event      = request.headers.get('X-Webhook-Event') || payload?.event || '';
 
-    // Verify transaction status directly with CinetPay
-    const verifyRes = await fetch("https://api-checkout.cinetpay.com/v2/payment/check", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        apikey: apiKey,
-        site_id: siteId,
-        transaction_id: cpm_trans_id
-      })
-    });
+    // Vérification de la signature (si le secret est configuré)
+    if (webhookSecret && signature && timestamp) {
+      if (!verifyWebhookSignature(rawBody, signature, timestamp, webhookSecret)) {
+        console.warn('[GENIUSPAY] ⚠️ Signature webhook invalide');
+        return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+      }
 
-    const verifyData = await verifyRes.json();
+      // Protection contre les replay attacks (5 minutes)
+      if (Math.abs(Date.now() / 1000 - parseInt(timestamp)) > 300) {
+        return NextResponse.json({ error: 'Timestamp too old' }, { status: 400 });
+      }
+    }
 
-    if (verifyData.code === "00" && verifyData.data.status === "ACCEPTED") {
-      // Transaction successful!
-      const customerEmail = verifyData.data.customer_email;
-      console.log(`[CINETPAY] ✅ Paiement réussi pour : ${customerEmail} (TX: ${cpm_trans_id})`);
+    // On ne traite que l'événement payment.success
+    if (event !== 'payment.success') {
+      return NextResponse.json({ received: true, event });
+    }
 
-      // Activer l'abonnement dans Prisma
-      const pendingSub = await prisma.subscription.findUnique({
-        where: { transactionId: cpm_trans_id }
+    const txData    = payload?.data;
+    const reference = txData?.reference as string | undefined;
+    const status    = txData?.status as string | undefined;
+    const metadata  = txData?.metadata || {};
+
+    if (!reference) {
+      return NextResponse.json({ error: 'Missing reference' }, { status: 400 });
+    }
+
+    // Double-vérification via l'API GeniusPay
+    const apiKey    = process.env.GENIUSPAY_API_KEY;
+    const apiSecret = process.env.GENIUSPAY_API_SECRET;
+
+    if (apiKey && apiSecret) {
+      const verifyRes = await fetch(`${GENIUSPAY_BASE_URL}/payments/${reference}`, {
+        headers: {
+          'X-API-Key': apiKey,
+          'X-API-Secret': apiSecret,
+        },
       });
 
-      if (pendingSub) {
-        if (pendingSub.status === 'PENDING') {
-          let days = 30;
-          const plan = pendingSub.plan;
-          if (plan.includes('Quotidien')) days = 1;
-          if (plan.includes('Hebdo')) days = 7;
-          if (plan.includes('Annuel')) days = 365;
+      const verifyData = await verifyRes.json();
 
-          const endDate = new Date();
-          endDate.setDate(endDate.getDate() + days);
-
-          await prisma.subscription.update({
-            where: { id: pendingSub.id },
-            data: { status: 'ACTIVE', endDate: endDate }
-          });
-
-          const user = await prisma.user.findUnique({ where: { id: pendingSub.userId } });
-          if (user && user.role === 'USER') {
-            let roleToSet = 'PREMIUM';
-            if (plan.includes('Ultimate')) roleToSet = 'ULTIMATE';
-            else if (plan.includes('Confidentiel')) roleToSet = 'CONFIDENTIEL';
-
-            await prisma.user.update({
-              where: { id: user.id },
-              data: { role: roleToSet }
-            });
-          }
-        } else {
-          console.log(`[CINETPAY] ⚠️ Transaction déjà traitée ou annulée (TX: ${cpm_trans_id})`);
-        }
-      } else if (customerEmail) {
-        // Rétrocompatibilité pour les anciennes transactions sans transactionId
-        const user = await prisma.user.findUnique({ where: { email: customerEmail } });
-        if (user) {
-           // On détermine la durée via le montant (puisque le plan n'est pas renvoyé par CinetPay Check)
-           const amount = verifyData.data.amount;
-           let days = 30;
-           let plan = 'Mensuel';
-           if (amount === 200) { days = 1; plan = 'Quotidien'; }
-           if (amount === 700) { days = 7; plan = 'Hebdo'; }
-           if (amount === 1000) { days = 7; plan = 'Confidentiel Hebdo'; }
-           if (amount === 2000) { days = 30; plan = 'Mensuel'; }
-           if (amount === 3000) { days = 30; plan = 'Confidentiel Mensuel'; }
-           if (amount === 20000) { days = 365; plan = 'Annuel'; }
-           if (amount === 27000) { days = 365; plan = 'Ultimate Annuel'; }
-           
-           const endDate = new Date();
-           endDate.setDate(endDate.getDate() + days);
-
-           await prisma.subscription.create({
-             data: {
-               userId: user.id,
-               plan: plan,
-               status: 'ACTIVE',
-               endDate: endDate,
-               transactionId: cpm_trans_id // on le lie maintenant
-             }
-           });
-           
-           if (user.role === 'USER') {
-             let roleToSet = 'PREMIUM';
-             if (plan.includes('Ultimate')) roleToSet = 'ULTIMATE';
-             else if (plan.includes('Confidentiel')) roleToSet = 'CONFIDENTIEL';
-
-             await prisma.user.update({
-               where: { id: user.id },
-               data: { role: roleToSet }
-             });
-           }
-        }
+      if (!verifyData.success || verifyData.data?.status !== 'completed') {
+        console.log(`[GENIUSPAY] ❌ Vérification échouée pour ref: ${reference}`);
+        return NextResponse.json({ received: true });
       }
-    } else {
-      console.log(`[CINETPAY] ❌ Paiement échoué ou annulé pour TX: ${cpm_trans_id}`);
     }
 
-    // Always return 200 OK to CinetPay to acknowledge receipt
-    return NextResponse.json({ status: "success" }, { status: 200 });
+    // Récupérer le transaction_id stocké dans les metadata
+    const transactionId = (metadata.transaction_id || reference) as string;
+    const customerEmail = (metadata.customer_email || txData?.customer_email || '') as string;
 
+    console.log(`[GENIUSPAY] ✅ Paiement réussi — ref: ${reference}, email: ${customerEmail}`);
+
+    // Activer l'abonnement dans Prisma
+    const pendingSub = await prisma.subscription.findUnique({
+      where: { transactionId: transactionId },
+    });
+
+    if (pendingSub) {
+      if (pendingSub.status === 'PENDING') {
+        let days = 30;
+        const plan = pendingSub.plan;
+        if (plan.includes('Quotidien')) days = 1;
+        if (plan.includes('Hebdo')) days = 7;
+        if (plan.includes('Annuel')) days = 365;
+
+        const endDate = new Date();
+        endDate.setDate(endDate.getDate() + days);
+
+        await prisma.subscription.update({
+          where: { id: pendingSub.id },
+          data: { status: 'ACTIVE', endDate: endDate },
+        });
+
+        const user = await prisma.user.findUnique({ where: { id: pendingSub.userId } });
+        if (user && user.role === 'USER') {
+          let roleToSet = 'PREMIUM';
+          if (plan.includes('Ultimate')) roleToSet = 'ULTIMATE';
+          else if (plan.includes('Confidentiel')) roleToSet = 'CONFIDENTIEL';
+
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { role: roleToSet },
+          });
+        }
+      } else {
+        console.log(`[GENIUSPAY] ⚠️ Transaction déjà traitée (ref: ${reference})`);
+      }
+    } else if (customerEmail) {
+      // Rétrocompatibilité : pas de pendingSub trouvé → on cherche via email
+      const user = await prisma.user.findUnique({ where: { email: customerEmail } });
+      if (user) {
+        const amount = txData?.amount as number;
+        let days = 30;
+        let plan = 'Mensuel';
+        if (amount === 200)   { days = 1;   plan = 'Quotidien'; }
+        if (amount === 700)   { days = 7;   plan = 'Hebdo'; }
+        if (amount === 1000)  { days = 7;   plan = 'Confidentiel Hebdo'; }
+        if (amount === 2000)  { days = 30;  plan = 'Mensuel'; }
+        if (amount === 3000)  { days = 30;  plan = 'Confidentiel Mensuel'; }
+        if (amount === 20000) { days = 365; plan = 'Annuel'; }
+        if (amount === 27000) { days = 365; plan = 'Ultimate Annuel'; }
+
+        const endDate = new Date();
+        endDate.setDate(endDate.getDate() + days);
+
+        await prisma.subscription.create({
+          data: {
+            userId: user.id,
+            plan: plan,
+            status: 'ACTIVE',
+            endDate: endDate,
+            transactionId: transactionId,
+          },
+        });
+
+        if (user.role === 'USER') {
+          let roleToSet = 'PREMIUM';
+          if (plan.includes('Ultimate')) roleToSet = 'ULTIMATE';
+          else if (plan.includes('Confidentiel')) roleToSet = 'CONFIDENTIEL';
+
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { role: roleToSet },
+          });
+        }
+      }
+    }
+
+    return NextResponse.json({ received: true }, { status: 200 });
   } catch (error) {
-    console.error("Webhook error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    console.error('[GENIUSPAY] Erreur webhook abonnement:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

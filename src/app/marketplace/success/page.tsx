@@ -129,7 +129,7 @@ export default async function MarketplaceSuccessPage({
             <div style={{ paddingTop: '2rem', borderTop: '1px solid #1f1f1f', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                 <p style={{ color: '#52525b', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2em' }}>Montant Total</p>
-                <p style={{ color: '#52525b', fontSize: '12px', fontWeight: 500, fontStyle: 'italic' }}>Paiement via CinetPay</p>
+                <p style={{ color: '#52525b', fontSize: '12px', fontWeight: 500, fontStyle: 'italic' }}>Paiement via GeniusPay</p>
               </div>
               <div style={{ textAlign: 'right' }}>
                 <p style={{ fontSize: '2.5rem', fontWeight: 900, color: 'white', letterSpacing: '-0.05em' }}>{purchase.amount} <span style={{ fontSize: '0.875rem', color: '#52525b' }}>FCFA</span></p>

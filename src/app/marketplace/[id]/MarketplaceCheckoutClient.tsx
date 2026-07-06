@@ -207,7 +207,7 @@ export default function MarketplaceCheckoutClient({ newspaper }: { newspaper: Ne
       </button>
 
       <div style={{ textAlign: 'center', fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.4)' }}>
-        {paymentMethod === 'online' ? 'Paiement sécurisé par CinetPay' : 'Traitement manuel par notre équipe'}
+        {paymentMethod === 'online' ? 'Paiement sécurisé par GeniusPay' : 'Traitement manuel par notre équipe'}
       </div>
       
       <style dangerouslySetInnerHTML={{ __html: `@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }` }} />

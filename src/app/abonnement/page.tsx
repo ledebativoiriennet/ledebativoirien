@@ -28,10 +28,10 @@ function AbonnementContent() {
       });
       const data = await res.json();
       
-      if (data.code === '201' && data.data?.payment_url) {
+      if (data.success && data.data?.payment_url) {
         window.location.href = data.data.payment_url;
       } else {
-        alert("Erreur de connexion à CinetPay. Veuillez réessayer.");
+        alert("Erreur de connexion à GeniusPay. Veuillez réessayer.");
       }
     } catch (e) {
       console.error(e);
@@ -73,7 +73,7 @@ function AbonnementContent() {
               onClick={() => handlePayment('Hebdo', 700)}
               disabled={loading !== null}
             >
-              {loading === 'Hebdo' ? "Connexion..." : "CinetPay"}
+              {loading === 'Hebdo' ? "Connexion..." : "GeniusPay"}
             </button>
           </div>
 
@@ -95,7 +95,7 @@ function AbonnementContent() {
               onClick={() => handlePayment('Mensuel', 2000)}
               disabled={loading !== null}
             >
-              {loading === 'Mensuel' ? "Connexion..." : "S'abonner via CinetPay"}
+              {loading === 'Mensuel' ? "Connexion..." : "S'abonner via GeniusPay"}
             </button>
           </div>
         </div>
