@@ -9,18 +9,7 @@ export const metadata: Metadata = {
   title: "Archives - Le Débat Ivoirien",
   description: "Consultez et recherchez tous les articles publiés sur Le Débat Ivoirien, classés par thématique, catégorie et année.",
 };
-
-const PREMIUM_ROLES = new Set(["PREMIUM", "CONFIDENTIEL", "ULTIMATE", "EDITOR", "ADMIN"]);
-
 export default async function ArchivesPage() {
-  const session = await getServerSession(authOptions);
-  const role = (session?.user as any)?.role as string | undefined;
-  const hasPremiumAccess = role && PREMIUM_ROLES.has(role);
-
-  if (!hasPremiumAccess) {
-    return <ArchivesPaywall isLoggedIn={!!session} />;
-  }
-
   const [filterOptions, initialData] = await Promise.all([
     getArchiveFilterOptions(),
     getFilteredArticles({ page: 1 }),

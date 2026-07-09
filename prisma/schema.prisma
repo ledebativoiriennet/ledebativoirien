@@ -38,6 +38,7 @@ model User {
   quizAttempts        QuizAttempt[]
   newsletterSub       NewsletterSubscriber?
   badges              String? // JSON stringified array of badge identifiers
+  articlePurchases    ArticlePurchase[]
 }
 
 model Subscription {
@@ -111,6 +112,7 @@ model Article {
   bookmarks         Bookmark[]
   giftLinks         GiftLink[]
   highlights        Highlight[]
+  articlePurchases    ArticlePurchase[]
   aiSummary         String?
   audioUrl          String?
   region            String?
@@ -726,4 +728,21 @@ model LiveUpdate {
   article    Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
 
   @@index([articleId, createdAt(sort: Desc)])
+}
+
+model ArticlePurchase {
+  id            String   @id @default(cuid())
+  userId        String
+  articleId     String
+  amount        Float
+  status        String   @default("PENDING")
+  transactionId String?  @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  article       Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, articleId])
+  @@index([userId])
+  @@index([articleId])
 }

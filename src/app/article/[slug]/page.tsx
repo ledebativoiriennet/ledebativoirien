@@ -224,12 +224,38 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
     isConfidentielSubscriber = role === "ADMIN" || role === "EDITOR" || role === "CONFIDENTIEL" || role === "ULTIMATE";
   }
 
+  // Détecter si l'article est en archive (publié il y a plus d'un an)
+  const oneYearAgo = new Date();
+  oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+  const isArchiveArticle = article.publishedAt !== null && new Date(article.publishedAt) < oneYearAgo;
+
+  // Vérifier si l'utilisateur a acheté cet article d'archive individuellement
+  let hasArchivePurchase = false;
+  if (isArchiveArticle && session?.user) {
+    const userId = (session.user as any).id;
+    if (userId) {
+      const purchase = await prisma.articlePurchase.findUnique({
+        where: { userId_articleId: { userId, articleId: article.id } }
+      });
+      hasArchivePurchase = purchase?.status === 'COMPLETED';
+    }
+  }
+
   // Determine if paywall should be shown
   let showPaywall = false;
+  // Les abonnés Annuel (ULTIMATE) ont accès aux archives sans surcoût
+  const hasArchiveAccess = isPremiumSubscriber && (session?.user as any)?.role === 'ULTIMATE' 
+    || ['ADMIN','EDITOR'].includes((session?.user as any)?.role);
+
   if (article.isConfidentiel) {
     showPaywall = !isConfidentielSubscriber;
   } else if (article.isPremium) {
     showPaywall = !isPremiumSubscriber;
+  }
+
+  // Archive paywall — s'applique après les paywalls premium/confidentiel
+  if (!showPaywall && isArchiveArticle && !hasArchiveAccess && !hasArchivePurchase) {
+    showPaywall = true;
   }
 
   // Vérifier le jeton cadeau
@@ -665,7 +691,10 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
                     </div>
                   </div>
                 ) : (
-                  <Paywall type={article.isConfidentiel ? 'confidentiel' : 'premium'} />
+                  <Paywall 
+                    type={isArchiveArticle && !article.isConfidentiel && !article.isPremium ? 'archive' : article.isConfidentiel ? 'confidentiel' : 'premium'}
+                    articleId={isArchiveArticle ? article.id : undefined}
+                  />
                 )}
               </div>
             )}

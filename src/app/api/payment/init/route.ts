@@ -36,10 +36,10 @@ export async function POST(request: Request) {
       if (email) {
         const user = await prisma.user.findUnique({ where: { email } });
         if (user) {
-          let days = 30; // Mensuel
-          if (plan.includes('Quotidien')) days = 1;
-          if (plan.includes('Hebdo')) days = 7;
-          if (plan.includes('Annuel')) days = 365;
+          let days = 30; // Par défaut
+          if (plan.includes('Hebdomadaire')) days = 7;
+          else if (plan.includes('Mensuel') || plan.includes('Confidentiel')) days = 30;
+          else if (plan.includes('Annuel')) days = 365;
 
           const endDate = new Date();
           endDate.setDate(endDate.getDate() + days);
@@ -52,9 +52,9 @@ export async function POST(request: Request) {
             },
           });
 
-          if (user.role === 'USER') {
+          if (user.role === 'USER' || user.role === 'PREMIUM' || user.role === 'CONFIDENTIEL' || user.role === 'ULTIMATE') {
             let roleToSet = 'PREMIUM';
-            if (plan.includes('Ultimate')) roleToSet = 'ULTIMATE';
+            if (plan.includes('Annuel')) roleToSet = 'ULTIMATE';
             else if (plan.includes('Confidentiel')) roleToSet = 'CONFIDENTIEL';
 
             await prisma.user.update({
