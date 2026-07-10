@@ -211,7 +211,7 @@ export async function getMatchesAndSync() {
 
   // Fetch matches scheduled for today or currently LIVE
   // @ts-ignore
-  let matches = await prisma.footballMatch.findMany({
+  const matches = await prisma.footballMatch.findMany({
     where: {
       sport: "Football",
       OR: [
@@ -227,17 +227,7 @@ export async function getMatchesAndSync() {
     orderBy: { matchDate: "asc" },
   });
 
-  // Fallback if empty
-  if (matches.length === 0) {
-    // @ts-ignore
-    matches = await prisma.footballMatch.findMany({
-      where: {
-        sport: "Football",
-      },
-      orderBy: { matchDate: "asc" },
-      take: 10,
-    });
-  }
-
+  // Si aucun match aujourd'hui ni en direct → retourner tableau vide
+  // Le bandeau WorldCupTicker se masque automatiquement si le tableau est vide
   return matches;
 }
