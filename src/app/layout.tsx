@@ -127,45 +127,33 @@ export default async function RootLayout({
   });
 
   /**
-   * Nettoie une dépêche du ticker international :
-   * 1. Normalise toutes les variantes d'apostrophes en apostrophe droite '
-   * 2. Retire les préfixes d'agences (AIP, Côte d'Ivoire-AIP, APS, AFP…)
-   * 3. Restaure les apostrophes manquantes devant voyelles et mots élisés
+   * Nettoie une dépêche :
+   * - Retire les préfixes d'agences (AIP, Côte d'Ivoire-AIP, Sénégal-APS, etc.)
+   * - Restaure les apostrophes manquantes sur les particules françaises courantes
    */
   function cleanHeadline(raw: string): string {
-    // 1. Normaliser TOUTES les variantes d'apostrophes en apostrophe droite ASCII
-    //    ' (U+2019) ' (U+2018) ʼ (U+02BC) ‛ (U+201B) → '
-    let s = raw.replace(/[\u2018\u2019\u02BC\u201B\u0060]/g, "'");
-
-    // 2. Supprimer préfixes agences UNIQUEMENT en début de chaîne (pas de /g global)
-    s = s
-      .replace(/^Côte\s+d'?Ivoire\s*[-–]\s*AIP\s+/i, '')
-      .replace(/^Côte\s+d'?Ivoire\s*[-–]\s*APS\s+/i, '')
-      .replace(/^Côte\s+d'?Ivoire\s*[-–]\s*AFP\s+/i, '')
-      .replace(/^AIP\s+/i, '')
-      .replace(/^APS\s+/i, '')
-      .replace(/^AFP\s+/i, '')
+    // 1. Supprimer préfixes agences en début de chaîne
+    let s = raw
+      .replace(/^(Côte\s+d['']?Ivoire\s*[-–]\s*)?AIP\s*/i, '')
+      .replace(/^(Côte\s+d['']?Ivoire\s*[-–]\s*)?APS\s*/i, '')
+      .replace(/^(Côte\s+d['']?Ivoire\s*[-–]\s*)?AFP\s*/i, '')
+      .replace(/^[A-Z]{2,4}\s+/g, '') // Tout autre préfixe d'agence en majuscules ex: "AIP "
       .trim();
 
-    // 3. Restaurer apostrophes manquantes — deux cas :
-    //    a) particule + MAJUSCULE collée          : dIvoire → d'Ivoire
-    //    b) particule + voyelle accentuée minuscule: lécole  → l'école
-    const VOWELS_ACCENTED = 'aeiouàâäéèêëîïôöùûü';
-    const particles = ['qu', 'l', 'd', 'j', 'n', 'm', 'c', 's'];
+    // 2. Restaurer les apostrophes sur les particules françaises
+    // Cas : "dIvoire", "lécole", "lAire", "nAire", "sIl", etc.
+    const particles = ['l', 'd', 'j', 'n', 'm', 'c', 's', 'qu'];
     for (const p of particles) {
-      // Cas a : suivi d'une MAJUSCULE
-      const reUpper = new RegExp(`\\b(${p})([A-ZÀÂÄÉÈÊËÎÏÔÖÙÛÜ][a-zàâäéèêëîïôöùûü])`, 'g');
-      s = s.replace(reUpper, "$1'$2");
-      // Cas b : suivi d'une voyelle accentuée minuscule directement
-      const reLower = new RegExp(`\\b(${p})([${VOWELS_ACCENTED}])`, 'g');
-      s = s.replace(reLower, "$1'$2");
+      // Avant une lettre minuscule accentuée ou majuscule directement collée
+      const re = new RegExp(`\\b(${p})([A-ZÀ-Ü][a-zà-ü])`, 'g');
+      s = s.replace(re, `$1'$2`);
     }
 
     return s.trim();
   }
 
   const internationalText = internationalNews.length > 0
-    ? internationalNews.map(fn => cleanHeadline(fn.content)).join(' &nbsp;&nbsp;|&nbsp;&nbsp; ')
+    ? internationalNews.map(fn => cleanHeadline(fn.content)).join(' &nbsp; &nbsp; | &nbsp; &nbsp; ')
     : "";
 
 
