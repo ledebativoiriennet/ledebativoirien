@@ -126,9 +126,36 @@ export default async function RootLayout({
     take: 15
   });
 
-  const internationalText = internationalNews.length > 0 
-    ? internationalNews.map(fn => fn.content).join(' &nbsp; &nbsp; | &nbsp; &nbsp; ') 
+  /**
+   * Nettoie une dépêche :
+   * - Retire les préfixes d'agences (AIP, Côte d'Ivoire-AIP, Sénégal-APS, etc.)
+   * - Restaure les apostrophes manquantes sur les particules françaises courantes
+   */
+  function cleanHeadline(raw: string): string {
+    // 1. Supprimer préfixes agences en début de chaîne
+    let s = raw
+      .replace(/^(Côte\s+d['']?Ivoire\s*[-–]\s*)?AIP\s*/i, '')
+      .replace(/^(Côte\s+d['']?Ivoire\s*[-–]\s*)?APS\s*/i, '')
+      .replace(/^(Côte\s+d['']?Ivoire\s*[-–]\s*)?AFP\s*/i, '')
+      .replace(/^[A-Z]{2,4}\s+/g, '') // Tout autre préfixe d'agence en majuscules ex: "AIP "
+      .trim();
+
+    // 2. Restaurer les apostrophes sur les particules françaises
+    // Cas : "dIvoire", "lécole", "lAire", "nAire", "sIl", etc.
+    const particles = ['l', 'd', 'j', 'n', 'm', 'c', 's', 'qu'];
+    for (const p of particles) {
+      // Avant une lettre minuscule accentuée ou majuscule directement collée
+      const re = new RegExp(`\\b(${p})([A-ZÀ-Ü][a-zà-ü])`, 'g');
+      s = s.replace(re, `$1'$2`);
+    }
+
+    return s.trim();
+  }
+
+  const internationalText = internationalNews.length > 0
+    ? internationalNews.map(fn => cleanHeadline(fn.content)).join(' &nbsp; &nbsp; | &nbsp; &nbsp; ')
     : "";
+
 
   const breakingNews = await prisma.breakingNews.findMany({
     where: { isActive: true },
