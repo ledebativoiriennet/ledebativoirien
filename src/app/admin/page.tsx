@@ -205,9 +205,9 @@ export default async function AdminDashboard() {
   });
 
   const revenueByPlan = {
-    quotidien: 0,
     hebdomadaire: 0,
     mensuel: 0,
+    confidentiel: 0,
     annuel: 0
   };
 
@@ -217,10 +217,10 @@ export default async function AdminDashboard() {
     const plan = sub.plan.toLowerCase();
     let subRevenue = 0;
 
-    if (plan.includes('quotidien') || plan.includes('jour')) { subRevenue = 200; revenueByPlan.quotidien += subRevenue; }
-    else if (plan.includes('hebdomadaire') || plan.includes('semaine')) { subRevenue = 700; revenueByPlan.hebdomadaire += subRevenue; }
-    else if (plan.includes('mensuel') || plan.includes('mois')) { subRevenue = 2000; revenueByPlan.mensuel += subRevenue; }
-    else if (plan.includes('annuel') || plan.includes('an')) { subRevenue = 20000; revenueByPlan.annuel += subRevenue; }
+    if (plan.includes('hebdomadaire') || plan.includes('semaine')) { subRevenue = 2000; revenueByPlan.hebdomadaire += subRevenue; }
+    else if (plan.includes('mensuel') || plan.includes('mois')) { subRevenue = 5000; revenueByPlan.mensuel += subRevenue; }
+    else if (plan.includes('confidentiel')) { subRevenue = 5000; revenueByPlan.confidentiel += subRevenue; }
+    else if (plan.includes('annuel') || plan.includes('an')) { subRevenue = 25000; revenueByPlan.annuel += subRevenue; }
     else { subRevenue = 1000; } // Plan par défaut non identifié
     
     totalRevenue += subRevenue;
@@ -342,19 +342,19 @@ export default async function AdminDashboard() {
           <h3 style={{ fontSize: '0.95rem', fontWeight: 'bold', color: '#475569', marginBottom: '1rem' }}>Répartition par type d'offre</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Pass Quotidien (200F)</span>
-              <span style={{ fontWeight: 'bold', color: '#0f172a' }}>{revenueByPlan.quotidien.toLocaleString('fr-FR')} FCFA</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Pass Hebdomadaire (700F)</span>
+              <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Pass Hebdomadaire (2000F)</span>
               <span style={{ fontWeight: 'bold', color: '#0f172a' }}>{revenueByPlan.hebdomadaire.toLocaleString('fr-FR')} FCFA</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Pass Mensuel (2000F)</span>
+              <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Pass Mensuel (5000F)</span>
               <span style={{ fontWeight: 'bold', color: '#0f172a' }}>{revenueByPlan.mensuel.toLocaleString('fr-FR')} FCFA</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Pass Annuel (20000F)</span>
+              <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Pass Confidentiel (5000F)</span>
+              <span style={{ fontWeight: 'bold', color: '#0f172a' }}>{revenueByPlan.confidentiel.toLocaleString('fr-FR')} FCFA</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Pass Annuel (25000F)</span>
               <span style={{ fontWeight: 'bold', color: '#0f172a' }}>{revenueByPlan.annuel.toLocaleString('fr-FR')} FCFA</span>
             </div>
           </div>
