@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import BadgeShowcase from "@/components/BadgeShowcase";
+import { checkAndExpireSubscriptions } from "@/lib/subscription";
 
 export default async function DashboardAbonne() {
   const session = await getServerSession(authOptions);
@@ -12,10 +13,15 @@ export default async function DashboardAbonne() {
     redirect("/login");
   }
 
+  // Vérifier et expirer les abonnements avant de charger les données
+  await checkAndExpireSubscriptions((session.user as any).id);
+
   const user = await prisma.user.findUnique({
     where: { email: session.user.email as string },
     include: { 
-      subscriptions: true,
+      subscriptions: {
+        orderBy: { startDate: 'desc' }
+      },
       readingHistory: {
         include: { 
           article: {
@@ -37,6 +43,9 @@ export default async function DashboardAbonne() {
 
   const activeSubscriptions = user.subscriptions.filter(s => s.status === 'ACTIVE');
   const isPremium = activeSubscriptions.length > 0 || user.role === 'ADMIN' || user.role === 'EDITOR';
+  
+  // Tous les abonnements à afficher (récents)
+  const allSubscriptions = user.subscriptions;
 
   // 1. Extraire les catégories des articles lus
   const readCategoryIds = new Set<string>();
@@ -129,24 +138,31 @@ export default async function DashboardAbonne() {
           <div>
             <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '1rem', borderBottom: '2px solid var(--primary)', paddingBottom: '0.5rem' }}>Mes Abonnements</h3>
           
-          {activeSubscriptions.length > 0 ? (
+          {allSubscriptions.length > 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {activeSubscriptions.map(sub => (
-                <div key={sub.id} style={{ backgroundColor: 'var(--card-bg)', border: '1px solid #10b981', borderRadius: 'var(--radius)', padding: '1.5rem', borderLeftWidth: '4px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                    <h4 style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{sub.plan}</h4>
-                    <span style={{ backgroundColor: '#ecfdf5', color: '#065f46', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 'bold' }}>ACTIF</span>
-                  </div>
-                  <p style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
-                    Souscrit le : {new Date(sub.startDate).toLocaleDateString("fr-FR")}
-                  </p>
-                  {sub.endDate && (
+              {allSubscriptions.map(sub => {
+                const isActive = sub.status === 'ACTIVE';
+                return (
+                  <div key={sub.id} style={{ backgroundColor: 'var(--card-bg)', border: `1px solid ${isActive ? '#10b981' : '#ef4444'}`, borderRadius: 'var(--radius)', padding: '1.5rem', borderLeftWidth: '4px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                      <h4 style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{sub.plan}</h4>
+                      {isActive ? (
+                        <span style={{ backgroundColor: '#ecfdf5', color: '#065f46', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 'bold' }}>ACTIF</span>
+                      ) : (
+                        <span style={{ backgroundColor: '#fef2f2', color: '#991b1b', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 'bold' }}>ÉCHU</span>
+                      )}
+                    </div>
                     <p style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
-                      Expire le : {new Date(sub.endDate).toLocaleDateString("fr-FR")}
+                      Souscrit le : {new Date(sub.startDate).toLocaleDateString("fr-FR")}
                     </p>
-                  )}
-                </div>
-              ))}
+                    {sub.endDate && (
+                      <p style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
+                        Expire le : {new Date(sub.endDate).toLocaleDateString("fr-FR")}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <div style={{ backgroundColor: 'var(--card-bg)', border: '1px dashed var(--border)', borderRadius: 'var(--radius)', padding: '2rem', textAlign: 'center' }}>

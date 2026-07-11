@@ -2,6 +2,7 @@ import { NextAuthOptions, getServerSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { checkAndExpireSubscriptions } from "./subscription";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -16,8 +17,15 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Email et mot de passe requis");
         }
 
+        const email = credentials.email;
+        // Obtenir temporairement l'ID utilisateur pour expirer ses abonnements
+        const tempUser = await prisma.user.findUnique({ where: { email }, select: { id: true } });
+        if (tempUser) {
+          await checkAndExpireSubscriptions(tempUser.id);
+        }
+
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
+          where: { email },
           include: { subscriptions: { where: { status: 'ACTIVE' } } }
         });
 

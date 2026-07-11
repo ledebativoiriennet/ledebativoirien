@@ -44,6 +44,7 @@ import ArticleTimeline from "@/components/ArticleTimeline";
 import ArticleStoryMode from "@/components/ArticleStoryMode";
 import ArticleCopilot from "@/components/ArticleCopilot";
 import AnimatedReactions from "@/components/AnimatedReactions";
+import { checkAndExpireSubscriptions } from "@/lib/subscription";
 
 export const revalidate = 60;
 
@@ -174,6 +175,11 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
   }
 
   const session = await getServerSession(authOptions);
+  
+  if (session?.user) {
+    await checkAndExpireSubscriptions((session.user as any).id);
+  }
+  
   const dbUser = session?.user?.email ? await prisma.user.findUnique({ where: { email: session.user.email }, select: { role: true } }) : null;
 
   // Sécurité : Empêcher l'accès public à un article en attente (brouillon) ou planifié dans le futur
@@ -219,7 +225,7 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
     });
     initialLiked = !!userLike;
 
-    const role = (session.user as any).role;
+    const role = dbUser?.role || (session.user as any).role;
     isPremiumSubscriber = role === "ADMIN" || role === "EDITOR" || role === "PREMIUM" || role === "ULTIMATE";
     isConfidentielSubscriber = role === "ADMIN" || role === "EDITOR" || role === "CONFIDENTIEL" || role === "ULTIMATE";
   }
