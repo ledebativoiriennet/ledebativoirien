@@ -1,6 +1,7 @@
 import React from 'react';
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
+import BulkPriceUpdateClient from './BulkPriceUpdateClient';
 
 export const metadata = {
   title: 'Admin - Kiosque PDF',
@@ -95,6 +96,8 @@ export default async function AdminMarketplacePage() {
           </div>
         </div>
       </div>
+
+      <BulkPriceUpdateClient />
 
       {/* ── Stats ────────────────────────────────────────────────────── */}
       <div style={{
