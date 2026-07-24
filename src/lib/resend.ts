@@ -39,8 +39,8 @@ Sujet : ${subject}
   try {
     // Si nous avons une liste bcc à envoyer en masse
     if (bcc && bcc.length > 0) {
-      // Chunk la liste bcc en paquets de 90 pour respecter la limite Resend de 100 destinataires par appel
-      const chunkSize = 90;
+      // Chunk la liste bcc en paquets de 45 pour respecter la limite Resend de 50 destinataires BCC par appel
+      const chunkSize = 45;
       const results = [];
       
       for (let i = 0; i < bcc.length; i += chunkSize) {
