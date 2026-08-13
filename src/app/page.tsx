@@ -80,11 +80,11 @@ export default async function Home() {
     prisma.marketIndicator.findMany({ where: { group: 'BRVM' }, take: 3, orderBy: { order: 'asc' } }),
     prisma.tag.findMany({ 
       where: { articles: { some: { publishedAt: { not: null, lte: new Date() } } } },
-      include: {
-        articles: {
-          where: { publishedAt: { not: null, lte: new Date() } },
-          select: { _count: { select: { views: true } } }
-        }
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        _count: { select: { articles: true } }
       }
     }),
     prisma.caricature.findMany({ take: 1, orderBy: { createdAt: 'desc' } }),
@@ -149,7 +149,7 @@ export default async function Home() {
   const processedTrendingTags = trendingTags
     .map(tag => ({
       ...tag,
-      totalViews: tag.articles.reduce((sum: number, art: any) => sum + (art._count?.views || 0), 0)
+      totalViews: tag._count.articles
     }))
     .sort((a, b) => b.totalViews - a.totalViews)
     .slice(0, 7);
