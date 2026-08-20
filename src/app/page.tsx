@@ -79,7 +79,8 @@ export default async function Home() {
     prisma.pressRelease.findMany({ take: 5, orderBy: { createdAt: 'desc' } }),
     prisma.marketIndicator.findMany({ where: { group: 'BRVM' }, take: 3, orderBy: { order: 'asc' } }),
     prisma.tag.findMany({ 
-      where: { articles: { some: { publishedAt: { not: null, lte: new Date() } } } },
+      take: 10,
+      orderBy: { articles: { _count: 'desc' } },
       select: {
         id: true,
         name: true,
