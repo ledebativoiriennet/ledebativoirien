@@ -1,15 +1,29 @@
 "use client";
 import { signIn } from "next-auth/react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("verified") === "true") {
+      setSuccess("Votre email a été vérifié avec succès. Vous pouvez maintenant vous connecter.");
+    }
+    const err = searchParams.get("error");
+    if (err === "InvalidToken") {
+      setError("Le lien de vérification est invalide ou a déjà été utilisé.");
+    } else if (err === "TokenExpired") {
+      setError("Le lien de vérification a expiré.");
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,6 +53,8 @@ export default function LoginPage() {
         <p style={{ color: 'var(--muted)', marginBottom: '2rem', textAlign: 'center', fontSize: '0.9rem' }}>Accédez à votre espace Le Débat Ivoirien</p>
         
         {error && <div style={{ color: '#b91c1c', marginBottom: '1.5rem', backgroundColor: '#fef2f2', padding: '0.75rem', borderRadius: '4px', border: '1px solid #f87171', fontSize: '0.9rem', textAlign: 'center' }}>{error}</div>}
+        {success && <div style={{ color: '#15803d', marginBottom: '1.5rem', backgroundColor: '#f0fdf4', padding: '0.75rem', borderRadius: '4px', border: '1px solid #4ade80', fontSize: '0.9rem', textAlign: 'center' }}>{success}</div>}
+
         
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div>

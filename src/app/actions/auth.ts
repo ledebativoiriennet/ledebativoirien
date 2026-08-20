@@ -23,13 +23,58 @@ export async function registerUser(formData: FormData) {
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         name,
         email,
         password: hashedPassword,
         role: "USER"
       }
+    });
+
+    const crypto = require("crypto");
+    const token = crypto.randomBytes(32).toString("hex");
+    const expiry = new Date();
+    expiry.setHours(expiry.getHours() + 24); // Expiration dans 24h
+
+    await prisma.verificationToken.create({
+      data: {
+        identifier: email,
+        token,
+        expires: expiry,
+      }
+    });
+
+    const { sendEmail } = require("@/lib/resend");
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ledebativoirien.net";
+    const verifyUrl = `${siteUrl}/api/auth/verify?token=${token}&email=${encodeURIComponent(email)}`;
+
+    const verifyHtml = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body { font-family: sans-serif; background-color: #f8fafc; padding: 20px; }
+          .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+          .btn { display: inline-block; background-color: #e60000; color: #ffffff; text-decoration: none; padding: 14px 25px; border-radius: 6px; font-weight: bold; margin-top: 20px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h2>Bienvenue sur Le Débat Ivoirien !</h2>
+          <p>Bonjour ${name},</p>
+          <p>Merci de vous être inscrit. Pour finaliser la création de votre compte, veuillez confirmer votre adresse email en cliquant sur le bouton ci-dessous :</p>
+          <a href="${verifyUrl}" class="btn" style="color: #ffffff;">Confirmer mon email</a>
+          <p style="margin-top: 30px; font-size: 12px; color: #666;">Ce lien est valable 24 heures. Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet email.</p>
+        </div>
+      </body>
+      </html>
+    `;
+
+    await sendEmail({
+      to: email,
+      subject: "✅ Confirmez votre adresse email - Le Débat Ivoirien",
+      html: verifyHtml
     });
 
     return { success: true };
