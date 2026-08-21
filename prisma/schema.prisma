@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -21,7 +21,7 @@ model User {
   updatedAt           DateTime              @updatedAt
   companyId           String?
   lastLoginAt         DateTime?
-  badges              String?               @db.Text
+  badges              String?
   emailVerified       DateTime?
   argumentVotes       ArgumentVote[]
   articleLikes        ArticleLike[]
@@ -97,12 +97,12 @@ model Category {
 model Article {
   id                String            @id @default(cuid())
   wpId              Int?              @unique
-  title             String            @db.VarChar(1000)
-  slug              String            @unique @db.VarChar(1000)
-  content           String            @db.LongText
-  excerpt           String?           @db.Text
-  imageUrl          String?           @db.VarChar(2000)
-  imageCaption      String?           @db.VarChar(1000)
+  title             String
+  slug              String            @unique
+  content           String
+  excerpt           String?
+  imageUrl          String?
+  imageCaption      String?
   isPremium         Boolean           @default(false)
   isConfidentiel    Boolean           @default(false)
   isFeatured        Boolean           @default(false)
@@ -110,15 +110,15 @@ model Article {
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
   authorId          String?
-  videoUrl          String?           @db.VarChar(2000)
-  videoFile         String?           @db.VarChar(2000)
+  videoUrl          String?
+  videoFile         String?
   videoCaption      String?
-  seoTitle          String?           @db.VarChar(500)
-  seoDescription    String?           @db.Text
+  seoTitle          String?
+  seoDescription    String?
   isAudioAvailable  Boolean           @default(false)
   isLiveBlog        Boolean           @default(false)
-  aiSummary         String?           @db.Text
-  audioUrl          String?           @db.VarChar(2000)
+  aiSummary         String?
+  audioUrl          String?
   region            String?
   isFactCheck       Boolean           @default(false)
   factVerdict       String?
@@ -150,7 +150,7 @@ model Article {
 
 model Poll {
   id        String       @id @default(cuid())
-  question  String       @db.Text
+  question  String
   isActive  Boolean      @default(true)
   articleId String?
   createdAt DateTime     @default(now())
@@ -173,8 +173,8 @@ model PollOption {
 model Obituary {
   id        String   @id @default(cuid())
   name      String
-  details   String   @db.Text
-  imageUrl  String?  @db.VarChar(2000)
+  details   String
+  imageUrl  String?
   createdAt DateTime @default(now())
 }
 
@@ -183,7 +183,7 @@ model PressRelease {
   title     String
   company   String
   createdAt DateTime @default(now())
-  url       String?  @db.VarChar(2000)
+  url       String?
 }
 
 model Video {
@@ -233,8 +233,8 @@ model Activity {
   title     String
   date      String
   location  String
-  imageUrl  String?  @db.VarChar(2000)
-  link      String?  @db.VarChar(2000)
+  imageUrl  String?
+  link      String?
   createdAt DateTime @default(now())
 }
 
@@ -252,8 +252,8 @@ model Tag {
 model FlashNews {
   id        String   @id @default(cuid())
   time      String
-  content   String   @db.Text
-  link      String?  @db.VarChar(2000)
+  content   String
+  link      String?
   source    String?
   region    String?
   createdAt DateTime @default(now())
@@ -264,8 +264,8 @@ model JobOffer {
   title       String
   company     String?
   location    String?
-  description String?  @db.Text
-  url         String?  @db.VarChar(2000)
+  description String?
+  url         String?
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -283,9 +283,9 @@ model Visitor {
   isBot       Boolean  @default(false)
   botName     String?
   botCategory String?
-  path        String?  @db.VarChar(2000)
+  path        String?
   source      String?
-  referrer    String?  @db.VarChar(2000)
+  referrer    String?
   visitedAt   DateTime @default(now())
 
   @@index([ipHash])
@@ -297,8 +297,8 @@ model Advertisement {
   id          String    @id @default(cuid())
   title       String
   company     String
-  imageUrl    String    @db.VarChar(2000)
-  linkUrl     String?   @db.VarChar(2000)
+  imageUrl    String
+  linkUrl     String?
   slot        String
   status      String    @default("PENDING")
   startDate   DateTime?
@@ -314,9 +314,9 @@ model AdEvent {
   id        String        @id @default(cuid())
   adId      String
   type      String
-  path      String?       @db.VarChar(2000)
+  path      String?
   ipHash    String?
-  userAgent String?       @db.VarChar(1000)
+  userAgent String?
   createdAt DateTime      @default(now())
   ad        Advertisement @relation(fields: [adId], references: [id], onDelete: Cascade)
 
@@ -352,7 +352,7 @@ model AdInquiry {
   email     String
   phone     String?
   format    String?
-  message   String?  @db.Text
+  message   String?
   status    String   @default("PENDING")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -430,8 +430,8 @@ model FootballMatch {
 
 model BreakingNews {
   id        String   @id @default(cuid())
-  content   String   @db.Text
-  link      String?  @db.VarChar(2000)
+  content   String
+  link      String?
   isActive  Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -440,7 +440,7 @@ model BreakingNews {
 model Caricature {
   id        String   @id @default(cuid())
   title     String
-  imageUrl  String   @db.VarChar(2000)
+  imageUrl  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -448,29 +448,29 @@ model Caricature {
 model Titrologie {
   id            String   @id @default(cuid())
   newspaperName String
-  imageUrl      String   @db.VarChar(2000)
+  imageUrl      String
   date          DateTime @default(now())
   createdAt     DateTime @default(now())
 }
 
 model SiteSettings {
   id                  String   @id @default("global")
-  facebookUrl         String?  @db.VarChar(500)
+  facebookUrl         String?
   updatedAt           DateTime @updatedAt
-  instagramUrl        String?  @db.VarChar(500)
-  linkedinUrl         String?  @db.VarChar(500)
-  twitterUrl          String?  @db.VarChar(500)
-  youtubeUrl          String?  @db.VarChar(500)
-  facebookAccessToken String?  @db.Text
+  instagramUrl        String?
+  linkedinUrl         String?
+  twitterUrl          String?
+  youtubeUrl          String?
+  facebookAccessToken String?
   facebookPageId      String?
-  linkedinAccessToken String?  @db.Text
+  linkedinAccessToken String?
   linkedinUrn         String?
-  twitterAccessSecret String?  @db.Text
-  twitterAccessToken  String?  @db.Text
+  twitterAccessSecret String?
+  twitterAccessToken  String?
   twitterApiKey       String?
-  twitterApiSecret    String?  @db.Text
-  footerCode          String?  @db.LongText
-  headerCode          String?  @db.LongText
+  twitterApiSecret    String?
+  footerCode          String?
+  headerCode          String?
   siteSkinBlur        Int?     @default(0)
   siteSkinBrightness  Int?     @default(100)
   siteSkinAttachment  String?  @default("fixed")
@@ -478,7 +478,7 @@ model SiteSettings {
 
 model Quote {
   id        String   @id @default(cuid())
-  text      String   @db.Text
+  text      String
   author    String
   isActive  Boolean  @default(false)
   createdAt DateTime @default(now())
@@ -511,11 +511,11 @@ model AuthorSubscriber {
 model DigitalNewspaper {
   id            String     @id @default(cuid())
   title         String
-  description   String?    @db.Text
+  description   String?
   issueNumber   Int?
   price         Float
-  coverImageUrl String?    @db.VarChar(2000)
-  pdfUrl        String     @db.VarChar(2000)
+  coverImageUrl String?
+  pdfUrl        String
   publishedAt   DateTime   @default(now())
   isActive      Boolean    @default(true)
   createdAt     DateTime   @default(now())
@@ -560,9 +560,9 @@ model ArticleView {
 
 model PushSubscription {
   id        String   @id @default(cuid())
-  endpoint  String   @unique @db.VarChar(1000)
-  p256dh    String   @db.VarChar(500)
-  auth      String   @db.VarChar(500)
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
   userId    String?
   createdAt DateTime @default(now())
   user      User?    @relation(fields: [userId], references: [id])
@@ -574,7 +574,7 @@ model Company {
   id        String     @id @default(cuid())
   name      String
   email     String     @unique
-  logoUrl   String?    @db.VarChar(2000)
+  logoUrl   String?
   plan      String     @default("B2B_STANDARD")
   maxUsers  Int        @default(10)
   createdAt DateTime   @default(now())
@@ -590,9 +590,9 @@ model ActivityLog {
   userEmail String?
   action    String
   resource  String?
-  details   String?  @db.Text
+  details   String?
   ipAddress String?
-  userAgent String?  @db.VarChar(1000)
+  userAgent String?
   browser   String?
   device    String?
   os        String?
@@ -604,7 +604,7 @@ model ActivityLog {
 model LiveStream {
   id        String   @id @default(cuid())
   title     String   @default("Direct LDI")
-  url       String   @db.VarChar(2000)
+  url       String
   platform  String   @default("OTHER")
   isActive  Boolean  @default(false)
   createdAt DateTime @default(now())
@@ -613,7 +613,7 @@ model LiveStream {
 
 model Comment {
   id        String   @id @default(cuid())
-  content   String   @db.Text
+  content   String
   articleId String
   userId    String
   isActive  Boolean  @default(true)
@@ -656,7 +656,7 @@ model NewsletterLog {
   subject        String
   recipientCount Int
   status         String
-  errorMessage   String?  @db.Text
+  errorMessage   String?
   sentAt         DateTime @default(now())
 }
 
@@ -664,8 +664,8 @@ model Highlight {
   id        String   @id @default(cuid())
   userId    String
   articleId String
-  text      String   @db.Text
-  context   String?  @db.Text
+  text      String
+  context   String?
   createdAt DateTime @default(now())
   article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -711,8 +711,8 @@ model QuizAttempt {
 model QuizQuestion {
   id       String      @id @default(cuid())
   quizId   String
-  question String      @db.Text
-  options  String      @db.Text
+  question String
+  options  String
   answer   Int
   quiz     ArticleQuiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
 
@@ -722,7 +722,7 @@ model QuizQuestion {
 model Debate {
   id        String           @id @default(cuid())
   articleId String           @unique
-  question  String           @db.Text
+  question  String
   isActive  Boolean          @default(true)
   createdAt DateTime         @default(now())
   article   Article          @relation(fields: [articleId], references: [id], onDelete: Cascade)
@@ -733,7 +733,7 @@ model DebateArgument {
   id            String         @id @default(cuid())
   debateId      String
   userId        String
-  content       String         @db.Text
+  content       String
   type          String
   votes         Int            @default(0)
   createdAt     DateTime       @default(now())
@@ -760,7 +760,7 @@ model ArgumentVote {
 model LiveUpdate {
   id         String   @id @default(cuid())
   articleId  String
-  content    String   @db.Text
+  content    String
   authorName String   @default("La Rédaction")
   isPinned   Boolean  @default(false)
   createdAt  DateTime @default(now())
