@@ -139,8 +139,8 @@ model Article {
   readingHistory    ReadingHistory[]
   categories        Category[]        @relation("ArticleToCategory")
   tags              Tag[]             @relation("ArticleToTag")
-  Article_A         Article[]         @relation("RelatedArticles")
-  Article_B         Article[]         @relation("RelatedArticles")
+  relatedArticles   Article[]         @relation("RelatedArticles")
+  relatedTo         Article[]         @relation("RelatedArticles")
 
   @@index([publishedAt(sort: Desc)])
   @@index([isConfidentiel])
