@@ -10,10 +10,18 @@ const prisma = new PrismaClient();
 
 async function main() {
   const result = await prisma.article.updateMany({
-    where: { isPremium: true },
-    data: { isPremium: false },
+    where: {
+      OR: [
+        { isPremium: true },
+        { isConfidentiel: true }
+      ]
+    },
+    data: {
+      isPremium: false,
+      isConfidentiel: false
+    },
   });
-  console.log(`✅ ${result.count} articles mis en accès public (isPremium = false)`);
+  console.log(`✅ ${result.count} articles mis en accès public (Premium et Confidentiel désactivés).`);
 }
 
 main()

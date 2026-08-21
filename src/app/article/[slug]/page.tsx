@@ -253,16 +253,8 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
   const hasArchiveAccess = isPremiumSubscriber && (session?.user as any)?.role === 'ULTIMATE' 
     || ['ADMIN','EDITOR'].includes((session?.user as any)?.role);
 
-  if (article.isConfidentiel) {
-    showPaywall = !isConfidentielSubscriber;
-  } else if (article.isPremium) {
-    showPaywall = !isPremiumSubscriber;
-  }
-
-  // Archive paywall — s'applique après les paywalls premium/confidentiel
-  if (!showPaywall && isArchiveArticle && !hasArchiveAccess && !hasArchivePurchase) {
-    showPaywall = true;
-  }
+  // Paywall désactivé : tous les articles sont accessibles gratuitement à tout le monde
+  showPaywall = false;
 
   // Vérifier le jeton cadeau
   let isGifted = false;
