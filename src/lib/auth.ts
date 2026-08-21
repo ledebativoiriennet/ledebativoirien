@@ -39,9 +39,10 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Identifiants incorrects");
         }
 
-        if (!user.emailVerified) {
-          throw new Error("Veuillez confirmer votre adresse email avant de vous connecter. Vérifiez votre boîte de réception.");
-        }
+        // Vérification email désactivée — tous les utilisateurs peuvent se connecter
+        // if (!user.emailVerified) {
+        //   throw new Error("Veuillez confirmer votre adresse email avant de vous connecter. Vérifiez votre boîte de réception.");
+        // }
 
         // Déterminer le rôle effectif basé sur les abonnements actifs
         let effectiveRole = user.role;
