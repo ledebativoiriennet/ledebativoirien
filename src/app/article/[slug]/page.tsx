@@ -255,8 +255,9 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
 
   if (article.isConfidentiel) {
     showPaywall = !isConfidentielSubscriber;
+  } else if (article.isPremium) {
+    showPaywall = !isPremiumSubscriber;
   }
-  // isPremium désactivé : tous les articles sont publics par défaut
 
   // Archive paywall — s'applique après les paywalls premium/confidentiel
   if (!showPaywall && isArchiveArticle && !hasArchiveAccess && !hasArchivePurchase) {

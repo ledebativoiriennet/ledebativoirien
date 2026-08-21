@@ -33,7 +33,7 @@ export async function publishArticle(formData: FormData) {
   const title = formData.get("title") as string;
   const excerpt = formData.get("excerpt") as string;
   const content = formData.get("content") as string;
-  const isPremium = false; // Tous les articles sont publics par défaut
+  const isPremium = formData.get("isPremium") === "on";
   const isAudioAvailable = formData.get("isAudioAvailable") === "on";
   const isConfidentiel = formData.get("isConfidentiel") === "on";
   const isFeatured = formData.get("isFeatured") === "on";
@@ -218,7 +218,7 @@ export async function updateArticle(articleId: string, formData: FormData) {
   const title = formData.get("title") as string;
   const excerpt = formData.get("excerpt") as string;
   const content = formData.get("content") as string;
-  const isPremium = false; // Tous les articles sont publics par défaut
+  const isPremium = formData.get("isPremium") === "on";
   const isAudioAvailable = formData.get("isAudioAvailable") === "on";
   const isConfidentiel = formData.get("isConfidentiel") === "on";
   const isFeatured = formData.get("isFeatured") === "on";
