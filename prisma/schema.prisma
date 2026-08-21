@@ -21,25 +21,27 @@ model User {
   updatedAt           DateTime              @updatedAt
   companyId           String?
   lastLoginAt         DateTime?
+  badges              String?               @db.Text
+  emailVerified       DateTime?
+  argumentVotes       ArgumentVote[]
   articleLikes        ArticleLike[]
-  purchases           Purchase[]
-  pushSubscriptions   PushSubscription[]
-  readingHistory      ReadingHistory[]
-  subscriptions       Subscription[]
-  comments            Comment[]
+  articlePurchases    ArticlePurchase[]
+  authorSubscriptions AuthorSubscriber[]    @relation("UserAuthorSubs")
   bookmarks           Bookmark[]
+  comments            Comment[]
+  debateArguments     DebateArgument[]
   giftLinks           GiftLink[]
   highlights          Highlight[]
-  tagSubscriptions    TagSubscriber[]
-  authorSubscriptions AuthorSubscriber[]    @relation("UserAuthorSubs")
-  company             Company?              @relation(fields: [companyId], references: [id])
-  debateArguments     DebateArgument[]
-  argumentVotes       ArgumentVote[]
-  quizAttempts        QuizAttempt[]
   newsletterSub       NewsletterSubscriber?
-  badges              String?               @db.Text
-  articlePurchases    ArticlePurchase[]
-  emailVerified       DateTime?
+  purchases           Purchase[]
+  pushSubscriptions   PushSubscription[]
+  quizAttempts        QuizAttempt[]
+  readingHistory      ReadingHistory[]
+  subscriptions       Subscription[]
+  tagSubscriptions    TagSubscriber[]
+  company             Company?              @relation(fields: [companyId], references: [id])
+
+  @@index([companyId], map: "User_companyId_fkey")
 }
 
 model VerificationToken {
@@ -60,7 +62,9 @@ model Subscription {
   transactionId String?   @unique
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  user          User      @relation(fields: [userId], references: [id])
+  user          User      @relation(fields: [userId], references: [id], onDelete: NoAction)
+
+  @@index([userId], map: "Subscription_userId_fkey")
 }
 
 model Author {
@@ -86,55 +90,57 @@ model Category {
   parent    Category?  @relation("CategoryToCategory", fields: [parentId], references: [id])
   children  Category[] @relation("CategoryToCategory")
   articles  Article[]  @relation("ArticleToCategory")
+
+  @@index([parentId], map: "Category_parentId_fkey")
 }
 
 model Article {
-  id                String           @id @default(cuid())
-  wpId              Int?             @unique
-  title             String           @db.VarChar(1000)
-  slug              String           @unique @db.VarChar(1000)
-  content           String           @db.LongText
-  excerpt           String?          @db.Text
-  imageUrl          String?          @db.VarChar(2000)
-  imageCaption      String?          @db.VarChar(1000)
-  isPremium         Boolean          @default(false)
-  isConfidentiel    Boolean          @default(false)
-  isFeatured        Boolean          @default(false)
+  id                String            @id @default(cuid())
+  wpId              Int?              @unique
+  title             String            @db.VarChar(1000)
+  slug              String            @unique @db.VarChar(1000)
+  content           String            @db.LongText
+  excerpt           String?           @db.Text
+  imageUrl          String?           @db.VarChar(2000)
+  imageCaption      String?           @db.VarChar(1000)
+  isPremium         Boolean           @default(false)
+  isConfidentiel    Boolean           @default(false)
+  isFeatured        Boolean           @default(false)
   publishedAt       DateTime?
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
   authorId          String?
-  videoUrl          String?          @db.VarChar(2000)
-  videoFile         String?          @db.VarChar(2000)
+  videoUrl          String?           @db.VarChar(2000)
+  videoFile         String?           @db.VarChar(2000)
   videoCaption      String?
-  seoTitle          String?          @db.VarChar(500)
-  seoDescription    String?          @db.Text
-  isAudioAvailable  Boolean          @default(false)
-  isLiveBlog        Boolean          @default(false)
-  author            Author?          @relation(fields: [authorId], references: [id])
-  likes             ArticleLike[]
-  views             ArticleView[]
-  readingHistory    ReadingHistory[]
-  categories        Category[]       @relation("ArticleToCategory")
-  tags              Tag[]            @relation("ArticleToTag")
-  comments          Comment[]
-  bookmarks         Bookmark[]
-  giftLinks         GiftLink[]
-  highlights        Highlight[]
-  articlePurchases  ArticlePurchase[]
-  aiSummary         String?          @db.Text
-  audioUrl          String?          @db.VarChar(2000)
+  seoTitle          String?           @db.VarChar(500)
+  seoDescription    String?           @db.Text
+  isAudioAvailable  Boolean           @default(false)
+  isLiveBlog        Boolean           @default(false)
+  aiSummary         String?           @db.Text
+  audioUrl          String?           @db.VarChar(2000)
   region            String?
-  isFactCheck       Boolean          @default(false)
+  isFactCheck       Boolean           @default(false)
   factVerdict       String?
   timelineId        String?
   timelineEventDate DateTime?
+  author            Author?           @relation(fields: [authorId], references: [id])
+  likes             ArticleLike[]
+  articlePurchases  ArticlePurchase[]
   quiz              ArticleQuiz?
-  polls             Poll[]
+  views             ArticleView[]
+  bookmarks         Bookmark[]
+  comments          Comment[]
   debate            Debate?
+  giftLinks         GiftLink[]
+  highlights        Highlight[]
   liveUpdates       LiveUpdate[]
-  relatedArticles   Article[]        @relation("RelatedArticles")
-  referencedIn      Article[]        @relation("RelatedArticles")
+  polls             Poll[]
+  readingHistory    ReadingHistory[]
+  categories        Category[]        @relation("ArticleToCategory")
+  tags              Tag[]             @relation("ArticleToTag")
+  Article_A         Article[]         @relation("RelatedArticles")
+  Article_B         Article[]         @relation("RelatedArticles")
 
   @@index([publishedAt(sort: Desc)])
   @@index([isConfidentiel])
@@ -148,8 +154,10 @@ model Poll {
   isActive  Boolean      @default(true)
   articleId String?
   createdAt DateTime     @default(now())
-  options   PollOption[]
   article   Article?     @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  options   PollOption[]
+
+  @@index([articleId], map: "Poll_articleId_fkey")
 }
 
 model PollOption {
@@ -158,6 +166,8 @@ model PollOption {
   text   String
   votes  Int    @default(0)
   poll   Poll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
+
+  @@index([pollId], map: "PollOption_pollId_fkey")
 }
 
 model Obituary {
@@ -235,8 +245,8 @@ model Tag {
   slug        String          @unique
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
-  articles    Article[]       @relation("ArticleToTag")
   subscribers TagSubscriber[]
+  articles    Article[]       @relation("ArticleToTag")
 }
 
 model FlashNews {
@@ -357,6 +367,7 @@ model ReadingHistory {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, articleId])
+  @@index([articleId], map: "ReadingHistory_articleId_fkey")
 }
 
 model ArticleLike {
@@ -368,6 +379,7 @@ model ArticleLike {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, articleId])
+  @@index([articleId], map: "ArticleLike_articleId_fkey")
 }
 
 model Bookmark {
@@ -379,6 +391,7 @@ model Bookmark {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, articleId])
+  @@index([articleId], map: "Bookmark_articleId_fkey")
 }
 
 model GiftLink {
@@ -394,6 +407,8 @@ model GiftLink {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([token])
+  @@index([articleId], map: "GiftLink_articleId_fkey")
+  @@index([userId], map: "GiftLink_userId_fkey")
 }
 
 model FootballMatch {
@@ -476,7 +491,7 @@ model NewsletterSubscriber {
   userId    String?  @unique
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
-  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user      User?    @relation(fields: [userId], references: [id])
 }
 
 model AuthorSubscriber {
@@ -489,6 +504,8 @@ model AuthorSubscriber {
   user      User?    @relation("UserAuthorSubs", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([email, authorId])
+  @@index([authorId], map: "AuthorSubscriber_authorId_fkey")
+  @@index([userId], map: "AuthorSubscriber_userId_fkey")
 }
 
 model DigitalNewspaper {
@@ -522,8 +539,12 @@ model Purchase {
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
   company            Company?         @relation(fields: [companyId], references: [id])
-  digitalNewspaper   DigitalNewspaper @relation(fields: [digitalNewspaperId], references: [id])
+  digitalNewspaper   DigitalNewspaper @relation(fields: [digitalNewspaperId], references: [id], onDelete: NoAction)
   user               User?            @relation(fields: [userId], references: [id])
+
+  @@index([companyId], map: "Purchase_companyId_fkey")
+  @@index([digitalNewspaperId], map: "Purchase_digitalNewspaperId_fkey")
+  @@index([userId], map: "Purchase_userId_fkey")
 }
 
 model ArticleView {
@@ -545,6 +566,8 @@ model PushSubscription {
   userId    String?
   createdAt DateTime @default(now())
   user      User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "PushSubscription_userId_fkey")
 }
 
 model Company {
@@ -644,10 +667,11 @@ model Highlight {
   text      String   @db.Text
   context   String?  @db.Text
   createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, articleId])
+  @@index([articleId], map: "Highlight_articleId_fkey")
 }
 
 model TagSubscriber {
@@ -655,19 +679,20 @@ model TagSubscriber {
   userId    String
   tagId     String
   createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, tagId])
+  @@index([tagId], map: "TagSubscriber_tagId_fkey")
 }
 
 model ArticleQuiz {
   id        String         @id @default(cuid())
   articleId String         @unique
-  questions QuizQuestion[]
-  attempts  QuizAttempt[]
-  article   Article        @relation(fields: [articleId], references: [id], onDelete: Cascade)
   createdAt DateTime       @default(now())
+  article   Article        @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  attempts  QuizAttempt[]
+  questions QuizQuestion[]
 }
 
 model QuizAttempt {
@@ -676,8 +701,8 @@ model QuizAttempt {
   quizId    String
   score     Int
   createdAt DateTime    @default(now())
-  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   quiz      ArticleQuiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([quizId])
@@ -690,6 +715,8 @@ model QuizQuestion {
   options  String      @db.Text
   answer   Int
   quiz     ArticleQuiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@index([quizId], map: "QuizQuestion_quizId_fkey")
 }
 
 model Debate {
@@ -710,9 +737,12 @@ model DebateArgument {
   type          String
   votes         Int            @default(0)
   createdAt     DateTime       @default(now())
+  argumentVotes ArgumentVote[]
   debate        Debate         @relation(fields: [debateId], references: [id], onDelete: Cascade)
   user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  argumentVotes ArgumentVote[]
+
+  @@index([debateId], map: "DebateArgument_debateId_fkey")
+  @@index([userId], map: "DebateArgument_userId_fkey")
 }
 
 model ArgumentVote {
@@ -724,6 +754,7 @@ model ArgumentVote {
   user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([argumentId, userId])
+  @@index([userId], map: "ArgumentVote_userId_fkey")
 }
 
 model LiveUpdate {
@@ -748,8 +779,8 @@ model ArticlePurchase {
   transactionId String?  @unique
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   article       Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, articleId])
   @@index([userId])
