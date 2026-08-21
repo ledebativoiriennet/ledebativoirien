@@ -1,7 +1,5 @@
 import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
-import { PrismaLibSQL } from '@prisma/adapter-libsql';
-import Database from 'better-sqlite3';
 
 // Use better-sqlite3 directly with WAL mode + busy_timeout to handle
 // concurrent access between deployment versions on Hostinger.
@@ -13,6 +11,8 @@ function createPrismaClient(): PrismaClient {
   const dbPath = dbUrl.replace(/^file:/, '').split('?')[0];
 
   try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const Database = require('better-sqlite3');
     const sqlite = new Database(dbPath, { timeout: 15000 });
     // WAL mode: allows concurrent reads while serializing writes
     sqlite.pragma('journal_mode = WAL');
