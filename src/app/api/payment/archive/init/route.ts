@@ -33,14 +33,14 @@ export async function POST(request: Request) {
       create: {
         userId: user.id,
         articleId: article.id,
-        amount: 500,
+        amount: 250,
         status: 'PENDING',
         transactionId: transactionId,
       },
       update: {
         status: 'PENDING',
         transactionId: transactionId,
-        amount: 500,
+        amount: 250,
       }
     });
 
@@ -75,7 +75,7 @@ export async function POST(request: Request) {
         'X-API-Secret': apiSecret,
       },
       body: JSON.stringify({
-        amount: 500,
+        amount: 250,
         currency: 'XOF',
         description: `Achat article archive - ${article.title}`,
         customer: {

@@ -94,7 +94,7 @@ export function Paywall({ type = 'premium', articleId }: PaywallProps) {
             <div style={{ margin: '1.5rem 0', width: '100%', position: 'relative' }}>
               <div style={{ borderTop: '1px solid var(--border)', position: 'absolute', top: '50%', width: '100%', zIndex: 0 }}></div>
               <span style={{ backgroundColor: 'var(--card-bg)', padding: '0 1rem', position: 'relative', zIndex: 1, color: 'var(--muted)', fontSize: '0.9rem', fontWeight: 'bold' }}>
-                {isArchive ? "OU ACHETER CET ARTICLE" : "OU ACHETER À L'UNITÉ (100 FCFA)"}
+                {isArchive ? "OU ACHETER CET ARTICLE" : "OU ACHETER À L'UNITÉ (250 FCFA)"}
               </span>
             </div>
 
@@ -106,12 +106,12 @@ export function Paywall({ type = 'premium', articleId }: PaywallProps) {
                   width: '100%', padding: '1rem', backgroundColor: 'var(--primary)', color: 'white', fontWeight: 'bold', border: 'none', borderRadius: '8px', cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontSize: '1.05rem', boxShadow: '0 4px 6px -1px rgba(230, 0, 0, 0.2)'
                 }}
               >
-                {loading ? "Initialisation..." : "💳 Débloquer cet article — 500 FCFA"}
+                {loading ? "Initialisation..." : "💳 Débloquer cet article — 250 FCFA"}
               </button>
             ) : (
               <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', width: '100%', flexWrap: 'wrap' }}>
                 <button 
-                  onClick={() => alert("Simulation de l'API Wave : Veuillez valider le paiement de 100 FCFA sur votre application Wave.")}
+                  onClick={() => alert("Simulation de l'API Wave : Veuillez valider le paiement de 250 FCFA sur votre application Wave.")}
                   style={{ 
                     flex: '1', minWidth: '120px', padding: '0.75rem', backgroundColor: '#1ce6e6', color: '#000', fontWeight: 'bold', border: 'none', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' 
                   }}
