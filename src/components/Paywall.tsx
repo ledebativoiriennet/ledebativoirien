@@ -18,9 +18,9 @@ export function Paywall({ type = 'premium', articleId }: PaywallProps) {
   const isConfidentiel = type === 'confidentiel';
   const isArchive = type === 'archive';
 
-  const handleArchivePurchase = async () => {
-    if (status === "unauthenticated" || !session?.user?.email) {
-      alert("Veuillez vous connecter pour acheter cet article.");
+  const handleArticlePurchase = async () => {
+    if (status === 'unauthenticated' || !session?.user?.email) {
+      alert('Veuillez vous connecter pour acheter cet article.');
       router.push(`/login?callbackUrl=${window.location.pathname}`);
       return;
     }
@@ -31,7 +31,7 @@ export function Paywall({ type = 'premium', articleId }: PaywallProps) {
     setError(null);
 
     try {
-      const res = await fetch('/api/payment/archive/init', {
+      const res = await fetch('/api/payment/article/init', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -45,11 +45,11 @@ export function Paywall({ type = 'premium', articleId }: PaywallProps) {
       if (data.success && data.data?.payment_url) {
         window.location.href = data.data.payment_url;
       } else {
-        throw new Error(data.error || "Erreur de connexion à GeniusPay.");
+        throw new Error(data.error || 'Erreur de connexion à GeniusPay.');
       }
     } catch (err: any) {
       console.error(err);
-      setError(err.message || "Une erreur est survenue.");
+      setError(err.message || 'Une erreur est survenue.');
       setLoading(false);
     }
   };
@@ -91,55 +91,48 @@ export function Paywall({ type = 'premium', articleId }: PaywallProps) {
                 : "S'abonner pour lire la suite (Illimité)"}
             </Link>
             
-            <div style={{ margin: '1.5rem 0', width: '100%', position: 'relative' }}>
-              <div style={{ borderTop: '1px solid var(--border)', position: 'absolute', top: '50%', width: '100%', zIndex: 0 }}></div>
-              <span style={{ backgroundColor: 'var(--card-bg)', padding: '0 1rem', position: 'relative', zIndex: 1, color: 'var(--muted)', fontSize: '0.9rem', fontWeight: 'bold' }}>
-                {isArchive ? "OU ACHETER CET ARTICLE" : "OU ACHETER À L'UNITÉ (250 FCFA)"}
-              </span>
-            </div>
+            {articleId && (
+              <>
+                <div style={{ margin: '1rem 0', width: '100%', position: 'relative' }}>
+                  <div style={{ borderTop: '1px solid var(--border)', position: 'absolute', top: '50%', width: '100%', zIndex: 0 }}></div>
+                  <span style={{ backgroundColor: 'var(--card-bg)', padding: '0 1rem', position: 'relative', zIndex: 1, color: 'var(--muted)', fontSize: '0.9rem', fontWeight: 'bold' }}>
+                    OU ACHETER CET ARTICLE À L'UNITÉ
+                  </span>
+                </div>
 
-            {isArchive ? (
-              <button 
-                onClick={handleArchivePurchase}
-                disabled={loading}
-                style={{ 
-                  width: '100%', padding: '1rem', backgroundColor: 'var(--primary)', color: 'white', fontWeight: 'bold', border: 'none', borderRadius: '8px', cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontSize: '1.05rem', boxShadow: '0 4px 6px -1px rgba(230, 0, 0, 0.2)'
-                }}
-              >
-                {loading ? "Initialisation..." : "💳 Débloquer cet article — 250 FCFA"}
-              </button>
-            ) : (
-              <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', width: '100%', flexWrap: 'wrap' }}>
-                <button 
-                  onClick={() => alert("Simulation de l'API Wave : Veuillez valider le paiement de 250 FCFA sur votre application Wave.")}
-                  style={{ 
-                    flex: '1', minWidth: '120px', padding: '0.75rem', backgroundColor: '#1ce6e6', color: '#000', fontWeight: 'bold', border: 'none', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' 
+                <button
+                  onClick={handleArticlePurchase}
+                  disabled={loading}
+                  style={{
+                    width: '100%',
+                    padding: '1rem',
+                    backgroundColor: isArchive ? '#1e293b' : isConfidentiel ? '#7f1d1d' : 'var(--primary)',
+                    color: 'white',
+                    fontWeight: 'bold',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    fontSize: '1.05rem',
+                    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.15)',
+                    opacity: loading ? 0.7 : 1,
                   }}
                 >
-                  <span style={{ fontSize: '1.2rem' }}>🌊</span> Wave
+                  {loading
+                    ? '⏳ Redirection vers le paiement...'
+                    : '💳 Débloquer cet article — 250 FCFA'}
                 </button>
-                
-                <button 
-                  onClick={() => alert("Simulation de l'API Orange Money : Tapez #144# pour valider.")}
-                  style={{ 
-                    flex: '1', minWidth: '120px', padding: '0.75rem', backgroundColor: '#ff6600', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' 
-                  }}
-                >
-                  OMoney
-                </button>
-                
-                <button 
-                  onClick={() => alert("Simulation de l'API MTN MoMo : Validation PUSH en cours...")}
-                  style={{ 
-                    flex: '1', minWidth: '120px', padding: '0.75rem', backgroundColor: '#ffcc00', color: '#000', fontWeight: 'bold', border: 'none', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' 
-                  }}
-                >
-                  MTN MoMo
-                </button>
-              </div>
+
+                <p style={{ fontSize: '0.78rem', color: 'var(--muted)', margin: '0.25rem 0 0' }}>
+                  Paiement sécurisé via GeniusPay (Wave, Orange Money, MTN MoMo, carte bancaire)
+                </p>
+              </>
             )}
 
-            <div style={{ fontSize: '0.9rem', marginTop: '1.5rem' }}>
+            <div style={{ fontSize: '0.9rem', marginTop: '0.5rem' }}>
               Déjà abonné ? <Link href="/login" style={{ color: 'var(--primary)', fontWeight: 800, textDecoration: 'underline' }}>Connectez-vous</Link>
             </div>
           </div>

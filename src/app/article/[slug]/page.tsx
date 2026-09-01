@@ -235,17 +235,20 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
   oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
   const isArchiveArticle = article.publishedAt !== null && new Date(article.publishedAt) < oneYearAgo;
 
-  // Vérifier si l'utilisateur a acheté cet article d'archive individuellement
-  let hasArchivePurchase = false;
-  if (isArchiveArticle && session?.user) {
+  // Vérifier si l'utilisateur a acheté cet article individuellement (archive, premium, confidentiel)
+  let hasArticlePurchase = false;
+  const isPaywallArticle = isArchiveArticle || article.isPremium || article.isConfidentiel;
+  if (isPaywallArticle && session?.user) {
     const userId = (session.user as any).id;
     if (userId) {
       const purchase = await prisma.articlePurchase.findUnique({
         where: { userId_articleId: { userId, articleId: article.id } }
       });
-      hasArchivePurchase = purchase?.status === 'COMPLETED';
+      hasArticlePurchase = purchase?.status === 'COMPLETED';
     }
   }
+  // Rétrocompatibilité
+  const hasArchivePurchase = hasArticlePurchase;
 
   // Determine if paywall should be shown
   let showPaywall = false;
@@ -254,9 +257,9 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
     || ['ADMIN','EDITOR'].includes((session?.user as any)?.role);
 
   if (article.isConfidentiel) {
-    showPaywall = !isConfidentielSubscriber;
+    showPaywall = !isConfidentielSubscriber && !hasArticlePurchase;
   } else if (article.isPremium) {
-    showPaywall = !isPremiumSubscriber;
+    showPaywall = !isPremiumSubscriber && !hasArticlePurchase;
   }
 
   // Archive paywall — s'applique après les paywalls premium/confidentiel
@@ -698,7 +701,7 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
                 ) : (
                   <Paywall 
                     type={isArchiveArticle && !article.isConfidentiel && !article.isPremium ? 'archive' : article.isConfidentiel ? 'confidentiel' : 'premium'}
-                    articleId={isArchiveArticle ? article.id : undefined}
+                    articleId={article.id}
                   />
                 )}
               </div>

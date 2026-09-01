@@ -93,8 +93,8 @@ export async function POST(request: Request) {
 
     console.log(`[GENIUSPAY] ✅ Paiement réussi — ref: ${reference}, email: ${customerEmail}`);
 
-    // Si c'est un achat d'article d'archive individuel
-    if (transactionId.startsWith('ART-') || metadata.type === 'archive_purchase') {
+    // Si c'est un achat d'article individuel (premium, confidentiel, archive)
+    if (transactionId.startsWith('ART-') || metadata.type === 'archive_purchase' || metadata.type === 'article_purchase') {
       const pendingArtPurchase = await prisma.articlePurchase.findUnique({
         where: { transactionId: transactionId }
       });
@@ -103,7 +103,7 @@ export async function POST(request: Request) {
           where: { id: pendingArtPurchase.id },
           data: { status: 'COMPLETED' }
         });
-        console.log(`[GENIUSPAY] ✅ Achat d'article d'archive validé — ref: ${reference}, tx: ${transactionId}`);
+        console.log(`[GENIUSPAY] ✅ Achat d'article validé — ref: ${reference}, tx: ${transactionId}`);
       }
       return NextResponse.json({ received: true }, { status: 200 });
     }
